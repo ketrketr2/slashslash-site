@@ -42,7 +42,6 @@ h1,h2,h3,h4,p,figure,dl,dd{margin:0}
 .cursor.is-label .cursor-dot{box-shadow:0 0 0 2px #fff,0 0 0 5px var(--accent),0 0 0 6.5px var(--ink)}
 .cursor.is-label .cursor-ring{left:16px;top:16px;width:auto;height:30px;padding:0 12px 0 11px;border-radius:999px;background:var(--accent);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
 .cursor.is-label .cursor-label{opacity:1}
-.cursor.is-label .cursor-label:after{content:' ↗'}
 .cursor.is-label.flip-x .cursor-ring{translate:calc(-100% - 32px) 0}
 .cursor.is-label.flip-y .cursor-ring{top:-46px}
 .has-cursor,.has-cursor a,.has-cursor button,.has-cursor [data-cursor]{cursor:none}
@@ -529,15 +528,18 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .profile-grid{display:grid;grid-template-columns:clamp(220px,22vw,300px) minmax(0,1fr);gap:clamp(30px,5vw,90px);align-items:start;padding:0 var(--gutter) clamp(80px,10vw,140px)}
 .pf-side{display:flex;flex-direction:column;gap:18px;position:sticky;top:calc(var(--head) + 24px)}
 .pf-photo{position:relative;width:min(100%,232px);margin:0}
-.pf-photo img{width:100%;height:auto;aspect-ratio:470/588;object-fit:cover;display:block;background:var(--ink);box-shadow:8px 8px 0 var(--ink);transform:rotate(-2deg) scale(1.04);clip-path:inset(0 100% 0 0);transition:clip-path 1s var(--ease-io),transform 1.2s var(--ease)}
-.pf-photo.in img{clip-path:inset(-24px);transform:rotate(-2deg)}
+.pf-frame{position:relative;display:block}
+.pf-photo .pf-portrait{width:100%;height:auto;aspect-ratio:470/588;object-fit:cover;display:block;background:var(--ink);box-shadow:8px 8px 0 var(--ink);transform:rotate(-2deg) scale(1.04);clip-path:inset(0 100% 0 0);transition:clip-path 1s var(--ease-io),transform 1.2s var(--ease)}
+.pf-photo.in .pf-portrait{clip-path:inset(-24px);transform:rotate(-2deg)}
+/* 口元に猫のポーちゃん（本人の希望）。写真が開いたあとに貼り付く */
+.pf-sticker{position:absolute;left:35.7%;top:57.1%;width:35.7%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid #fff;box-shadow:3px 3px 0 var(--ink);z-index:1;opacity:0;transform:rotate(8deg) scale(.3);transition:transform .55s cubic-bezier(.3,1.6,.5,1) .95s,opacity .15s .95s}
+.pf-photo.in .pf-sticker{opacity:1;transform:rotate(8deg)}
 .pf-photo figcaption{margin-top:14px;font:700 11px/1.5 var(--jp);color:var(--muted);letter-spacing:.02em}
 .pf-id{display:flex;flex-direction:column;gap:10px}
 .pf-name{font:700 clamp(22px,2.1vw,30px)/1.3 var(--jp);letter-spacing:.06em;display:flex;flex-direction:column;gap:4px}
 .pf-name small{font:800 11px var(--display);font-stretch:118%;letter-spacing:.14em;color:var(--muted)}
 .pf-titles{display:flex;flex-direction:column;gap:6px}
 .pf-titles li{font:700 13px/1.6 var(--jp)}
-.pf-titles li:nth-child(2) span{background:linear-gradient(transparent 55%,var(--accent) 55%)}
 .pf-likes{margin:0;border-top:2px solid var(--ink);padding-top:12px;display:flex;flex-direction:column;gap:8px}
 .pf-likes dt{font:600 10px var(--mono);letter-spacing:.12em}
 .pf-likes dd{margin:0;display:flex;flex-wrap:wrap;gap:6px}
@@ -627,20 +629,29 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .foot-note{opacity:.6}
 
 /* ---------- 事例ファイル（CASE FILE） ---------- */
-.case-file{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:var(--paper);color:var(--ink);overflow:hidden}
-.case-file[open]{display:flex;flex-direction:column}
-.case-file.enter{animation:cf-in .6s var(--ease-io)}
-.case-file.leave{animation:cf-out .4s var(--ease-io) forwards}
-.case-file::backdrop{background:#111110}
-@keyframes cf-in{from{clip-path:polygon(0 0,0 0,0 100%,0 100%)}to{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}}
-@keyframes cf-out{from{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}to{clip-path:polygon(100% 0,100% 0,100% 100%,100% 100%)}}
+.case-file{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:var(--ink);overflow:hidden}
+.case-file[open]{display:block}
+.case-file::backdrop{background:transparent}
+/* 後ろのページを暗く透かす。押すと閉じる */
+.cf-scrim{position:absolute;inset:0;background:#111110b3;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+/* 事例ファイル本体：PCは右からのシート（左に後ろのページが見える）。スマホは下からのシート */
+.cf-sheet{position:absolute;top:0;right:0;bottom:0;width:min(1180px,88vw);display:flex;flex-direction:column;background:var(--paper);box-shadow:-30px 0 70px #00000059;border-left:2px solid var(--ink)}
+.case-file.enter .cf-sheet{animation:cf-in .5s var(--ease-io)}
+.case-file.enter .cf-scrim{animation:cf-fade-in .4s ease}
+.case-file.leave .cf-sheet{animation:cf-out .38s var(--ease-io) forwards}
+.case-file.leave .cf-scrim{animation:cf-fade-out .38s ease forwards}
+@keyframes cf-in{from{transform:translateX(104%)}to{transform:none}}
+@keyframes cf-out{from{transform:none}to{transform:translateX(104%)}}
+@keyframes cf-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes cf-fade-out{from{opacity:1}to{opacity:0}}
 .cf-bar{flex:none;height:58px;display:flex;align-items:center;gap:16px;padding:0 var(--gutter);background:var(--ink);color:#fff;font:600 11px var(--mono);letter-spacing:.05em;border-bottom:5px solid var(--accent);position:relative;z-index:3}
 .cf-label{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cf-nav{display:flex;gap:4px}
 .cf-nav button{width:40px;height:40px;border:1px solid #ffffff55;font:700 16px var(--display);display:grid;place-items:center;transition:background .2s,color .2s}
 .cf-nav button:hover{background:var(--accent);color:var(--ink);border-color:var(--accent)}
-.cf-close{color:#fff;font:700 14px var(--jp);display:flex;gap:10px;align-items:center;padding:10px 0 10px 10px;white-space:nowrap}
-.cf-close span{font-size:22px;line-height:1}
+.cf-close{color:var(--ink);background:var(--accent);font:800 14px var(--jp);display:flex;gap:8px;align-items:center;padding:7px 14px 7px 16px;border-radius:999px;white-space:nowrap;transition:background .2s,color .2s}
+.cf-close span{font-size:20px;line-height:1}
+.cf-close:hover{background:#fff}
 .case-scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .case-body-swap{animation:cf-swap .55s var(--ease)}
 @keyframes cf-swap{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
@@ -776,7 +787,8 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .reduced .hero-copy,.reduced .menu nav a,.pre-reduced .hero-copy{animation:none!important;opacity:1;transform:none;clip-path:none}
 .reduced .wall-row,.reduced .ht-row,.reduced .ht-w,.reduced .hero-slash,.reduced .strip-track,.reduced .ai-ticker-track,.reduced .stage-band,.reduced .role button{animation:none!important}
 .reduced .split .ch,.reduced .card,.reduced .ai-item,.reduced .pf-time li{transition:none!important;transform:none!important;opacity:1!important;translate:none!important;font-stretch:118%}
-.reduced .pf-photo img{transition:none;transform:none;clip-path:none}
+.reduced .pf-photo .pf-portrait{transition:none;transform:none;clip-path:none}
+.reduced .pf-sticker{transition:none;opacity:1;transform:rotate(8deg)}
 .reduced .cf-hero-text h2 .ch{animation:none;transform:none}
 .reduced .cf-sub{animation:none;opacity:1}
 .reduced .case-file.enter,.reduced .case-file.leave,.reduced .case-body-swap{animation:none}
@@ -962,17 +974,7 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 @media(max-width:380px){.here em{display:none}}
 
 
-/* プロフィール：好きなことの横に、猫の写真を小さく */
-.pf-likes.has-pet{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr;grid-template-areas:'dt pet' 'tags pet';column-gap:14px;row-gap:8px;align-items:start}
-.pf-likes.has-pet dt{grid-area:dt}
-.pf-likes.has-pet .pf-like-tags{grid-area:tags}
-.pf-pet{grid-area:pet;margin:0}
-.pf-pet figure{margin:0;width:84px;background:#fff;padding:5px 5px 4px;border:1px solid var(--ink);box-shadow:4px 4px 0 var(--accent);transform:rotate(4deg);transition:transform .4s var(--ease)}
-.pf-pet figure:hover{transform:rotate(-2deg) scale(1.06)}
-.pf-pet img{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover}
-.pf-pet figcaption{margin-top:3px;text-align:center;font:700 9px/1.3 var(--jp);letter-spacing:.04em}
-@media(max-width:720px){.pf-pet figure{width:72px}}
-.reduced .pf-pet figure{transition:none}
+
 
 /* スマホの実績：最初は注目の2件、残りは ALL のタブで一覧に（2026-10-03 夕） */
 .filter-toggle{display:none}
@@ -1016,3 +1018,21 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
   .sp-row i{font:900 16px var(--display);font-style:normal}
   .sp-row:active{background:#00000008}
 }
+
+/* 事例ファイル：読み進めても「閉じる」が見えるように、右下に出し続ける */
+.cf-fab{position:absolute;right:max(20px,env(safe-area-inset-right));bottom:calc(20px + env(safe-area-inset-bottom));z-index:4;display:flex;align-items:center;gap:8px;height:54px;padding:0 20px 0 16px;border-radius:999px;background:var(--ink);color:#fff;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--accent);font:800 14px var(--jp);opacity:0;transform:translateY(18px) scale(.94);pointer-events:none;transition:opacity .25s,transform .35s var(--ease),background .2s,color .2s}
+.cf-fab i{font:900 24px/1 var(--display);font-style:normal}
+.cf-fab.on{opacity:1;transform:none;pointer-events:auto}
+.cf-fab:hover{background:var(--accent);color:var(--ink)}
+.reduced .cf-fab{transition:none}
+@media(max-width:720px){.cf-fab{height:52px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));padding:0 18px 0 14px}.cf-close{padding:7px 12px 7px 14px}}
+
+/* スマホ：下から出るシート。上に後ろのページを少し残し、そこを押しても閉じる */
+@media(max-width:720px){
+  .cf-sheet{top:40px;left:0;width:100%;border-left:0;border-radius:16px 16px 0 0;overflow:hidden;box-shadow:0 -20px 50px #00000066}
+  .cf-bar{padding-top:6px}
+  .cf-bar:before{content:'';position:absolute;top:6px;left:50%;width:38px;height:4px;border-radius:2px;background:#ffffff70;translate:-50% 0}
+  @keyframes cf-in{from{transform:translateY(102%)}to{transform:none}}
+  @keyframes cf-out{from{transform:none}to{transform:translateY(102%)}}
+}
+.reduced .case-file.enter .cf-sheet,.reduced .case-file.leave .cf-sheet,.reduced .case-file.enter .cf-scrim,.reduced .case-file.leave .cf-scrim{animation:none}

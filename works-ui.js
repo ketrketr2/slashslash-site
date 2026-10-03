@@ -487,7 +487,7 @@ function renderCase(index, layer) {
   </section>`;
   $('#case-label').textContent = `CASE ${p.no} / ${pad(projects.length)} — ${p.label}`;
   $('#case-prev').disabled = $('#case-next').disabled = vis.length < 2;
-  scroller.scrollTop = 0;
+  scroller.scrollTop = 0; syncFab();
   if (caseObserver) caseObserver.disconnect();
   caseObserver = new IntersectionObserver(es => es.forEach(x => { const v = x.target; if (x.isIntersecting && !reduced) { v.preload = 'auto'; const pr = v.play(); if (pr) pr.catch(() => { }); } else v.pause(); }), { root: scroller, threshold: .2 });
   $$('video', body).forEach(v => caseObserver.observe(v));
@@ -570,9 +570,8 @@ function openCase(index, opts = {}) {
     document.documentElement.classList.add('case-open');
     dlg.classList.remove('leave');
   };
-  const clearFx = () => { fly.classList.remove('on'); fly.getAnimations().forEach(x => x.cancel()); fly.innerHTML = ''; const a = $('.cut-a', cut), b = $('.cut-b', cut); [a, b].forEach(el => el.getAnimations().forEach(x => x.cancel())); cut.classList.remove('on'); };
-  if (reduced || !opts.from) { show(); if (!reduced) { dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter'); } return; }
-  Promise.all([animateCut('in'), flyFrom(opts.from, hero)]).then(() => { show(); dlg.classList.remove('enter'); requestAnimationFrame(clearFx); });
+  // ページを切り替えず、いまのページの上に事例ファイルを重ねる（PCは右から、スマホは下からのシート。後ろのページは暗く透けて見え、押すと閉じる）
+  show(); if (!reduced) { dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter'); }
 }
 function swapCase(index, layer) {
   caseIndex = index;
@@ -593,7 +592,7 @@ function closeNow(then) {
   if (reduced) { done(); return; }
   dlg.classList.remove('enter'); dlg.classList.add('leave');
   let finished = false; const fin = () => { if (finished) return; finished = true; done(); };
-  dlg.addEventListener('animationend', fin, { once: true }); setTimeout(fin, 520);
+  const sheet = $('#cf-sheet') || dlg; sheet.addEventListener('animationend', fin, { once: true }); setTimeout(fin, 520);
 }
 addEventListener('popstate', e => {
   const st = e.state || {};
@@ -601,12 +600,13 @@ addEventListener('popstate', e => {
   if (caseOpen && !st.slashCase) { backPending = false; const t = afterClose; afterClose = null; closeNow(() => { if (t) t(); if (pendingOpen) { const [i, o] = pendingOpen; pendingOpen = null; openCase(i, o); } }); return; }
   if (!caseOpen && st.slashCase) { const i = projects.findIndex(p => p.id === st.slashCase); if (i >= 0) { casePushed = true; openCase(i, { noPush: true }); } }
 });
+const scrim = $('#cf-scrim'); if (scrim) scrim.addEventListener('click', () => closeCase());
 dlg.addEventListener('cancel', e => { e.preventDefault(); if (!zoom.hidden) { closeZoom(); return; } closeCase(); });
 // 閉じたあとの片付け。close イベントは少し遅れて届くので、自分で閉じたときはその場で済ませる
 function afterClosed() {
   if (!caseOpen) return;
   if (caseObserver) caseObserver.disconnect(); $$('video', body).forEach(v => { v.pause(); v.removeAttribute('src'); v.load && v.load(); });
-  body.innerHTML = ''; document.documentElement.classList.remove('case-open'); caseOpen = false; closeZoomNow(); zoomPushed = false;
+  body.innerHTML = ''; document.documentElement.classList.remove('case-open'); caseOpen = false; closeZoomNow(); zoomPushed = false; syncFab();
   document.body.classList.remove('reading'); syncPlayback();
   // ブラウザが自分で閉じた場合（戻る操作など）も、積んだ履歴を残さない
   if (casePushed) { casePushed = false; if (history.state && history.state.slashCase) history.back(); }
@@ -627,6 +627,17 @@ body.addEventListener('click', e => {
   if (e.target.closest('[data-case-contact]')) { e.preventDefault(); closeCase(() => { const c = $('#contact'); if (c) c.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); }); return; }
   const f = e.target.closest('.cf-frame'); if (f) { openZoom(body._rest[+f.dataset.k]); }
 });
+// 下へ読み進めたら、右下に「閉じる」を出し続ける（末尾の「閉じる」が見えている間と、拡大表示の間は隠す）
+const fab = $('#cf-fab'); let fabRaf = 0;
+function syncFab() {
+  fabRaf = 0; if (!fab) return;
+  const end = $('.cf-close-end', body), endVis = !!end && end.getBoundingClientRect().top < innerHeight - 30;
+  const show = caseOpen && scroller.scrollTop > 240 && !endVis && (!zoom || zoom.hidden);
+  if (show === fab.classList.contains('on')) return;
+  fab.classList.toggle('on', show); fab.setAttribute('aria-hidden', String(!show)); fab.tabIndex = show ? 0 : -1;
+}
+scroller.addEventListener('scroll', () => { if (!fabRaf) fabRaf = requestAnimationFrame(syncFab); }, { passive: true });
+if (fab) fab.addEventListener('click', () => closeCase());
 // 拡大表示（これも「戻る」で閉じる）
 const zoom = $('#cf-zoom'), zoomStage = $('#cf-zoom-stage');
 function openZoom(a) {
@@ -634,11 +645,11 @@ function openZoom(a) {
   zoomStage.classList.remove('full');
   zoomStage.innerHTML = a.kind === 'video' ? `<video muted loop playsinline autoplay controls poster="${esc(a.poster || '')}"><source src="${esc(a.src)}" type="video/webm"><source src="${esc(mp4(a.src))}" type="video/mp4"></video>` : `<img src="${esc(a.src)}" alt="${esc(a.alt || a.title)}">`;
   $('#cf-zoom-cap').textContent = `${a.title}：${a.caption}`;
-  zoom.hidden = false; $('#cf-zoom-close').focus();
+  zoom.hidden = false; syncFab(); $('#cf-zoom-close').focus();
   if (!zoomPushed) { history.pushState({ slashCase: projects[caseIndex].id, zoom: true }, '', location.hash); zoomPushed = true; }
 }
 function closeZoom() { if (!zoom || zoom.hidden) return; if (zoomPushed && history.state && history.state.zoom) { history.back(); return; } closeZoomNow(); }
-function closeZoomNow() { if (!zoom || zoom.hidden) return; $$('video', zoomStage).forEach(v => v.pause()); zoomStage.innerHTML = ''; zoom.hidden = true; }
+function closeZoomNow() { if (!zoom || zoom.hidden) return; $$('video', zoomStage).forEach(v => v.pause()); zoomStage.innerHTML = ''; zoom.hidden = true; syncFab(); }
 $('#cf-zoom-close').addEventListener('click', closeZoom);
 zoomStage.addEventListener('click', e => { if (e.target.tagName === 'IMG') { if (e.target.naturalWidth > zoomStage.clientWidth * 1.2) zoomStage.classList.toggle('full'); else closeZoom(); } else if (e.target === zoomStage) closeZoom(); });
 

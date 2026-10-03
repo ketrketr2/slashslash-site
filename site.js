@@ -95,7 +95,7 @@ if (cursor) {
   let lastT = null;
   const target = el => {
     if (el === lastT) return; lastT = el; const t = el && el.closest && el.closest('[data-cursor]');
-    if (t) { label.textContent = t.dataset.cursor; cursor.classList.add('is-label'); cursor.classList.remove('is-link'); return; }
+    if (t) { label.textContent = t.dataset.cursor + (t.dataset.cursor === 'CLOSE' ? ' ×' : ' ↗'); cursor.classList.add('is-label'); cursor.classList.remove('is-link'); return; }
     cursor.classList.remove('is-label'); cursor.classList.toggle('is-link', !!(el && el.closest && el.closest('a,button,label,[role=button],[role=tab]')));
   };
   addEventListener('pointermove', e => {
@@ -286,16 +286,16 @@ if (partnerList) partnerList.innerHTML = (D.partners || []).map(p => `<li><b>${p
 const pf = D.profile, pfBox = $('#profile-body');
 if (pf && pfBox) {
   pfBox.innerHTML = `<div class="pf-side">
-    <figure class="pf-photo"><img src="${esc(pf.photo)}" alt="代表 ${esc(pf.name)} の写真（目元を帯で隠しています）" width="470" height="588" loading="lazy" decoding="async">${pf.photo_note ? `<figcaption>${esc(pf.photo_note)}</figcaption>` : ''}</figure>
+    <figure class="pf-photo"><span class="pf-frame"><img class="pf-portrait" src="${esc(pf.photo)}" alt="代表 ${esc(pf.name)} の写真（目元を帯で、口元を猫の写真で隠しています）" width="470" height="588" loading="lazy" decoding="async">${pf.pet ? `<img class="pf-sticker" src="${esc(pf.pet.src)}" alt="猫の${esc(pf.pet.name)}" width="300" height="300" loading="lazy" decoding="async">` : ''}</span>${pf.photo_note ? `<figcaption>${esc(pf.photo_note)}</figcaption>` : ''}</figure>
     <div class="pf-id"><p class="pf-name">${esc(pf.name)}<small>${esc(pf.en)}</small></p><ul class="pf-titles">${pf.titles.map(t => `<li><span>${esc(t)}</span></li>`).join('')}</ul></div>
-    ${pf.likes && pf.likes.length ? `<dl class="pf-likes${pf.pet ? ' has-pet' : ''}"><dt>好きなこと</dt><dd class="pf-like-tags">${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd>${pf.pet ? `<dd class="pf-pet"><figure><img src="${esc(pf.pet.src)}" alt="猫の${esc(pf.pet.name)}" width="300" height="300" loading="lazy" decoding="async"><figcaption>${esc(pf.pet.name)}</figcaption></figure></dd>` : ''}</dl>` : ''}
+    ${pf.likes && pf.likes.length ? `<dl class="pf-likes"><dt>好きなこと</dt><dd class="pf-like-tags">${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd></dl>` : ''}
     <p class="pf-links">${(pf.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</p>
   </div>
   <div class="pf-text">
     <p class="pf-lead">${esc(pf.lead)}</p>
     <div class="pf-body">${pf.body.map(b => `<p>${esc(b)}</p>`).join('')}</div>
     <ul class="pf-skills" aria-label="専門">${pf.skills.map(s => `<li>${esc(s)}</li>`).join('')}</ul>
-    <ol class="pf-time" aria-label="経歴">${pf.timeline.map(([y, t], i) => `<li style="--i:${i}" class="${/LU\.TWIYO|スラッシュを設立/.test(t) ? 'hl' : ''}"><b>${esc(y)}</b><p><span>${esc(t)}</span></p></li>`).join('')}</ol>
+    <ol class="pf-time" aria-label="経歴">${pf.timeline.map(([y, t], i) => `<li style="--i:${i}" class="${/スラッシュを設立/.test(t) ? 'hl' : ''}"><b>${esc(y)}</b><p><span>${esc(t)}</span></p></li>`).join('')}</ol>
   </div>`;
   const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { threshold: .2 });
   [$('.pf-photo', pfBox), $('.pf-time', pfBox)].forEach(el => el && io.observe(el));

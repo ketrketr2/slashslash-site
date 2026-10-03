@@ -3886,7 +3886,7 @@ window.SLASH_WORKS = {
   "name": "中井 健太郎",
   "en": "KENTARO NAKAI",
   "photo": "assets/profile/nakai-mesen2.jpg",
-  "photo_note": "※目線は本人の希望です",
+  "photo_note": "※目線とポーちゃんは本人の希望です",
   "pet": {
    "src": "assets/profile/po.jpg",
    "name": "ポーちゃん"

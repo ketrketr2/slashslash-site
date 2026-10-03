@@ -20,13 +20,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261003k">
+<link rel="stylesheet" href="site.css?v=20261003l">
 <link rel="preload" href="assets/logo-w-600.png" as="image">
-<script src="boot.js?v=20261003k"></script>
-<script src="intro.js?v=20261003k" defer></script>
-<script src="works.js?v=20261003k" defer></script>
-<script src="site.js?v=20261003k" defer></script>
-<script src="works-ui.js?v=20261003k" defer></script>
+<script src="boot.js?v=20261003l"></script>
+<script src="intro.js?v=20261003l" defer></script>
+<script src="works.js?v=20261003l" defer></script>
+<script src="site.js?v=20261003l" defer></script>
+<script src="works-ui.js?v=20261003l" defer></script>
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -252,12 +252,16 @@
 </footer>
 
 <dialog id="case" class="case-file" aria-labelledby="case-title">
+  <div class="cf-scrim" id="cf-scrim" aria-hidden="true" data-cursor="CLOSE"></div>
+  <div class="cf-sheet" id="cf-sheet">
   <div class="cf-bar">
     <span class="cf-label" id="case-label">CASE</span>
     <div class="cf-nav"><button type="button" id="case-prev" aria-label="前の事例">←</button><button type="button" id="case-next" aria-label="次の事例">→</button></div>
     <button type="button" id="case-close" class="cf-close">閉じる <span aria-hidden="true">×</span></button>
   </div>
   <div class="case-scroll" id="case-scroll"><div id="case-body"></div></div>
+  <button type="button" class="cf-fab" id="cf-fab" aria-label="事例ファイルを閉じる" aria-hidden="true" tabindex="-1"><i aria-hidden="true">×</i><span>閉じる</span></button>
+  </div>
   <div class="cf-zoom" id="cf-zoom" hidden><button type="button" class="cf-zoom-close" id="cf-zoom-close">閉じる <span aria-hidden="true">×</span></button><div class="cf-zoom-stage" id="cf-zoom-stage"></div><p class="cf-zoom-cap" id="cf-zoom-cap"></p></div>
 </dialog>
 <div class="fly" id="fly" aria-hidden="true"></div>
