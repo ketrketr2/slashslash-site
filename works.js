@@ -621,6 +621,144 @@ window.SLASH_WORKS = {
    "links": []
   },
   {
+   "id": "ai-journey",
+   "label": "AI時代の購買ファネルと価値換算",
+   "title": "AI ERA JOURNEY",
+   "kicker": "FORESIGHT / VALUATION",
+   "industry": "自動車",
+   "year": "2026",
+   "status": "議論用の資料と試算の設計（協力会社として参画）",
+   "tags": [
+    "ai",
+    "geo",
+    "mkt",
+    "kpi",
+    "stats",
+    "research",
+    "f-auto"
+   ],
+   "subtitle": "クルマの買い方・売り方・支え方が、AIでどう変わるか。2026・2030・2035の3時点で描く",
+   "summary": "自動車メーカーとの議論のために、生成AIが広がったあとのクルマの買い方、販売店の働き方と稼ぎ方、購入後の支え方を、2026年・2030年・2035年の3時点で描いた。公開されている調査と統計を集め、購買の6段階のどこをAIが担うか、販売店の22の業務のどれがAIへ移るかを整理し、2030年までにやることを3つにまとめた。あわせて、購買ファネルの段階ごとの粗利からAIの寄与を逆算し、金額で語るための試算を設計した。",
+   "can": [
+    "公開の調査と統計から、3時点の将来像を描く",
+    "購買の段階ごとに、担い手の変化を整理する",
+    "販売店の業務とKPIの置き換えを整理する",
+    "粗利と検討ファネルから、AIの寄与を逆算する試算",
+    "広告予算の振り替えと、2030年までの打ち手"
+   ],
+   "process": [
+    "AIの進化の段階と、ほかの業界で先に起きたことの整理",
+    "購買・販売店・購入後の3つの視点で、2026・2030・2035年の変化と打ち手を整理",
+    "購買ファネルの段階ごとの粗利から、AIの寄与を逆算する試算の設計"
+   ],
+   "team": [
+    "lead",
+    "researchd",
+    "mktc",
+    "analyst",
+    "stat"
+   ],
+   "note": "協力会社として参画しているプロジェクトです。資料の数値は公開資料にもとづきますが、ここに載せている図は考え方を示す模式図で、数値は架空です。",
+   "tape": [
+    "2026",
+    "2030",
+    "2035",
+    "FUNNEL",
+    "VALUE"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/ai-journey/01-journey.jpg",
+     "kind": "image",
+     "title": "購買の6段階を、誰が担うか",
+     "caption": "気づく・調べる・見積・試乗・契約・納車の6段階を、2026年・2030年・2035年の3時点で、人と店・AI・買い手のAIのどれが担うかで塗り分けた図（模式図）",
+     "alt": "6列×3行の表が、灰色・水色・青の3色で塗り分けられた図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/ai-journey/02-touchpoints.jpg",
+     "kind": "image",
+     "title": "接点の変化と、測るものの置き換え",
+     "caption": "検討中の人が見る接点の割合の変化と、今のKPIから置き換わるKPIの対応（模式図・数値は架空）",
+     "alt": "左に接点ごとの割合の推移の線グラフ、右に今のKPIと置き換わるKPIの対応表",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/ai-journey/03-dealer-tasks.jpg",
+     "kind": "image",
+     "title": "販売店の22の業務",
+     "caption": "販売店の22の業務を、AIが主担当になる時期で3つに分け、職種ごとのAIの当てはまりやすさと並べた図（模式図・数値は架空）",
+     "alt": "3列に業務の札が並ぶ図と、職種別の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/ai-journey/04-funnel-value.jpg",
+     "kind": "image",
+     "title": "粗利と検討ファネルから、AIの価値を逆算する",
+     "caption": "1台の粗利を段階ごとの候補の数で割って段階の価値を出し、次の段階へ進めた価値をチャネルで按分して、AIの寄与を年間の金額にする考え方（模式図・数値は架空）",
+     "alt": "段階ごとの価値の階段状の棒グラフ、チャネル別の積み上げ横棒、AIの寄与の積み上げと換算式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "JOURNEY",
+     "tag": "模式図",
+     "src": "assets/works/ai-journey/01-journey.jpg",
+     "alt": "6列×3行の表が、灰色・水色・青の3色で塗り分けられた図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "購買の6段階を、誰が担うか",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "TOUCHPOINT",
+     "tag": "模式図",
+     "src": "assets/works/ai-journey/02-touchpoints.jpg",
+     "alt": "左に接点ごとの割合の推移の線グラフ、右に今のKPIと置き換わるKPIの対応表",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "接点の変化と、測るものの置き換え",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "DEALER",
+     "tag": "模式図",
+     "src": "assets/works/ai-journey/03-dealer-tasks.jpg",
+     "alt": "3列に業務の札が並ぶ図と、職種別の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "販売店の22の業務",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "VALUE",
+     "tag": "模式図",
+     "src": "assets/works/ai-journey/04-funnel-value.jpg",
+     "alt": "段階ごとの価値の階段状の棒グラフ、チャネル別の積み上げ横棒、AIの寄与の積み上げと換算式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "粗利と検討ファネルから、AIの価値を逆算する",
+     "ratio": 0.666
+    }
+   ],
+   "no": "03",
+   "results": [],
+   "links": []
+  },
+  {
    "id": "marketing-command",
    "label": "サイト・広告・AI検索の統合ボード",
    "title": "MARKETING COMMAND",
@@ -765,7 +903,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "03",
+   "no": "04",
    "results": [],
    "links": []
   },
@@ -906,7 +1044,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "04",
+   "no": "05",
    "results": []
   },
   {
@@ -1048,7 +1186,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "05",
+   "no": "06",
    "results": [],
    "links": []
   },
@@ -1186,7 +1324,143 @@ window.SLASH_WORKS = {
      ]
     }
    ],
-   "no": "06",
+   "no": "07",
+   "results": [],
+   "links": []
+  },
+  {
+   "id": "clean-room",
+   "label": "クリーンルームでの広告データ分析の設計",
+   "title": "CLEAN ROOM",
+   "kicker": "DATA CLEAN ROOM / MEASUREMENT",
+   "industry": "自動車",
+   "year": "2024–2026",
+   "status": "分析の設計を支援（他社のチームとして参画）",
+   "tags": [
+    "ads",
+    "kpi",
+    "stats",
+    "bi",
+    "mkt",
+    "f-auto"
+   ],
+   "subtitle": "顧客データと広告の接触を、個人を出さずに突き合わせて測る",
+   "summary": "自動車メーカーの広告配信で、メーカーの顧客データと広告の配信・接触のログを、広告プラットフォームのデータクリーンルームの中で突き合わせて分析する仕組みづくりを支援した。個人情報の扱いと委託先のセキュリティの確認、分析の外部委託の段取りから、開放後のセグメント別の速報、分析用のクエリ集の作成まで。その後、サイトの計測の設計と、別のプラットフォームのクリーンルームとの連携の検討も担当した。",
+   "can": [
+    "データクリーンルームでの分析の設計",
+    "個人情報の扱い・セキュリティの確認と、委託の段取り",
+    "セグメント別の速報と、分析のクエリ集",
+    "広告からサイト、問い合わせまでの計測の設計",
+    "複数のクリーンルームの連携の検討"
+   ],
+   "process": [
+    "個人情報の扱い、委託先のセキュリティの確認、分析の外部委託の段取り",
+    "開放後のセグメント別の速報と、分析のサンプル・クエリ集の作成",
+    "広告ごとのパラメータ、アクセス解析と広告の連携などの計測の設計と、別のクリーンルームとの連携の検討"
+   ],
+   "team": [
+    "lead",
+    "analyst",
+    "sysd",
+    "ads",
+    "sec"
+   ],
+   "note": "他社のチームの一員として参画した案件です。社名・ツール名・データの中身は伏せています。図は仕組みと考え方を示す模式図で、数値は架空です。",
+   "tape": [
+    "MATCH",
+    "AGGREGATE",
+    "MEASURE",
+    "QUERY"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/clean-room/01-matching.jpg",
+     "kind": "image",
+     "title": "クリーンルームでの突き合わせ",
+     "caption": "メーカーの顧客データと広告の接触ログをクリーンルームの中で照合・集計し、一定の人数以上の集計結果だけを取り出す仕組みと、準備で確かめたこと（模式図）",
+     "alt": "左右のデータの箱から中央のクリーンルームへ矢印が入り、下へ集計値だけが出ていく図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/clean-room/02-quick-report.jpg",
+     "kind": "image",
+     "title": "セグメント別の速報",
+     "caption": "到達と接触回数、届いた人と届かなかった人の反応率、接触回数と反応率の関係を、セグメント別に並べた速報（模式図・数値は架空）",
+     "alt": "横棒グラフ、2点を結ぶ比較の図、頭打ちになる曲線の3つのグラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/clean-room/03-measurement.jpg",
+     "kind": "image",
+     "title": "広告から問い合わせまでの計測設計",
+     "caption": "広告ごとのパラメータ、サイトのイベント、広告の管理画面との連携、クリーンルームの4層をそろえた計測の設計（模式図）",
+     "alt": "4層の帯の図と、命名規則の表、確認項目のリスト",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/clean-room/04-query-library.jpg",
+     "kind": "image",
+     "title": "分析のクエリ集",
+     "caption": "よく使う問いを10の型にまとめた表と、値を入れ替えて使うクエリのひな形（模式図）",
+     "alt": "10行の表と、コードのひな形",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "CLEAN ROOM",
+     "tag": "模式図",
+     "src": "assets/works/clean-room/01-matching.jpg",
+     "alt": "左右のデータの箱から中央のクリーンルームへ矢印が入り、下へ集計値だけが出ていく図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "クリーンルームでの突き合わせ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "REPORT",
+     "tag": "模式図",
+     "src": "assets/works/clean-room/02-quick-report.jpg",
+     "alt": "横棒グラフ、2点を結ぶ比較の図、頭打ちになる曲線の3つのグラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "セグメント別の速報",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "MEASURE",
+     "tag": "模式図",
+     "src": "assets/works/clean-room/03-measurement.jpg",
+     "alt": "4層の帯の図と、命名規則の表、確認項目のリスト",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "広告から問い合わせまでの計測設計",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "QUERY",
+     "tag": "模式図",
+     "src": "assets/works/clean-room/04-query-library.jpg",
+     "alt": "10行の表と、コードのひな形",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "分析のクエリ集",
+     "ratio": 0.666
+    }
+   ],
+   "no": "08",
    "results": [],
    "links": []
   },
@@ -1441,7 +1715,145 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "07",
+   "no": "09",
+   "results": [],
+   "links": []
+  },
+  {
+   "id": "wallet-ads",
+   "label": "電子決済アプリの広告事業の成長戦略",
+   "title": "WALLET ADS",
+   "kicker": "AD BUSINESS STRATEGY",
+   "industry": "金融（海外の電子決済）",
+   "year": "2025",
+   "status": "構想の段階を担当（チームで参画）",
+   "tags": [
+    "biz",
+    "mkt",
+    "ads",
+    "kpi",
+    "research",
+    "f-fin"
+   ],
+   "subtitle": "決済の手数料以外に、広告という収益の柱をつくる",
+   "summary": "東南アジアの電子決済アプリについて、利用者の基盤を生かした広告事業の成長戦略を描いた。現地の広告主・代理店の状況の調査とヒアリング、利用者数から営業利益までの試算モデル、データ基盤と配信の仕組みの事業者選定（RFI）、必要な体制、加盟店や広告主に向けた新しいサービスの検討までを、約2か月の構想の段階で進めた。",
+   "can": [
+    "広告事業を段階的に広げる成長のシナリオ",
+    "利用者数から営業利益までの試算モデル",
+    "配信の仕組みを自社で持つかの判断材料（損益分岐）",
+    "データ基盤・配信の仕組みの事業者選定（RFI・比較表）",
+    "体制と、加盟店・広告主に向けた新しいサービスの検討"
+   ],
+   "process": [
+    "現地の広告主・代理店の状況の調査とヒアリング、広告の戦略の素案",
+    "収益の試算モデルと4年のロードマップ、データ基盤と配信の仕組みのRFIと比較表",
+    "必要な体制の整理と、加盟店・広告主に向けた新しいサービスの検討"
+   ],
+   "team": [
+    "lead",
+    "pm",
+    "mktc",
+    "dxc",
+    "sysd",
+    "analyst"
+   ],
+   "note": "コンサルティング会社のチームの一員として参画し、進行の管理と、戦略・試算・事業者選定を担当しました。社名・国名・サービス名は伏せています。図は考え方を示す模式図で、数値は架空です。",
+   "tape": [
+    "USERS",
+    "IMPRESSIONS",
+    "CPM",
+    "BUILD OR BUY",
+    "ROADMAP"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/wallet-ads/01-scope.jpg",
+     "kind": "image",
+     "title": "広告事業の3段階",
+     "caption": "媒体社・代理店・プラットフォーマーの3つの目線で、自社の枠の価値を上げることから、他社の枠の販売、加盟店とデータの事業へ広げる順番を示した図（模式図）",
+     "alt": "3段の階段状の箱に、各段階の目線・取り組み・売る相手・測るものが並ぶ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/wallet-ads/02-driver-tree.jpg",
+     "kind": "image",
+     "title": "営業利益までの分解と感度",
+     "caption": "利用者・起動・表示・消化率・単価から営業利益までを分解した試算モデルの構造と、要素を20%動かしたときの利益の変化（模式図・数値は架空）",
+     "alt": "左に営業利益から売上と原価へ枝分かれするツリー、右に要素ごとの感度の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/wallet-ads/03-build-or-buy.jpg",
+     "kind": "image",
+     "title": "配信の仕組みを自社で持つかの判断",
+     "caption": "外部の配信事業者を使う場合と自社で持つ場合の利益を月間の表示回数で比べた損益分岐と、広告費100の行き先（模式図・数値は架空）",
+     "alt": "2本の直線が交わる損益分岐のグラフと、広告費が手数料で減っていく積み上げの棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/wallet-ads/04-roadmap.jpg",
+     "kind": "image",
+     "title": "4年のロードマップと判断の場面",
+     "caption": "基盤・配信・広告の販売・加盟店・新しい収益の4年の取り組みと判断の場面、収益の内訳の推移（模式図・数値は架空）",
+     "alt": "年ごとの取り組みを並べた工程表と判断の場面のひし形、収益の内訳の積み上げ棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "SCOPE",
+     "tag": "模式図",
+     "src": "assets/works/wallet-ads/01-scope.jpg",
+     "alt": "3段の階段状の箱に、各段階の目線・取り組み・売る相手・測るものが並ぶ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "広告事業の3段階",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "MODEL",
+     "tag": "模式図",
+     "src": "assets/works/wallet-ads/02-driver-tree.jpg",
+     "alt": "左に営業利益から売上と原価へ枝分かれするツリー、右に要素ごとの感度の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "営業利益までの分解と感度",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "BUILD",
+     "tag": "模式図",
+     "src": "assets/works/wallet-ads/03-build-or-buy.jpg",
+     "alt": "2本の直線が交わる損益分岐のグラフと、広告費が手数料で減っていく積み上げの棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "配信の仕組みを自社で持つかの判断",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "ROADMAP",
+     "tag": "模式図",
+     "src": "assets/works/wallet-ads/04-roadmap.jpg",
+     "alt": "年ごとの取り組みを並べた工程表と判断の場面のひし形、収益の内訳の積み上げ棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "4年のロードマップと判断の場面",
+     "ratio": 0.666
+    }
+   ],
+   "no": "10",
    "results": [],
    "links": []
   },
@@ -1594,7 +2006,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "08",
+   "no": "11",
    "links": []
   },
   {
@@ -1732,7 +2144,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "09",
+   "no": "12",
    "results": [],
    "links": []
   },
@@ -2010,7 +2422,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "10",
+   "no": "13",
    "results": [],
    "links": []
   },
@@ -2247,7 +2659,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "11",
+   "no": "14",
    "results": [],
    "links": []
   },
@@ -2494,7 +2906,7 @@ window.SLASH_WORKS = {
      "ratio": 0.563
     }
    ],
-   "no": "12",
+   "no": "15",
    "results": [],
    "links": []
   },
@@ -2660,7 +3072,7 @@ window.SLASH_WORKS = {
      "ratio": 0.625
     }
    ],
-   "no": "13",
+   "no": "16",
    "results": [],
    "links": []
   },
@@ -2847,7 +3259,7 @@ window.SLASH_WORKS = {
      "ratio": 0.625
     }
    ],
-   "no": "14",
+   "no": "17",
    "results": [],
    "links": []
   },
@@ -2989,8 +3401,280 @@ window.SLASH_WORKS = {
      "ratio": 0.569
     }
    ],
-   "no": "15",
+   "no": "18",
    "results": [],
+   "links": []
+  },
+  {
+   "id": "taste-learn",
+   "label": "嗜好品のサブスクと体験の実証",
+   "title": "TASTE & LEARN",
+   "kicker": "SUBSCRIPTION / EXPERIENCE",
+   "industry": "消費財（嗜好品）",
+   "year": "2024–2025",
+   "status": "実証の設計・運営と、続く調査",
+   "tags": [
+    "biz",
+    "cx",
+    "ws",
+    "research",
+    "loyalty",
+    "f-goods"
+   ],
+   "subtitle": "お酒を届けるだけでなく、詳しくなる体験を月額で",
+   "summary": "嗜好品の会社の新規事業チームとともに、お酒と、詳しくなるための体験（セミナー）・教材・コミュニティを月額で届けるサブスクリプションを検討した。体感したあとに理由を知ると、もっと知りたくなるという仮説から、飲み比べと料理とのペアリングを組み合わせたセミナーを設計し、教材と台本を作り、専門店と組んで運営した。参加者の事前・事後の変化を調べ、続く調査も受託した。",
+   "can": [
+    "サブスクリプションの事業モデルの設計",
+    "関与の段階と、目的ごとの引き上げ方の整理",
+    "セミナーとペアリングの体験の設計",
+    "教材と台本の制作、当日の運営",
+    "専門店との実証の段取りと、事前・事後の調査"
+   ],
+   "process": [
+    "関与の段階と、目的ごとの引き上げのきっかけを整理",
+    "体感 → 知識 → 探求の順でセミナーとペアリングを設計し、教材と台本を制作",
+    "専門店と組んだ実証の運営と、事前・事後のアンケートによる変化の測定、続く調査"
+   ],
+   "team": [
+    "lead",
+    "planner",
+    "researchd",
+    "pm"
+   ],
+   "note": "新規事業チームとともに進めた実証です。社名・店名・参加者の情報は伏せています。図は考え方を示す模式図で、数値は架空です。",
+   "tape": [
+    "TASTE",
+    "LEARN",
+    "PAIRING",
+    "SUBSCRIPTION"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/taste-learn/01-experience.jpg",
+     "kind": "image",
+     "title": "体感 → 知識 → 探求",
+     "caption": "飲んで感じた印象に理由の説明が重なると次の探求が始まる、というセミナーの設計の軸にした考え方（模式図）",
+     "alt": "体感・知識・次の探求の3列に、熟成・産地・スタイルの3つの例が並ぶ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/taste-learn/02-ladder.jpg",
+     "kind": "image",
+     "title": "関与の段階と、支出の割合",
+     "caption": "関与を16段階に分け、段階ごとの心理・行動と、お酒にかける支出の割合を仮説として置いた図（模式図・数値は架空）",
+     "alt": "16段のはしごと、段階ごとの支出の割合の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/taste-learn/03-map.jpg",
+     "kind": "image",
+     "title": "習得度×目的のマップ",
+     "caption": "詳しくなりたい目的を5つに分け、習得度ごとの行動と、次の段階へ引き上げるきっかけを整理した図（模式図）",
+     "alt": "5列×3段の表と、最下段に引き上げのきっかけの行がある図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/taste-learn/04-pilot.jpg",
+     "kind": "image",
+     "title": "月額の会員制と、実証の設計",
+     "caption": "お酒の定期便にセミナー・教材・コミュニティを組み合わせる事業の形と、実証の流れ、事前と事後の変化（模式図・数値は架空）",
+     "alt": "事業の形の図、実証の6つの工程、事前と事後を比べた点の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "LOOP",
+     "tag": "模式図",
+     "src": "assets/works/taste-learn/01-experience.jpg",
+     "alt": "体感・知識・次の探求の3列に、熟成・産地・スタイルの3つの例が並ぶ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "体感 → 知識 → 探求",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "LADDER",
+     "tag": "模式図",
+     "src": "assets/works/taste-learn/02-ladder.jpg",
+     "alt": "16段のはしごと、段階ごとの支出の割合の横棒グラフ",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "関与の段階と、支出の割合",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "MAP",
+     "tag": "模式図",
+     "src": "assets/works/taste-learn/03-map.jpg",
+     "alt": "5列×3段の表と、最下段に引き上げのきっかけの行がある図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "習得度×目的のマップ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "PILOT",
+     "tag": "模式図",
+     "src": "assets/works/taste-learn/04-pilot.jpg",
+     "alt": "事業の形の図、実証の6つの工程、事前と事後を比べた点の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "月額の会員制と、実証の設計",
+     "ratio": 0.666
+    }
+   ],
+   "no": "19",
+   "results": [],
+   "links": []
+  },
+  {
+   "id": "beauty-ui",
+   "label": "AI診断の画面設計（アプリと店頭）",
+   "title": "AI DIAGNOSIS UI",
+   "kicker": "UI / UX DIRECTION",
+   "industry": "化粧品",
+   "year": "2020–2021",
+   "status": "企画・デザインディレクション（公開済み）",
+   "tags": [
+    "ui",
+    "ai",
+    "web",
+    "cx",
+    "visual",
+    "f-beauty"
+   ],
+   "subtitle": "店頭の鏡型の診断機と、アプリの2つの診断の画面を、使う場面と相手に合わせて設計する",
+   "summary": "化粧品の会社のAIを使った診断について、店頭に置く鏡型の診断機の画面と、アプリのメイクの診断・肌の診断の画面の企画とデザインのディレクションを行った。鏡に映る人の上でも読めること、店頭で顔が大写しのまま残らないこと、男性にも開いたトーンにすることなど、使われる場面と相手からデザインの条件を決め、協力会社のデザイナーと画面を作り、HTMLのひな形にして開発会社へ渡した。",
+   "can": [
+    "使う場面と相手から、デザインの条件を決める",
+    "トーンの方向の比較と選定",
+    "診断の流れ（問診・撮影・分析・結果・提案）の設計",
+    "結果の画面のひな形化と量産",
+    "デザイナー・開発会社との制作の進行"
+   ],
+   "results": [
+    "想定を超える診断数を記録し、SNSでも話題に"
+   ],
+   "process": [
+    "使われる場面と相手から、鏡型の画面とアプリのデザインの条件を整理",
+    "トーンの方向を4つ並べて選び、画面の流れと優先度を決めて制作",
+    "結果の画面をひな形にして量産し、HTMLのひな形にして開発会社へ引き渡し"
+   ],
+   "team": [
+    "lead",
+    "planner",
+    "prodd",
+    "designer"
+   ],
+   "note": "協力会社のデザイナーと制作し、実装は開発会社が担当しました。社名・ブランド名は伏せています。画面の図は構成を示す模式図で、実際のデザインではありません。",
+   "tape": [
+    "MIRROR",
+    "APP",
+    "TONE",
+    "FLOW"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/beauty-ui/01-mirror.jpg",
+     "kind": "image",
+     "title": "鏡に映る人の上でも読める画面",
+     "caption": "店頭の鏡型の画面で、色の濃さが落ちることと映り込みを前提に、色を絞り細い線で画面を成り立たせ、顔の表示をぼかす設計（模式図）",
+     "alt": "色見本の比較、2つの鏡型の画面の比較、顔のぼかしの操作の3段の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-ui/02-directions.jpg",
+     "kind": "image",
+     "title": "4つのトーンの方向",
+     "caption": "男女どちらにも開くために、未来感と今のトーンとの連続性で4つの方向を並べて選んだ図と、結果の画面のイラストの方向（模式図）",
+     "alt": "2軸のマップに4つの方向のカードが並び、右にイラストの3つの方向",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-ui/03-flows.jpg",
+     "kind": "image",
+     "title": "2つの診断の画面の流れ",
+     "caption": "メイクの診断と肌の診断の画面の流れと優先度、結果の詳細を1枚のひな形から派生させる作り方（模式図）",
+     "alt": "2段に並ぶスマートフォンの画面の模式と矢印、10枚のカードの格子",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-ui/04-schedule.jpg",
+     "kind": "image",
+     "title": "約10週の進め方",
+     "caption": "トーンの策定、画面の設計、優先度ごとの画面、HTMLのひな形の順に進めた工程表（模式図）",
+     "alt": "3つのグループの工程を色分けしたガントチャート",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "MIRROR",
+     "tag": "模式図",
+     "src": "assets/works/beauty-ui/01-mirror.jpg",
+     "alt": "色見本の比較、2つの鏡型の画面の比較、顔のぼかしの操作の3段の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "鏡に映る人の上でも読める画面",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "TONE",
+     "tag": "模式図",
+     "src": "assets/works/beauty-ui/02-directions.jpg",
+     "alt": "2軸のマップに4つの方向のカードが並び、右にイラストの3つの方向",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "4つのトーンの方向",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "FLOW",
+     "tag": "模式図",
+     "src": "assets/works/beauty-ui/03-flows.jpg",
+     "alt": "2段に並ぶスマートフォンの画面の模式と矢印、10枚のカードの格子",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "2つの診断の画面の流れ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "SCHEDULE",
+     "tag": "模式図",
+     "src": "assets/works/beauty-ui/04-schedule.jpg",
+     "alt": "3つのグループの工程を色分けしたガントチャート",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "約10週の進め方",
+     "ratio": 0.666
+    }
+   ],
+   "no": "20",
    "links": []
   },
   {
@@ -3141,7 +3825,7 @@ window.SLASH_WORKS = {
      "ratio": 0.693
     }
    ],
-   "no": "16",
+   "no": "21",
    "links": []
   },
   {
@@ -3284,7 +3968,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "17",
+   "no": "22",
    "links": []
   }
  ],
@@ -3335,21 +4019,6 @@ window.SLASH_WORKS = {
   },
   {
    "no": "A04",
-   "year": "2024–2025",
-   "industry": "消費財（嗜好品）",
-   "tags": [
-    "f-goods",
-    "cx",
-    "ws",
-    "research"
-   ],
-   "kind": "実施",
-   "title": "体験型のPoC（ペアリングとセミナー）",
-   "detail": "ペアリングとセミナーを組み合わせた体験を設計し、教材と台本を作り、運営まで担当。続く調査も受託した。",
-   "results": []
-  },
-  {
-   "no": "A05",
    "year": "2024",
    "industry": "観光",
    "tags": [
@@ -3369,7 +4038,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A06",
+   "no": "A05",
    "year": "2023–2024",
    "industry": "自動車",
    "tags": [
@@ -3384,7 +4053,7 @@ window.SLASH_WORKS = {
    "results": []
   },
   {
-   "no": "A07",
+   "no": "A06",
    "year": "2023",
    "industry": "出版",
    "tags": [
@@ -3403,7 +4072,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A08",
+   "no": "A07",
    "year": "2022–2023",
    "industry": "自動車販売",
    "tags": [
@@ -3421,7 +4090,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A09",
+   "no": "A08",
    "year": "2022",
    "industry": "自動車",
    "tags": [
@@ -3438,7 +4107,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A10",
+   "no": "A09",
    "year": "2021",
    "industry": "自動車",
    "tags": [
@@ -3452,7 +4121,7 @@ window.SLASH_WORKS = {
    "results": []
   },
   {
-   "no": "A11",
+   "no": "A10",
    "year": "2020–2021",
    "industry": "自動車",
    "tags": [
@@ -3470,7 +4139,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A12",
+   "no": "A11",
    "year": "2020–2021",
    "industry": "SaaS",
    "tags": [
@@ -3488,24 +4157,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A13",
-   "year": "2020–2021",
-   "industry": "化粧品",
-   "tags": [
-    "f-beauty",
-    "ui",
-    "ai",
-    "web"
-   ],
-   "kind": "実施",
-   "title": "アプリと店頭のAI診断のUI・UX",
-   "detail": "アプリと店頭の診断機器で使うAI診断の画面を設計。複雑な機能と導線を、ターゲットに合うデザインで解いた。",
-   "results": [
-    "想定を超える診断数を記録し、SNSでも話題に"
-   ]
-  },
-  {
-   "no": "A14",
+   "no": "A12",
    "year": "2020",
    "industry": "金融（カード）",
    "tags": [
@@ -3523,7 +4175,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A15",
+   "no": "A13",
    "year": "2018–2019",
    "industry": "商業施設",
    "tags": [
@@ -3555,8 +4207,11 @@ window.SLASH_WORKS = {
     "ローンチ計画"
    ],
    "works": [
+    "wallet-ads",
+    "ai-journey",
     "bank-brand",
     "idea-studio",
+    "taste-learn",
     "owned-media",
     "fx-loyalty",
     "dealer-community"
@@ -3579,6 +4234,7 @@ window.SLASH_WORKS = {
     "omni-cx",
     "isp-loyalty",
     "fx-loyalty",
+    "taste-learn",
     "dealer-community"
    ]
   },
@@ -3598,6 +4254,7 @@ window.SLASH_WORKS = {
     "fx-loyalty",
     "isp-loyalty",
     "price-research",
+    "taste-learn",
     "condition-ui",
     "urban-inbound"
    ]
@@ -3623,6 +4280,7 @@ window.SLASH_WORKS = {
     "isp-loyalty",
     "fx-loyalty",
     "bank-brand",
+    "clean-room",
     "urban-inbound",
     "omni-cx"
    ]
@@ -3642,6 +4300,7 @@ window.SLASH_WORKS = {
    ],
    "works": [
     "marketing-command",
+    "clean-room",
     "urban-inbound",
     "ai-visibility",
     "owned-media",
@@ -3663,10 +4322,12 @@ window.SLASH_WORKS = {
    ],
    "works": [
     "ai-visibility",
+    "ai-journey",
     "data-agent",
     "ai-film",
     "navi",
     "idea-studio",
+    "beauty-ui",
     "marketing-command"
    ]
   },
@@ -3686,6 +4347,7 @@ window.SLASH_WORKS = {
    "works": [
     "navi",
     "condition-ui",
+    "beauty-ui",
     "dealer-demo",
     "idea-studio",
     "dealer-community"
