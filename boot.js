@@ -1,3 +1,5 @@
+/* http で開かれたら https へ移す（GitHub の「Enforce HTTPS」が証明書の取り直しで外れている間の保険）。本番のドメインだけ */
+if(location.protocol==='http:'&&/(^|\.)slashslash\.jp$/.test(location.hostname))location.replace('https://www.slashslash.jp'+location.pathname+location.search+location.hash);
 /* 描画前に「動きを止める」設定を反映して、ちらつきを防ぐ。動きがあるときは開幕の演出のためにヒーローを待たせる。
  * 事例や見出しへのリンク（#works など）から来たときは、開幕を出さずにすぐ本文を見せる。 */
 try{var h=location.hash;if(localStorage.getItem('slash-motion')==='off'||(!localStorage.getItem('slash-motion')&&matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('pre-reduced');else if(!h||h==='#'||h==='#top')document.documentElement.classList.add('intro-on')}catch(e){}
