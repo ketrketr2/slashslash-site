@@ -286,14 +286,14 @@ if (partnerList) partnerList.innerHTML = (D.partners || []).map(p => `<li><b>${p
 const pf = D.profile, pfBox = $('#profile-body');
 if (pf && pfBox) {
   pfBox.innerHTML = `<div class="pf-side">
-    <figure class="pf-photo"><span class="pf-frame"><img class="pf-portrait" src="${esc(pf.photo)}" alt="代表 ${esc(pf.name)} の写真（目元を帯で、口元を猫の写真で隠しています）" width="470" height="588" loading="lazy" decoding="async">${pf.pet ? `<img class="pf-sticker" src="${esc(pf.pet.src)}" alt="猫の${esc(pf.pet.name)}" width="300" height="300" loading="lazy" decoding="async">` : ''}</span>${pf.photo_note ? `<figcaption>${esc(pf.photo_note)}</figcaption>` : ''}</figure>
+    <figure class="pf-photo"><span class="pf-frame"><img class="pf-portrait" src="${esc(pf.photo)}" alt="代表 ${esc(pf.name)} の写真（目元を帯で、口元を猫の写真で隠しています）" width="470" height="588" loading="lazy" decoding="async">${pf.pet ? `<img class="pf-sticker" src="${esc(pf.pet.src)}" alt="${esc(pf.pet.name)}" width="300" height="300" loading="lazy" decoding="async">` : ''}</span>${pf.photo_note ? `<figcaption>${esc(pf.photo_note)}</figcaption>` : ''}</figure>
     <div class="pf-id"><p class="pf-name">${esc(pf.name)}<small>${esc(pf.en)}</small></p><ul class="pf-titles">${pf.titles.map(t => `<li><span>${esc(t)}</span></li>`).join('')}</ul></div>
-    ${pf.likes && pf.likes.length ? `<dl class="pf-likes"><dt>好きなこと</dt><dd class="pf-like-tags">${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd></dl>` : ''}
+    ${(pf.likes && pf.likes.length) || (pf.weak && pf.weak.length) ? `<dl class="pf-likes">${pf.likes && pf.likes.length ? `<dt>好きなこと</dt><dd class="pf-like-tags">${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd>` : ''}${pf.weak && pf.weak.length ? `<dt class="pf-weak-dt">苦手なこと</dt><dd class="pf-like-tags pf-weak-tags">${pf.weak.map(l => `<span>${esc(l)}</span>`).join('')}</dd>` : ''}</dl>` : ''}
     <p class="pf-links">${(pf.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</p>
   </div>
   <div class="pf-text">
-    <p class="pf-lead">${esc(pf.lead)}</p>
-    <div class="pf-body">${pf.body.map(b => `<p>${esc(b)}</p>`).join('')}</div>
+    ${pf.lead ? `<p class="pf-lead">${esc(pf.lead)}</p>` : ''}
+    ${pf.body && pf.body.length ? `<div class="pf-body">${pf.body.map(b => `<p>${esc(b)}</p>`).join('')}</div>` : ''}
     <ul class="pf-skills" aria-label="専門">${pf.skills.map(s => `<li>${esc(s)}</li>`).join('')}</ul>
     <ol class="pf-time" aria-label="経歴">${pf.timeline.map(([y, t], i) => `<li style="--i:${i}" class="${/スラッシュを設立/.test(t) ? 'hl' : ''}"><b>${esc(y)}</b><p><span>${esc(t)}</span></p></li>`).join('')}</ol>
   </div>`;

@@ -546,6 +546,8 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .pf-likes dd span{font:700 12px var(--jp);background:var(--ink);color:#fff;padding:5px 10px;border-radius:999px}
 .pf-likes dd span:nth-child(2){background:var(--accent);color:var(--ink)}
 .pf-likes dd span:nth-child(3){background:var(--pink);color:var(--ink)}
+.pf-likes .pf-weak-dt{margin-top:6px}
+.pf-likes dd.pf-weak-tags span{background:transparent;color:var(--ink);border:1.5px dashed var(--ink);padding:4px 10px}
 .pf-links{display:flex;flex-wrap:wrap;gap:8px 18px}
 .pf-links a{font-weight:700;font-size:14px;border-bottom:2px solid var(--ink);padding-bottom:2px}
 .pf-links a:hover{color:var(--blue)}
