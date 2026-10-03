@@ -158,6 +158,18 @@ function onScroll() {
   header.classList.toggle('solid', solid);
   const mid = h / 2; header.classList.toggle('on-dark', solid && darkSecs().some(s => { const r = s.getBoundingClientRect(); return r.top <= mid && r.bottom >= mid; }));
   const max = document.documentElement.scrollHeight - innerHeight; progress.style.transform = `scaleX(${max > 0 ? clamp(scrollY / max) : 0})`;
+  showHere(solid);
+}
+/* スマホのヘッダーに「いまどの節か」を出す（ナビが隠れる幅で使う） */
+const HERE = [['works', '01', 'WORKS', '実績'], ['ai', '02', 'AI', 'AI活用'], ['services', '03', 'SERVICES', '領域'], ['team', '04', 'TEAM', '体制'], ['profile', '05', 'PROFILE', '代表'], ['company', '06', 'COMPANY', '会社'], ['contact', '07', 'CONTACT', '相談する']];
+const here = $('#here'); let hereId = '';
+function showHere(solid) {
+  if (!here) return;
+  const line = innerHeight * .35; let cur = null;
+  if (solid) for (const h of HERE) { const el = document.getElementById(h[0]); if (!el) continue; const r = el.getBoundingClientRect(); if (r.top <= line && r.bottom > line) { cur = h; break; } }
+  here.classList.toggle('on', !!cur);
+  if (cur && cur[0] !== hereId) { hereId = cur[0]; $('#here-no').textContent = cur[1]; $('#here-en').textContent = cur[2]; $('#here-ja').textContent = cur[3]; here.classList.remove('flip'); void here.offsetWidth; here.classList.add('flip'); }
+  if (!cur) hereId = '';
 }
 function skewLoop() {
   skewRaf = 0; const y = scrollY; vel = y - lastY; lastY = y; const target = reduced ? 0 : clamp(vel * -.18, -10, 10);
@@ -198,11 +210,18 @@ if (aiGrid) {
 }
 
 /* ---------- 領域（SERVICES） ---------- */
+// 事例のサムネ。動画の事例は、見えている間だけ動かす
+function svThumb(p) {
+  const L = (p.layers || []).find(l => l.type === 'image' || l.type === 'video');
+  if (L && L.type === 'video' && L.poster) { const poster = wallOf(L.poster); return `<span class="sv-thumb"><img src="${esc(poster)}" alt="" loading="lazy" decoding="async"><video muted loop playsinline preload="none" data-auto data-src="${esc(L.src)}" poster="${esc(poster)}"></video></span>`; }
+  return `<span class="sv-thumb"><img src="${esc(wallOf(thumbOf(p)))}" alt="" loading="lazy" decoding="async"></span>`;
+}
 const svList = $('#service-list');
 if (svList) {
   svList.innerHTML = (D.services || []).map((s, i) => `<li class="sv-item"><button type="button" class="sv-head" aria-expanded="false" aria-controls="sv-${esc(s.id)}"><span class="sv-no">${pad(i + 1)}</span><span class="sv-name"><b>${esc(s.en)}</b><span>${esc(s.name)}</span></span><span class="sv-count">${pad(s.works.length)} CASES</span><span class="sv-plus" aria-hidden="true">+</span></button>
    <div class="sv-body" id="sv-${esc(s.id)}"><div><div class="sv-inner"><div class="sv-text"><p>${esc(s.body)}</p><ul class="sv-can" aria-label="できること">${s.can.map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>
-   <div class="sv-works">${s.works.filter(id => byId[id]).map(id => `<button type="button" data-work="${esc(id)}" data-cursor="OPEN"><img src="${esc(wallOf(thumbOf(byId[id])))}" alt="" loading="lazy" decoding="async"><span>${esc(byId[id].title)}<br>${esc(byId[id].label)}</span></button>`).join('')}</div></div></div></div></li>`).join('');
+   <div class="sv-works">${s.works.filter(id => byId[id]).map(id => `<button type="button" data-work="${esc(id)}" data-cursor="OPEN">${svThumb(byId[id])}<span>${esc(byId[id].title)}<br>${esc(byId[id].label)}</span></button>`).join('')}</div></div></div></div></li>`).join('');
+  $$('video[data-auto]', svList).forEach(v => playIO.observe(v));
   $$('.sv-head', svList).forEach(h => h.addEventListener('click', () => { const item = h.closest('.sv-item'), on = !item.classList.contains('open'); item.classList.toggle('open', on); h.setAttribute('aria-expanded', String(on)); }));
   svList.addEventListener('click', e => { const b = e.target.closest('[data-work]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.work, b.querySelector('img')); });
   const first = $('.sv-item', svList); if (first) { first.classList.add('open'); $('.sv-head', first).setAttribute('aria-expanded', 'true'); }
@@ -268,7 +287,7 @@ if (pf && pfBox) {
   pfBox.innerHTML = `<div class="pf-side">
     <figure class="pf-photo"><img src="${esc(pf.photo)}" alt="代表 ${esc(pf.name)} の写真（目元を帯で隠しています）" width="470" height="588" loading="lazy" decoding="async">${pf.photo_note ? `<figcaption>${esc(pf.photo_note)}</figcaption>` : ''}</figure>
     <div class="pf-id"><p class="pf-name">${esc(pf.name)}<small>${esc(pf.en)}</small></p><ul class="pf-titles">${pf.titles.map(t => `<li><span>${esc(t)}</span></li>`).join('')}</ul></div>
-    ${pf.likes && pf.likes.length ? `<dl class="pf-likes"><dt>好きなこと</dt><dd>${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd></dl>` : ''}
+    ${pf.likes && pf.likes.length ? `<dl class="pf-likes${pf.pet ? ' has-pet' : ''}"><dt>好きなこと</dt><dd class="pf-like-tags">${pf.likes.map(l => `<span>${esc(l)}</span>`).join('')}</dd>${pf.pet ? `<dd class="pf-pet"><figure><img src="${esc(pf.pet.src)}" alt="猫の${esc(pf.pet.name)}" width="300" height="300" loading="lazy" decoding="async"><figcaption>${esc(pf.pet.name)}</figcaption></figure></dd>` : ''}</dl>` : ''}
     <p class="pf-links">${(pf.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</p>
   </div>
   <div class="pf-text">

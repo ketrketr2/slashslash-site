@@ -20,13 +20,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261003h">
+<link rel="stylesheet" href="site.css?v=20261003i">
 <link rel="preload" href="assets/logo-w-600.png" as="image">
-<script src="boot.js?v=20261003h"></script>
-<script src="intro.js?v=20261003h" defer></script>
-<script src="works.js?v=20261003h" defer></script>
-<script src="site.js?v=20261003h" defer></script>
-<script src="works-ui.js?v=20261003h" defer></script>
+<script src="boot.js?v=20261003i"></script>
+<script src="intro.js?v=20261003i" defer></script>
+<script src="works.js?v=20261003i" defer></script>
+<script src="site.js?v=20261003i" defer></script>
+<script src="works-ui.js?v=20261003i" defer></script>
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -43,6 +43,7 @@
 
 <header class="site-header" id="header">
   <a class="site-brand" href="#top" aria-label="株式会社スラッシュ トップへ"><img class="logo-ink" src="assets/logo-120.png" alt="" width="89" height="120"><img class="logo-paper" src="assets/logo-w-120.png" alt="" width="89" height="120"><span class="brand-name">株式会社スラッシュ</span></a>
+  <p class="here" id="here" aria-hidden="true"><b id="here-no">01</b><span id="here-en">WORKS</span><em id="here-ja">実績</em></p>
   <nav class="gnav" aria-label="サイト内">
     <a href="#works" data-scramble><b>WORKS</b><span>実績</span></a>
     <a href="#ai" data-scramble><b>AI</b><span>AI活用</span></a>
@@ -93,7 +94,7 @@
   <div class="section-head">
     <p class="sec-no" data-scramble>01 / WORKS</p>
     <h2 id="works-heading" class="sec-title"><span class="st-en" data-split>WORKS</span><span class="st-ja">実物の画面と資料で見る、実績</span></h2>
-    <p class="sec-note">社名・ブランド名・実数値は伏せています。画面を選ぶと、事例ファイル（CASE FILE）が開きます。</p>
+    <p class="sec-note">画面を選ぶと、事例ファイル（CASE FILE）が開きます。<small class="disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</small></p>
   </div>
 
   <div class="works-bar" id="works-bar">
@@ -132,7 +133,8 @@
       </div>
     </div>
     <!-- カード -->
-    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カード表示" hidden><div class="grid" id="grid"></div></div>
+    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カード表示" hidden><div class="grid" id="grid"></div>
+      <div class="grid-hud" id="grid-hud" hidden><button type="button" class="gh-btn" id="gh-prev" aria-label="前の事例">←</button><p class="gh-count" aria-live="polite"><b id="gh-now">01</b><span>/</span><span id="gh-total">17</span><em id="gh-title"></em></p><div class="gh-bar" aria-hidden="true"><i id="gh-fill"></i></div><button type="button" class="gh-btn" id="gh-next" aria-label="次の事例">→</button></div></div>
     <!-- 一覧 -->
     <div class="view view-list" id="view-list" role="tabpanel" aria-label="一覧表示" hidden>
       <p class="list-note">事例ファイルのある実績と、これまでの取り組み（ARCHIVE）を年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
@@ -244,6 +246,7 @@
 </main>
 
 <footer class="site-footer">
+  <p class="foot-disclaimer">掲載している画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</p>
   <div class="foot-mark" aria-hidden="true"><img src="assets/logo-w-600.png" alt="" width="443" height="600" loading="lazy"><span class="foot-word" data-proximity>s/ash</span></div>
   <div class="foot-row"><span>© 2020 s/ash Inc.</span><nav aria-label="フッター"><a href="#works">WORKS</a><a href="#ai">AI</a><a href="#services">SERVICES</a><a href="#team">TEAM</a><a href="#profile">PROFILE</a><a href="#company">COMPANY</a><a href="#contact">CONTACT</a></nav></div>
 </footer>

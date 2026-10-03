@@ -325,19 +325,65 @@ function renderGrid() {
       <span class="card-open" aria-hidden="true">↗</span></article>`;
   }).join('');
   if (cardObserver) cardObserver.disconnect();
+  const carousel = isCarousel(); grid.classList.toggle('carousel', carousel); grid.scrollLeft = 0;
   cardObserver = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.style.transitionDelay = `${(+x.target.dataset.k % 3) * 70}ms`; x.target.classList.add('in'); cardObserver.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
-  $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced) c.classList.add('in'); else cardObserver.observe(c); });
+  $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced || carousel) c.classList.add('in'); else cardObserver.observe(c); });
+  watchCovers(); syncHud();
 }
+/* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例ファイルを開いている間・タブが裏にある間は止める） */
+let coverIO = null;
+function coverPlay(v) {
+  const c = v.closest('.card');
+  if (v._vis && !reduced && !document.hidden && !caseOpen) {
+    if (!v.querySelector('source')) v.innerHTML = `<source src="${esc(v.dataset.src)}" type="video/webm"><source src="${esc(mp4(v.dataset.src))}" type="video/mp4">`;
+    v.preload = 'auto'; const pr = v.play(); if (pr) pr.then(() => { if (c) c.classList.add('playing'); }).catch(() => { });
+  } else v.pause();
+}
+function watchCovers() {
+  if (coverIO) coverIO.disconnect();
+  coverIO = new IntersectionObserver(es => es.forEach(x => { x.target._vis = x.isIntersecting; coverPlay(x.target); }), { threshold: .35 });
+  $$('.card-media video', grid).forEach(v => coverIO.observe(v));
+}
+function syncCovers() { $$('.card-media video', grid).forEach(coverPlay); }
+document.addEventListener('visibilitychange', syncCovers);
+new MutationObserver(syncCovers).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+/* スマホ：カードは縦に積まず、横にめくる。「03 / 17」と進み具合のバーで、いまどこを見ているかを出す */
+const narrow = matchMedia('(max-width: 720px)');
+const hud = $('#grid-hud'), hudNow = $('#gh-now'), hudTotal = $('#gh-total'), hudFill = $('#gh-fill'), hudTitle = $('#gh-title'), hudPrev = $('#gh-prev'), hudNext = $('#gh-next');
+function isCarousel() { return narrow.matches && state.view === 'grid'; }
+function gridAt() {
+  const cards = $$('.card', grid); if (!cards.length) return 0;
+  const mid = grid.scrollLeft + grid.clientWidth / 2; let best = 0, gap = Infinity;
+  cards.forEach((c, k) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < gap) { gap = d; best = k; } });
+  return best;
+}
+let hudAt = -1;
+function syncHud() {
+  if (!hud) return;
+  const on = isCarousel() && !!$('.card', grid); hud.hidden = !on; if (!on) { hudAt = -1; return; }
+  const cards = $$('.card', grid), n = cards.length, k = gridAt();
+  hudNow.textContent = pad(k + 1); hudTotal.textContent = pad(n);
+  hudFill.style.transform = `scaleX(${((k + 1) / n).toFixed(4)})`;
+  const p = projects[+cards[k].dataset.i]; hudTitle.textContent = p ? p.title : '';
+  hudPrev.disabled = k <= 0; hudNext.disabled = k >= n - 1;
+  if (k !== hudAt) { cards.forEach((c, i) => c.classList.toggle('current', i === k)); hudAt = k; }
+}
+function gridGo(d) {
+  const cards = $$('.card', grid); if (!cards.length) return;
+  const k = clamp(gridAt() + d, 0, cards.length - 1), c = cards[k];
+  grid.scrollTo({ left: c.offsetLeft - (grid.clientWidth - c.offsetWidth) / 2, behavior: reduced ? 'instant' : 'smooth' });
+}
+let hudRaf = 0;
+grid.addEventListener('scroll', () => { if (!hudRaf) hudRaf = requestAnimationFrame(() => { hudRaf = 0; syncHud(); }); }, { passive: true });
+if (hudPrev) hudPrev.addEventListener('click', () => gridGo(-1));
+if (hudNext) hudNext.addEventListener('click', () => gridGo(1));
+narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); else syncHud(); });
 grid.addEventListener('click', e => {
   const t = e.target.closest('[data-tag]'); if (t) { filterByTag(t.dataset.tag); return; }
   const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c) });
 });
-grid.addEventListener('pointerover', e => {
-  const c = e.target.closest('.card'); if (!c || !fine.matches || reduced || c.classList.contains('playing')) return;
-  const v = $('video', c); if (!v) return; if (!v.src && !v.querySelector('source')) { v.innerHTML = `<source src="${esc(v.dataset.src)}" type="video/webm"><source src="${esc(mp4(v.dataset.src))}" type="video/mp4">`; }
-  c.classList.add('playing'); v.preload = 'auto'; const pr = v.play(); if (pr) pr.catch(() => { });
-});
-grid.addEventListener('pointerout', e => { const c = e.target.closest('.card'); if (!c || c.contains(e.relatedTarget)) return; c.classList.remove('playing'); c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); const v = $('video', c); if (v) v.pause(); });
+grid.addEventListener('pointerout', e => { const c = e.target.closest('.card'); if (!c || c.contains(e.relatedTarget)) return; c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); });
 grid.addEventListener('pointermove', e => {
   if (!fine.matches || reduced) return; const c = e.target.closest('.card'); if (!c) return;
   const r = c.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
@@ -351,7 +397,8 @@ function renderList() {
   lv.innerHTML = listItems().map(x => {
     if (x.kind === 'case') {
       const p = x.p, c = coverOf(p);
-      return `<li class="lv-row is-case"><button type="button" class="lv-hit" data-i="${x.i}" data-thumb="${esc(c ? (c.poster || c.src) : '')}" aria-haspopup="dialog">
+      const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
+      return `<li class="lv-row is-case"><button type="button" class="lv-hit" data-i="${x.i}" data-thumb="${esc(c ? (c.poster || c.src) : '')}" data-vid="${esc(vid)}" aria-haspopup="dialog">
         <span class="lv-no">${p.no}</span><span class="lv-title"><b><span class="lv-kind">CASE</span>${esc(p.title)}</b><span>${esc(p.label)}</span><span class="lv-meta">${esc(p.industry)} / ${esc(p.year)}</span></span>
         <span class="lv-ind">${esc(p.industry)}</span><span class="lv-year">${esc(p.year)}</span><span class="lv-tags">${esc(tagText(p.tags))}</span><span class="lv-arrow" aria-hidden="true">↗</span></button></li>`;
     }
@@ -369,12 +416,21 @@ lv.addEventListener('click', e => {
 });
 if (pv) {
   let px = 0, py = 0, vx = 0, rr = 0, prevX = 0;
-  lv.addEventListener('pointerover', e => { const b = e.target.closest('.lv-hit[data-thumb]'); if (!b || !fine.matches || !b.dataset.thumb) { pv.classList.remove('on'); return; } pimg.src = b.dataset.thumb; pv.classList.add('on'); });
-  lv.addEventListener('pointerleave', () => pv.classList.remove('on'));
+  // 動画の事例は、浮かぶサムネも動画にする
+  const pvid = document.createElement('video'); pvid.muted = true; pvid.loop = true; pvid.playsInline = true; pvid.setAttribute('muted', ''); pvid.setAttribute('playsinline', ''); pvid.hidden = true; pv.appendChild(pvid);
+  const pvOff = () => { pv.classList.remove('on'); pvid.pause(); };
+  lv.addEventListener('pointerover', e => {
+    const b = e.target.closest('.lv-hit[data-thumb]'); if (!b || !fine.matches || !b.dataset.thumb) { pvOff(); return; }
+    pimg.src = b.dataset.thumb; const v = b.dataset.vid;
+    if (v && !reduced) { if (pvid.dataset.src !== v) { pvid.dataset.src = v; pvid.poster = b.dataset.thumb; pvid.innerHTML = `<source src="${esc(v)}" type="video/webm"><source src="${esc(mp4(v))}" type="video/mp4">`; pvid.load(); } pvid.hidden = false; const pr = pvid.play(); if (pr) pr.catch(() => { }); }
+    else { pvid.hidden = true; pvid.pause(); }
+    pv.classList.add('on');
+  });
+  lv.addEventListener('pointerleave', pvOff);
   lv.addEventListener('pointermove', e => {
     if (!fine.matches) return; vx = e.clientX - prevX; prevX = e.clientX; rr = reduced ? -3 : clamp(vx * .6, -14, 14) - 3;
     px = e.clientX + 34; py = e.clientY - 60; pv.style.setProperty('--x', px + 'px'); pv.style.setProperty('--y', py + 'px'); pv.style.setProperty('--r', rr.toFixed(1) + 'deg');
-    if (!e.target.closest('.lv-hit[data-thumb]')) pv.classList.remove('on');
+    if (!e.target.closest('.lv-hit[data-thumb]')) pvOff();
   });
 }
 
@@ -421,8 +477,10 @@ function renderCase(index, layer) {
   ${teamSection(p)}
   <section class="cf-foot">
     <p class="cf-note">${esc(p.note)}</p>
+    ${p.own ? '' : `<p class="cf-disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</p>`}
     <div class="cf-links">${(p.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}<a href="#contact" data-case-contact>この領域について相談する ↗</a></div>
     ${vis.length > 1 ? `<button type="button" class="cf-next" data-case-next data-cursor="NEXT"><small>NEXT CASE ${next.no}</small><b>${esc(next.title)}</b><span>${esc(next.subtitle)}</span><i>→</i></button>` : ''}
+    <button type="button" class="cf-close-end" data-case-close><span>CLOSE</span><b>事例ファイルを閉じる</b><i aria-hidden="true">×</i></button>
   </section>`;
   $('#case-label').textContent = `CASE ${p.no} / ${pad(projects.length)} — ${p.label}`;
   $('#case-prev').disabled = $('#case-next').disabled = vis.length < 2;
@@ -562,6 +620,7 @@ body.addEventListener('click', e => {
   const tr = e.target.closest('[data-team-role], .cf-net .role'); if (tr) { const id = tr.dataset.teamRole || tr.dataset.role; pickTeamRole(id === casePick ? null : id); return; }
   const oc = e.target.closest('[data-case-open]'); if (oc) { const i = projects.findIndex(p => p.id === oc.dataset.caseOpen); if (i >= 0) swapCase(i); return; }
   if (e.target.closest('[data-case-next]')) { stepCase(1); return; }
+  if (e.target.closest('[data-case-close]')) { closeCase(); return; }
   if (e.target.closest('[data-case-contact]')) { e.preventDefault(); closeCase(() => { const c = $('#contact'); if (c) c.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); }); return; }
   const f = e.target.closest('.cf-frame'); if (f) { openZoom(body._rest[+f.dataset.k]); }
 });
@@ -614,9 +673,17 @@ window.SlashWorks = {
 };
 
 /* ================= 初期表示 ================= */
+const startHash = location.hash;
 const fromHash = location.hash.startsWith('#w-') ? projects.findIndex(p => p.id === location.hash.slice(3)) : -1;
 state.current = fromHash >= 0 ? fromHash : 0;
 syncViewButtons(); renderFilters();
 if (state.view === 'layers') { renderPlist(); mount(state.current); startStage(); } else renderView();
 if (location.hash.startsWith('#case-')) { const i = projects.findIndex(p => p.id === location.hash.slice(6)); if (i >= 0) setTimeout(() => openCase(i, { noPush: true }), 300); }
+// 立体表示は URL を #w-… に書き換えるため、ブラウザのアンカー移動が効かない。#works・#w-… で来たときは自分で実績へ送る
+if (startHash === '#works' || startHash.startsWith('#w-')) {
+  let userMoved = false; ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(t => addEventListener(t, () => { userMoved = true; }, { once: true, passive: true }));
+  const go = () => { if (userMoved) return; const w = $('#works'); if (!w) return; const top = w.getBoundingClientRect().top; if (top < 0 || top > 120) w.scrollIntoView({ behavior: 'instant', block: 'start' }); };
+  requestAnimationFrame(go);
+  if (document.readyState === 'complete') setTimeout(go, 60); else addEventListener('load', go, { once: true });
+}
 })();
