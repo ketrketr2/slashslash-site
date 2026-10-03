@@ -3940,7 +3940,7 @@ window.SLASH_WORKS = {
    ],
    [
     "2026",
-    "並行して（副業にて）、株式会社YOHAKU Planning にプランナーとして参画"
+    "株式会社YOHAKU Planningにプランナーとして参画"
    ]
   ],
   "skills": [

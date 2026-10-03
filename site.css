@@ -583,6 +583,7 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .company-table dt{font:600 11px var(--mono);letter-spacing:.06em;padding-top:4px}
 .company-table dd{margin:0;font-size:14px;line-height:1.8;font-weight:700}
 .company-table a{border-bottom:1.5px solid var(--accent)}
+.company-table .nb{display:inline-block}
 
 /* ---------- CONTACT ---------- */
 .contact{background:var(--accent);color:var(--ink);position:relative;overflow:hidden}
