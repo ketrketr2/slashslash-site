@@ -33,14 +33,18 @@ h1,h2,h3,h4,p,figure,dl,dd{margin:0}
 /* ---------- カーソル・進捗・切り替えの帯 ---------- */
 .cursor{position:fixed;left:0;top:0;z-index:500;pointer-events:none;opacity:0;transition:opacity .25s}
 .has-cursor .cursor{opacity:1}
-.cursor-dot{position:fixed;left:-3px;top:-3px;width:6px;height:6px;border-radius:50%;background:#fff;mix-blend-mode:difference;will-change:transform}
-.cursor-ring{position:fixed;left:-20px;top:-20px;width:40px;height:40px;border-radius:50%;border:1.5px solid #fff;mix-blend-mode:difference;display:grid;place-items:center;will-change:transform;transition:width .35s var(--ease),height .35s var(--ease),left .35s var(--ease),top .35s var(--ease),background .25s,border-color .25s}
-.cursor-label{font:800 10px/1 var(--display);font-stretch:118%;letter-spacing:.06em;color:var(--ink);opacity:0;transform:scale(.6);transition:opacity .2s,transform .3s var(--ease);white-space:nowrap}
-.cursor.is-label .cursor-ring{width:92px;height:92px;left:-46px;top:-46px;background:var(--accent);border-color:var(--accent);mix-blend-mode:normal}
-.cursor.is-label .cursor-label{opacity:1;transform:none}
-.cursor.is-label .cursor-dot{opacity:0}
-.cursor.is-link .cursor-ring{width:64px;height:64px;left:-32px;top:-32px}
-.cursor.is-down .cursor-ring{transform-origin:center}
+.cursor-dot{position:fixed;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px #fff;z-index:2;will-change:transform;transition:box-shadow .2s}
+.cursor-ring{position:fixed;left:-17px;top:-17px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);box-shadow:0 0 0 1.5px #ffffffcc,inset 0 0 0 1.5px #ffffffcc;display:flex;align-items:center;justify-content:center;will-change:transform;transition:width .2s var(--ease),height .2s var(--ease),left .2s var(--ease),top .2s var(--ease),border-radius .2s,background .2s,border-color .2s}
+.cursor-label{font:800 11px/1 var(--display);font-stretch:118%;letter-spacing:.08em;color:var(--ink);opacity:0;transition:opacity .15s;white-space:nowrap}
+/* 押せるもの：輪を大きくして水色に */
+.cursor.is-link .cursor-ring{width:46px;height:46px;left:-23px;top:-23px;border-color:var(--ink);background:#69d9ee55}
+/* ラベル付き（OPEN・PLAY など）：点はポインタの位置に残し、ラベルは右下に札として出す（押す場所を隠さない） */
+.cursor.is-label .cursor-dot{box-shadow:0 0 0 2px #fff,0 0 0 5px var(--accent),0 0 0 6.5px var(--ink)}
+.cursor.is-label .cursor-ring{left:16px;top:16px;width:auto;height:30px;padding:0 12px 0 11px;border-radius:999px;background:var(--accent);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.cursor.is-label .cursor-label{opacity:1}
+.cursor.is-label .cursor-label:after{content:' ↗'}
+.cursor.is-label.flip-x .cursor-ring{translate:calc(-100% - 32px) 0}
+.cursor.is-label.flip-y .cursor-ring{top:-46px}
 .has-cursor,.has-cursor a,.has-cursor button,.has-cursor [data-cursor]{cursor:none}
 .has-cursor input,.has-cursor textarea,.has-cursor select,.has-cursor label{cursor:auto}
 .progress{position:fixed;left:0;top:0;z-index:70;height:3px;width:100%;background:var(--accent);transform-origin:0 50%;transform:scaleX(0);pointer-events:none}

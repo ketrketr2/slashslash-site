@@ -89,8 +89,9 @@ addEventListener('scroll', () => { if (proxActive) cacheProx(proxActive); }, { p
 const cursor = $('#cursor');
 if (cursor) {
   const dot = $('.cursor-dot', cursor), ring = $('.cursor-ring', cursor), label = $('.cursor-label', cursor);
-  let x = -100, y = -100, rx = -100, ry = -100, on = false, raf = 0;
-  const loop = () => { rx += (x - rx) * .22; ry += (y - ry) * .22; dot.style.transform = `translate3d(${x}px,${y}px,0)`; ring.style.transform = `translate3d(${rx}px,${ry}px,0)`; raf = (Math.abs(x - rx) + Math.abs(y - ry) > .3) ? requestAnimationFrame(loop) : 0; };
+  let x = -100, y = -100, on = false, raf = 0;
+  // 遅れて付いてくる動きはやめ、ポインタの位置にそのまま置く（操作の手応えを優先）。ラベルが画面の端で切れないよう、左・上へ逃がす
+  const loop = () => { raf = 0; const t = `translate3d(${x}px,${y}px,0)`; dot.style.transform = t; ring.style.transform = t; cursor.classList.toggle('flip-x', x > innerWidth - 150); cursor.classList.toggle('flip-y', y > innerHeight - 70); };
   let lastT = null;
   const target = el => {
     if (el === lastT) return; lastT = el; const t = el && el.closest && el.closest('[data-cursor]');
@@ -99,7 +100,7 @@ if (cursor) {
   };
   addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse' || !fine.matches || reduced) return;
-    x = e.clientX; y = e.clientY; if (!on) { on = true; rx = x; ry = y; root.classList.add('has-cursor'); }
+    x = e.clientX; y = e.clientY; if (!on) { on = true; root.classList.add('has-cursor'); }
     target(e.target); if (!raf) raf = requestAnimationFrame(loop);
   }, { passive: true });
   const retarget = () => { if (on) { lastT = null; target(document.elementFromPoint(x, y)); } };
