@@ -19,8 +19,8 @@ let reduced = document.body.classList.contains('reduced');
 const announce = t => { const a = $('#announcement'); if (a) a.textContent = t; };
 
 /* ================= 状態 ================= */
-const state = { do: null, field: null, view: innerWidth <= 720 ? 'grid' : 'layers', current: 0 };
-try { const v = localStorage.getItem('slash-view'); if (v && ['layers', 'grid', 'list'].includes(v)) state.view = v; } catch (e) { }
+const state = { do: null, field: null, view: innerWidth <= 720 ? 'grid' : 'layers', current: 0, spTab: 'pick' };
+try { const v = localStorage.getItem('slash-view2'); if (v && ['layers', 'grid', 'list'].includes(v)) state.view = v; } catch (e) { }
 const hasTags = (tags, f = state) => (!f.do || tags.includes(f.do)) && (!f.field || tags.includes(f.field));
 const visibleProjects = () => projects.map((p, i) => ({ p, i })).filter(({ p }) => hasTags(p.tags));
 const listItems = () => {
@@ -31,6 +31,10 @@ const listItems = () => {
 
 /* ================= 絞り込み ================= */
 const fDo = $('#f-do'), fField = $('#f-field'), countOut = $('#works-count'), countLabel = $('#works-count-label'), clearBtn = $('#filter-clear');
+// スマホでは、タグの絞り込みを最初はたたんでおく（「FILTER」で開く）
+const worksBarEl = $('#works-bar'), fToggle = $('#filter-toggle'), fToggleLabel = $('#filter-toggle-label');
+function setFiltersOpen(on) { if (!worksBarEl) return; worksBarEl.classList.toggle('filters-open', on); if (fToggle) fToggle.setAttribute('aria-expanded', String(on)); if (on) requestAnimationFrame(fitChips); }
+if (fToggle) fToggle.addEventListener('click', () => setFiltersOpen(!worksBarEl.classList.contains('filters-open')));
 // タグは横スクロールさせず折り返す。決めた行数に収まらない分は「＋N もっと見る」でまとめて出す
 const chipOpen = { do: false, field: false }, CHIP_LINES = { do: 2, field: 1 };
 function datasetTags() { return state.view === 'list' ? projects.map(p => p.tags).concat(archive.map(a => a.tags)) : projects.map(p => p.tags); }
@@ -52,6 +56,7 @@ function renderFilters() {
   const n = state.view === 'list' ? listItems().length : visibleProjects().length;
   countOut.textContent = pad(n); countLabel.textContent = state.view === 'list' ? 'ITEMS' : 'CASES';
   clearBtn.hidden = !state.do && !state.field;
+  if (fToggleLabel) { const lab = [state.do && TAG[state.do].label, state.field && TAG[state.field].label].filter(Boolean).join(' × '); fToggleLabel.textContent = lab ? `絞り込み中：${lab}` : 'できること・業種で絞り込む'; fToggle.classList.toggle('active', !!lab); }
   if (typeof checkJump === 'function') checkJump();
 }
 function fitRow(el, key, moved) {
@@ -108,7 +113,7 @@ const views = { layers: $('#view-layers'), grid: $('#view-grid'), list: $('#view
 function syncViewButtons() { $$('.view-switch [data-view]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === state.view))); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== state.view; }); }
 function setView(v) {
   if (v === state.view) return;
-  const go = () => { state.view = v; try { localStorage.setItem('slash-view', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
+  const go = () => { state.view = v; try { localStorage.setItem('slash-view2', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
   if (reduced) { go(); return; }
   viewsBox.classList.remove('wipe'); void viewsBox.offsetWidth; viewsBox.classList.add('wipe');
   setTimeout(go, 330); setTimeout(() => viewsBox.classList.remove('wipe'), 760);
@@ -311,29 +316,54 @@ function syncPlayback() {
 const grid = $('#grid');
 let cardObserver = null;
 function coverOf(p) { const L = p.layers.find(l => l.type === 'image' || l.type === 'video'); return L || (p.gallery || [])[0]; }
-function renderGrid() {
-  const vis = visibleProjects();
-  grid.innerHTML = vis.map(({ p, i }) => {
-    const c = coverOf(p); const tone = c ? c.tone : 'dark';
-    const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(c.poster)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
-    const kinds = p.layers.map(l => l.tag).filter(Boolean); const kind = kinds[0] || '';
-    return `<article class="card" data-i="${i}">
+function cardHTML({ p, i }) {
+  const c = coverOf(p); const tone = c ? c.tone : 'dark';
+  const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(c.poster)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
+  const kinds = p.layers.map(l => l.tag).filter(Boolean); const kind = kinds[0] || '';
+  return `<article class="card" data-i="${i}">
       <button type="button" class="card-hit" aria-label="${esc(p.title)}（${esc(p.label)}）の事例ファイルを開く" data-cursor="OPEN"></button>
       <div class="card-media tone-${esc(tone)}">${media}<span class="card-no">${p.no}</span>${kind ? `<span class="card-kind">${esc(kind)}</span>` : ''}</div>
       <div class="card-body"><h3>${esc(p.title)}</h3><p class="card-label">${esc(p.label)}</p><p class="card-meta">${esc(p.industry)} / ${esc(p.year)}</p>
       <ul class="card-tags">${p.tags.filter(t => TAG[t].group === 'do').slice(0, 5).map(t => `<li><button type="button" class="tag-btn" data-tag="${t}">${esc(TAG[t].label)}</button></li>`).join('')}</ul></div>
       <span class="card-open" aria-hidden="true">↗</span></article>`;
-  }).join('');
+}
+/* スマホ：いきなり17件を並べない。最初は注目の2件だけを大きく見せ、残りは「ALL」のタブで一覧（小さなサムネと事例名）として開く */
+const narrow = matchMedia('(max-width: 720px)');
+const wallOf = src => String(src || '').replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
+const PICK = 2;
+function rowHTML({ p, i }) {
+  const c = coverOf(p), thumb = c ? wallOf(c.poster || c.src) : '';
+  const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
+  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.title)}（${esc(p.label)}）の事例ファイルを開く">
+    <span class="sp-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">` : ''}${vid ? `<video muted loop playsinline preload="none" data-src="${esc(vid)}"></video>` : ''}</span>
+    <span class="sp-text"><small>${p.no}</small><b>${esc(p.title)}</b><span>${esc(p.label)}</span><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></button></li>`;
+}
+function renderSpGrid(vis) {
+  const filtered = !!(state.do || state.field), tab = filtered ? 'all' : state.spTab;
+  const pick = vis.slice(0, PICK), rest = vis.length - pick.length;
+  const tabs = `<div class="sp-tabs" role="tablist" aria-label="事例の見せ方">
+    <button type="button" role="tab" data-sptab="pick" aria-selected="${tab === 'pick'}" ${filtered ? 'disabled' : ''}><b>PICK UP</b><span>注目の${pick.length}件</span></button>
+    <button type="button" role="tab" data-sptab="all" aria-selected="${tab === 'all'}"><b>ALL</b><span>${filtered ? '絞り込み' : 'すべて'} ${vis.length}件</span></button></div>`;
+  const body = tab === 'pick'
+    ? `<div class="sp-pick">${pick.map(cardHTML).join('')}</div>${rest > 0 ? `<button type="button" class="sp-more" data-sptab="all"><span>ほかの事例を一覧で見る</span><b>+${rest}</b><i aria-hidden="true">→</i></button>` : ''}`
+    : `<ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`;
+  grid.innerHTML = tabs + body;
+  $$('.card', grid).forEach(c => c.classList.add('in'));
+}
+function renderGrid() {
+  const vis = visibleProjects(), sp = narrow.matches;
+  grid.classList.toggle('sp', sp);
   if (cardObserver) cardObserver.disconnect();
-  const carousel = isCarousel(); grid.classList.toggle('carousel', carousel); grid.scrollLeft = 0;
+  if (sp) { renderSpGrid(vis); watchCovers(); return; }
+  grid.innerHTML = vis.map(cardHTML).join('');
   cardObserver = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.style.transitionDelay = `${(+x.target.dataset.k % 3) * 70}ms`; x.target.classList.add('in'); cardObserver.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
-  $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced || carousel) c.classList.add('in'); else cardObserver.observe(c); });
-  watchCovers(); syncHud();
+  $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced) c.classList.add('in'); else cardObserver.observe(c); });
+  watchCovers();
 }
 /* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例ファイルを開いている間・タブが裏にある間は止める） */
 let coverIO = null;
 function coverPlay(v) {
-  const c = v.closest('.card');
+  const c = v.closest('.card, .sp-row');
   if (v._vis && !reduced && !document.hidden && !caseOpen) {
     if (!v.querySelector('source')) v.innerHTML = `<source src="${esc(v.dataset.src)}" type="video/webm"><source src="${esc(mp4(v.dataset.src))}" type="video/mp4">`;
     v.preload = 'auto'; const pr = v.play(); if (pr) pr.then(() => { if (c) c.classList.add('playing'); }).catch(() => { });
@@ -342,44 +372,17 @@ function coverPlay(v) {
 function watchCovers() {
   if (coverIO) coverIO.disconnect();
   coverIO = new IntersectionObserver(es => es.forEach(x => { x.target._vis = x.isIntersecting; coverPlay(x.target); }), { threshold: .35 });
-  $$('.card-media video', grid).forEach(v => coverIO.observe(v));
+  $$('.card-media video, .sp-thumb video', grid).forEach(v => coverIO.observe(v));
 }
-function syncCovers() { $$('.card-media video', grid).forEach(coverPlay); }
+function syncCovers() { $$('.card-media video, .sp-thumb video', grid).forEach(coverPlay); }
 document.addEventListener('visibilitychange', syncCovers);
 new MutationObserver(syncCovers).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-/* スマホ：カードは縦に積まず、横にめくる。「03 / 17」と進み具合のバーで、いまどこを見ているかを出す */
-const narrow = matchMedia('(max-width: 720px)');
-const hud = $('#grid-hud'), hudNow = $('#gh-now'), hudTotal = $('#gh-total'), hudFill = $('#gh-fill'), hudTitle = $('#gh-title'), hudPrev = $('#gh-prev'), hudNext = $('#gh-next');
-function isCarousel() { return narrow.matches && state.view === 'grid'; }
-function gridAt() {
-  const cards = $$('.card', grid); if (!cards.length) return 0;
-  const mid = grid.scrollLeft + grid.clientWidth / 2; let best = 0, gap = Infinity;
-  cards.forEach((c, k) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < gap) { gap = d; best = k; } });
-  return best;
-}
-let hudAt = -1;
-function syncHud() {
-  if (!hud) return;
-  const on = isCarousel() && !!$('.card', grid); hud.hidden = !on; if (!on) { hudAt = -1; return; }
-  const cards = $$('.card', grid), n = cards.length, k = gridAt();
-  hudNow.textContent = pad(k + 1); hudTotal.textContent = pad(n);
-  hudFill.style.transform = `scaleX(${((k + 1) / n).toFixed(4)})`;
-  const p = projects[+cards[k].dataset.i]; hudTitle.textContent = p ? p.title : '';
-  hudPrev.disabled = k <= 0; hudNext.disabled = k >= n - 1;
-  if (k !== hudAt) { cards.forEach((c, i) => c.classList.toggle('current', i === k)); hudAt = k; }
-}
-function gridGo(d) {
-  const cards = $$('.card', grid); if (!cards.length) return;
-  const k = clamp(gridAt() + d, 0, cards.length - 1), c = cards[k];
-  grid.scrollTo({ left: c.offsetLeft - (grid.clientWidth - c.offsetWidth) / 2, behavior: reduced ? 'instant' : 'smooth' });
-}
-let hudRaf = 0;
-grid.addEventListener('scroll', () => { if (!hudRaf) hudRaf = requestAnimationFrame(() => { hudRaf = 0; syncHud(); }); }, { passive: true });
-if (hudPrev) hudPrev.addEventListener('click', () => gridGo(-1));
-if (hudNext) hudNext.addEventListener('click', () => gridGo(1));
-narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); else syncHud(); });
+narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); });
 grid.addEventListener('click', e => {
+  const tb = e.target.closest('[data-sptab]');
+  if (tb) { if (tb.disabled) return; state.spTab = tb.dataset.sptab; renderGrid(); const top = grid.getBoundingClientRect().top; if (top < 0 || top > innerHeight * .6) grid.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); const sel = $(`.sp-tabs [data-sptab="${state.spTab}"]`, grid); if (sel && e.detail === 0) sel.focus({ preventScroll: true }); announce(state.spTab === 'all' ? `事例の一覧を表示しました。${visibleProjects().length}件。` : '注目の事例を表示しました。'); return; }
+  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row) }); return; }
   const t = e.target.closest('[data-tag]'); if (t) { filterByTag(t.dataset.tag); return; }
   const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c) });
 });
@@ -650,7 +653,7 @@ function checkJump() {
   if (show) jumpCount.textContent = countOut.textContent + (state.view === 'list' ? ' ITEMS' : ' CASES');
 }
 addEventListener('scroll', () => { if (!jumpRaf) jumpRaf = requestAnimationFrame(checkJump); }, { passive: true });
-if (jump) jump.addEventListener('click', () => { worksBar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); });
+if (jump) jump.addEventListener('click', () => { if (narrow.matches) setFiltersOpen(true); worksBar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); });
 
 /* ================= 横に並ぶ一覧は、マウスのホイールでも横に送れるようにする ================= */
 function wheelToX(el) {

@@ -950,7 +950,6 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .hover-preview video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 /* ヘッダーの現在地（ナビが隠れる幅だけ） */
 .here{display:none}
-.grid-hud{display:none}
 @media(max-width:960px){
   .here{display:flex;align-items:baseline;gap:7px;margin:0 0 0 4px;padding-left:12px;border-left:1.5px solid currentColor;opacity:0;translate:-6px 0;transition:opacity .3s,translate .4s var(--ease);pointer-events:none;white-space:nowrap;min-width:0}
   .here.on{opacity:1;translate:none}
@@ -961,26 +960,7 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 }
 @keyframes here-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media(max-width:380px){.here em{display:none}}
-/* スマホ：カードを横にめくる */
-@media(max-width:720px){
-  .grid{position:relative}
-  .grid.carousel{display:grid;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:84%;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;margin:0 -16px;padding:4px 16px 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .grid.carousel::-webkit-scrollbar{display:none}
-  .grid.carousel .card{scroll-snap-align:center;scroll-snap-stop:always;transition:transform .5s var(--ease),box-shadow .35s,opacity .35s}
-  .grid.carousel .card:not(.current){opacity:.55}
-  .grid.carousel .card.current{box-shadow:6px 6px 0 var(--accent)}
-  .grid-hud:not([hidden]){display:grid;grid-template-columns:44px minmax(0,1fr) 44px;grid-template-areas:'prev count next' 'bar bar bar';align-items:center;gap:10px 12px;padding:2px 0 0}
-  .gh-btn{grid-area:prev;width:44px;height:44px;border:1.5px solid var(--ink);font:900 18px var(--display);display:flex;align-items:center;justify-content:center;background:var(--paper)}
-  #gh-next{grid-area:next;background:var(--ink);color:#fff}
-  .gh-btn:disabled{opacity:.3}
-  .gh-count{grid-area:count;margin:0;display:flex;align-items:baseline;justify-content:center;gap:6px;font:600 12px var(--mono);min-width:0}
-  .gh-count b{font:900 28px/1 var(--display);font-stretch:118%;letter-spacing:-.04em}
-  .gh-count em{font:800 12px var(--display);font-style:normal;font-stretch:112%;letter-spacing:.02em;margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .gh-bar{grid-area:bar;height:3px;background:var(--line);overflow:hidden}
-  .gh-bar i{display:block;height:100%;background:var(--ink);transform-origin:0 50%;transform:scaleX(0);transition:transform .35s var(--ease)}
-  .cf-close-end{padding:16px}
-}
-.reduced .grid.carousel .card{transition:none}
+
 
 /* プロフィール：好きなことの横に、猫の写真を小さく */
 .pf-likes.has-pet{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr;grid-template-areas:'dt pet' 'tags pet';column-gap:14px;row-gap:8px;align-items:start}
@@ -993,3 +973,46 @@ html.intro-on .hero-facts{animation:intro-in .9s ease 1.1s both}
 .pf-pet figcaption{margin-top:3px;text-align:center;font:700 9px/1.3 var(--jp);letter-spacing:.04em}
 @media(max-width:720px){.pf-pet figure{width:72px}}
 .reduced .pf-pet figure{transition:none}
+
+/* スマホの実績：最初は注目の2件、残りは ALL のタブで一覧に（2026-10-03 夕） */
+.filter-toggle{display:none}
+.sp-tabs,.sp-more,.sp-list{display:none}
+@media(max-width:720px){
+  .works-bar{grid-template-areas:'view count' 'toggle toggle' 'filters filters'}
+  .filter-toggle{grid-area:toggle;display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 12px;border:1.5px solid var(--ink);background:var(--paper);text-align:left}
+  .filter-toggle b{font:900 12px var(--display);font-stretch:118%;letter-spacing:.06em}
+  .filter-toggle span{flex:1;font:700 12px var(--jp);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .filter-toggle i{font:900 18px/1 var(--display);font-style:normal;transition:transform .25s var(--ease)}
+  .filter-toggle.active{background:var(--accent)}
+  .works-bar.filters-open .filter-toggle i{transform:rotate(45deg)}
+  .works-bar .filters{display:none}
+  .works-bar.filters-open .filters{display:flex}
+  .grid.sp{display:block}
+  .grid.sp .sp-tabs{display:grid;grid-template-columns:1fr 1fr;border:1.5px solid var(--ink);margin-bottom:14px}
+  .sp-tabs button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:9px 12px;min-height:52px;text-align:left;background:var(--paper)}
+  .sp-tabs button+button{border-left:1.5px solid var(--ink)}
+  .sp-tabs b{font:900 14px/1 var(--display);font-stretch:118%;letter-spacing:.02em}
+  .sp-tabs span{font:700 11px/1.3 var(--jp);opacity:.75}
+  .sp-tabs [aria-selected=true]{background:var(--ink);color:#fff}
+  .sp-tabs [aria-selected=true] span{opacity:.85}
+  .sp-tabs button:disabled{opacity:.35}
+  .sp-pick{display:grid;gap:16px}
+  .grid.sp .sp-more{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;width:100%;margin-top:16px;padding:14px 16px;background:var(--ink);color:#fff;box-shadow:5px 5px 0 var(--accent);text-align:left}
+  .sp-more span{font:700 14px var(--jp)}
+  .sp-more b{font:900 22px/1 var(--display);font-stretch:118%;color:var(--accent)}
+  .sp-more i{font:900 18px var(--display);font-style:normal}
+  .grid.sp .sp-list{display:block;list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+  .sp-list li{border-bottom:1px solid var(--line)}
+  .sp-row{display:grid;grid-template-columns:104px minmax(0,1fr) 20px;gap:12px;align-items:center;width:100%;padding:10px 0;text-align:left}
+  .sp-thumb{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;background:#111;border:1px solid var(--ink)}
+  .sp-thumb img,.sp-thumb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .sp-thumb video{opacity:0;transition:opacity .4s}
+  .sp-row.playing .sp-thumb video{opacity:1}
+  .sp-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .sp-text small{font:600 10px var(--mono);letter-spacing:.06em;color:var(--muted)}
+  .sp-text b{font:900 16px/1.05 var(--display);font-stretch:112%;letter-spacing:-.02em;text-transform:uppercase;overflow-wrap:anywhere}
+  .sp-text span{font:700 12px/1.45 var(--jp)}
+  .sp-text em{font:600 10px var(--mono);font-style:normal;color:var(--muted)}
+  .sp-row i{font:900 16px var(--display);font-style:normal}
+  .sp-row:active{background:#00000008}
+}

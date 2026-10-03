@@ -20,13 +20,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261003j">
+<link rel="stylesheet" href="site.css?v=20261003k">
 <link rel="preload" href="assets/logo-w-600.png" as="image">
-<script src="boot.js?v=20261003j"></script>
-<script src="intro.js?v=20261003j" defer></script>
-<script src="works.js?v=20261003j" defer></script>
-<script src="site.js?v=20261003j" defer></script>
-<script src="works-ui.js?v=20261003j" defer></script>
+<script src="boot.js?v=20261003k"></script>
+<script src="intro.js?v=20261003k" defer></script>
+<script src="works.js?v=20261003k" defer></script>
+<script src="site.js?v=20261003k" defer></script>
+<script src="works-ui.js?v=20261003k" defer></script>
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -103,7 +103,8 @@
       <button type="button" role="tab" data-view="grid" aria-selected="false" data-magnetic><b>GRID</b><span>カード</span></button>
       <button type="button" role="tab" data-view="list" aria-selected="false" data-magnetic><b>LIST</b><span>一覧</span></button>
     </div>
-    <div class="filters">
+    <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="works-filters"><b>FILTER</b><span id="filter-toggle-label">できること・業種で絞り込む</span><i aria-hidden="true">+</i></button>
+    <div class="filters" id="works-filters">
       <div class="filter-row"><span class="fr-label">できること</span><div class="chips" id="f-do" role="group" aria-label="できることで絞り込む"></div></div>
       <div class="filter-row"><span class="fr-label">業種</span><div class="chips" id="f-field" role="group" aria-label="業種で絞り込む"></div></div>
     </div>
@@ -133,8 +134,7 @@
       </div>
     </div>
     <!-- カード -->
-    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カード表示" hidden><div class="grid" id="grid"></div>
-      <div class="grid-hud" id="grid-hud" hidden><button type="button" class="gh-btn" id="gh-prev" aria-label="前の事例">←</button><p class="gh-count" aria-live="polite"><b id="gh-now">01</b><span>/</span><span id="gh-total">17</span><em id="gh-title"></em></p><div class="gh-bar" aria-hidden="true"><i id="gh-fill"></i></div><button type="button" class="gh-btn" id="gh-next" aria-label="次の事例">→</button></div></div>
+    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カード表示" hidden><div class="grid" id="grid"></div></div>
     <!-- 一覧 -->
     <div class="view view-list" id="view-list" role="tabpanel" aria-label="一覧表示" hidden>
       <p class="list-note">事例ファイルのある実績と、これまでの取り組み（ARCHIVE）を年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
