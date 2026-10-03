@@ -240,11 +240,10 @@ window.SLASH_WORKS = {
    "subtitle": "MV、SNSのショート動画、広告、配信用のビジュアルまで、ひとつの世界観で",
    "summary": "Syuri × Sonar の2人組、Cry DOPE。世界観の設計から楽曲、MV、SNSのショート動画、広告クリエイティブ、配信サービス用のビジュアルまでを一貫して手がけ、作品と聴き手の出会いを設計している。2026年10月にデビュー曲「DARK DOPAMINE」の配信を始めた。",
    "can": [
+    "アーティストの世界観とブランドの設計",
     "MV（ミュージックビデオ）の企画・制作",
     "SNS用ショート動画の制作と投稿の運用",
     "広告クリエイティブの制作と、出稿の設計",
-    "配信サービス用の動くジャケット（Canvas）",
-    "Instagramの9分割グリッドの設計",
     "楽曲・歌詞の制作とアートディレクション"
    ],
    "process": [
@@ -347,27 +346,6 @@ window.SLASH_WORKS = {
      "ratio": 1.778
     },
     {
-     "src": "assets/works/crydope/07-canvas.webm",
-     "kind": "video",
-     "poster": "assets/works/crydope/07-canvas.jpg",
-     "title": "Canvas（動くジャケット）",
-     "caption": "配信サービスの再生画面で流れる、短いループ映像。",
-     "alt": "暗い部屋に立つアーティストのループ映像",
-     "focus": "50% 50%",
-     "tone": "dark",
-     "ratio": 1.778
-    },
-    {
-     "src": "assets/works/crydope/20-grid.jpg",
-     "kind": "image",
-     "title": "Instagramの9分割グリッド",
-     "caption": "配信開始に合わせて、プロフィールの9投稿が1枚の写真になるように設計した告知。",
-     "alt": "路地を手をつないで歩く二人の後ろ姿の写真を9分割した線と、新曲のタイトル",
-     "focus": "50% 40%",
-     "tone": "dark",
-     "ratio": 1.333
-    },
-    {
      "src": "assets/crydope-jacket.jpg",
      "kind": "image",
      "title": "DARK DOPAMINE",
@@ -435,14 +413,14 @@ window.SLASH_WORKS = {
     },
     {
      "type": "image",
-     "name": "GRID",
-     "tag": "Instagram",
-     "src": "assets/works/crydope/20-grid.jpg",
-     "alt": "路地を手をつないで歩く二人の後ろ姿の写真を9分割した線と、新曲のタイトル",
-     "focus": "50% 40%",
+     "name": "JACKET",
+     "tag": "アートワーク",
+     "src": "assets/crydope-jacket.jpg",
+     "alt": "DARK DOPAMINEのジャケット",
+     "focus": "50% 50%",
      "tone": "dark",
-     "title": "Instagramの9分割グリッド",
-     "ratio": 1.333
+     "title": "DARK DOPAMINE",
+     "ratio": 1.0
     },
     {
      "type": "video",
@@ -569,17 +547,6 @@ window.SLASH_WORKS = {
      "poster": "assets/works/ai-visibility/08-board-tour.jpg"
     },
     {
-     "src": "assets/works/ai-visibility/09-command-search.webm",
-     "kind": "video",
-     "title": "⌘Kの横断検索（動画）",
-     "caption": "コマンドパレットで質問を絞り込む操作の実画面録画（デモデータ）で、ブランド名は置換しています。",
-     "alt": "⌘Kで検索窓が開き、「ハイブリッド」と入力すると候補が絞られ、選択が下へ移る約7秒の動画",
-     "focus": "50% 30%",
-     "tone": "dark",
-     "ratio": 0.562,
-     "poster": "assets/works/ai-visibility/09-command-search.jpg"
-    },
-    {
      "src": "assets/works/ai-visibility/01-score-overview.jpg",
      "kind": "image",
      "title": "AI可視性ボードの概要",
@@ -628,26 +595,6 @@ window.SLASH_WORKS = {
      "focus": "50% 45%",
      "tone": "dark",
      "ratio": 0.624
-    },
-    {
-     "src": "assets/works/ai-visibility/06-command-palette.jpg",
-     "kind": "image",
-     "title": "⌘Kでの横断検索",
-     "caption": "全クエリとページを⌘Kで横断検索するコマンドパレットの実画面（デモデータ）で、ブランド名は置換しています。",
-     "alt": "ぼかした画面の上に検索窓が開き、「ハイブリッド」で絞り込んだ質問が5件並ぶ",
-     "focus": "50% 30%",
-     "tone": "dark",
-     "ratio": 0.625
-    },
-    {
-     "src": "assets/works/ai-visibility/07-theme-heatmap-light.jpg",
-     "kind": "image",
-     "title": "テーマ別出現率（ライトテーマ）",
-     "caption": "テーマ別メーカー出現率をライトテーマに切り替えた状態の実画面（デモデータ）で、メーカー名は自社・競合A〜Gに置換しています。",
-     "alt": "白背景に青系のヒートマップ。自社列が黄枠で強調され、右端に首位と自社との差",
-     "focus": "50% 45%",
-     "tone": "light",
-     "ratio": 0.625
     }
    ],
    "layers": [
@@ -726,8 +673,7 @@ window.SLASH_WORKS = {
     "改善の進め方（PDCA）と改善トライアルの企画",
     "車種担当向けの販促ダッシュボード",
     "サイト全体の戦況と動線の可視化",
-    "車種ごとの成績・検索・AIでの見え方の統合",
-    "毎朝の自動更新"
+    "車種ごとの成績・検索・AIでの見え方の統合"
    ],
    "process": [
     "NPSと各種指標の関係を分析してKPIを定義し、改善の進め方を設計",
@@ -873,8 +819,7 @@ window.SLASH_WORKS = {
     "情報が絶えず増える画面の情報設計",
     "脳の形の点群で情報を描く3D表示",
     "会議の文字起こしの取り込みと論点整理",
-    "論点・決定・宿題・警告を一画面に並べるUI",
-    "架空の台本で動く公開用デモ"
+    "論点・決定・宿題・警告を一画面に並べるUI"
    ],
    "process": [
     "会議や音声の文字起こしを取り込み、論点・決定事項・宿題を整理する仕組みの設計と実装",
@@ -930,16 +875,6 @@ window.SLASH_WORKS = {
      "focus": "50% 50%",
      "tone": "dark",
      "ratio": 0.462
-    },
-    {
-     "src": "assets/works/navi/03-board-early.jpg",
-     "kind": "image",
-     "title": "打ち合わせの序盤",
-     "caption": "打ち合わせの序盤。論点が立ち、最初の「言うこと」が出た段階。",
-     "alt": "司令室の画面。論点の入力欄と、論点ツリーが組み上がり始めた状態",
-     "focus": "50% 45%",
-     "tone": "dark",
-     "ratio": 0.555
     }
    ],
    "layers": [
@@ -1018,17 +953,16 @@ window.SLASH_WORKS = {
     "f-auto"
    ],
    "subtitle": "同じ商品を、UGC風・公式風・ストーリーの3つの型で動画にする",
-   "summary": "自動車の純正用品を題材に、商品動画をAIで制作した。生活者の投稿のように見せるUGC風、ブランドの公式動画、夜の家族の場面を描くストーリーの3つの型を作り分け、テロップと尺を広告・SNSの配信面に合わせて調整している。撮影を待たずに型を並べて比べられるので、どの見せ方が反応を取るかを早く確かめられる。",
+   "summary": "自動車の純正用品を題材に、商品動画をAIで制作した。生活者の投稿のように見せるUGC風、ブランドの公式動画、夜の家族の場面を描くストーリーの3つの型を作り分けた。撮影を待たずに型を並べて比べられるので、どの見せ方が反応を取るかを早く確かめられる。",
    "can": [
     "商品動画の型の設計（UGC風・公式風・ストーリー）",
     "AIによる映像の生成と編集",
-    "テロップと尺の、配信面ごとの調整",
     "広告・SNSでの比較テストの設計"
    ],
    "process": [
     "見せたい場面と、型ごとの構成・台本を設計",
-    "AIで映像を生成し、編集とテロップで仕上げる",
-    "配信面ごとに尺と見せ方を調整し、比べられる形にする"
+    "AIで映像を生成し、編集で仕上げる",
+    "広告・SNSで型を比べるテストを設計し、反応を取る見せ方を見つける"
    ],
    "team": [
     "lead",
@@ -1166,8 +1100,7 @@ window.SLASH_WORKS = {
     "チャットでの依頼に、調べて根拠つきで答える",
     "アクセス解析・ダッシュボードの数値の参照",
     "グラフ入りのPDFと画面キャプチャの自動作成",
-    "使い方ガイドなどの文書の作成",
-    "毎日のまとめ（質問数・答えられなかった質問）"
+    "答えられなかった質問からの毎日の改善"
    ],
    "process": [
     "答えるための資料・数値の集め方と、回答の型を設計",
@@ -1274,8 +1207,8 @@ window.SLASH_WORKS = {
        "リンクとPDF"
       ],
       [
-       "振り返る",
-       "毎日のまとめ"
+       "直す",
+       "答えられなかった質問から"
       ]
      ]
     }
@@ -1359,16 +1292,6 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     },
     {
-     "src": "assets/works/urban-inbound/01-findings-cover.jpg",
-     "kind": "image",
-     "title": "決済データが示した5つの発見（表紙）",
-     "caption": "決済データから訪日客の買い方を読み解いたHTML資料の実ページで、エリア名・施設名・社名・実数値は伏せています。",
-     "alt": "生成り色の表紙に「決済データが示した、対象エリア・5つの発見」の見出しと、伏字の数値が入った5枚のカード",
-     "focus": "40% 45%",
-     "tone": "light",
-     "ratio": 0.583
-    },
-    {
      "src": "assets/works/urban-inbound/02-sales-equation.jpg",
      "kind": "image",
      "title": "売上の方程式と5つの発見",
@@ -1425,16 +1348,6 @@ window.SLASH_WORKS = {
      "caption": "議論が散らからないよう全論点を0→1→2→3の1本のツリーに固定した論点構造マップの実ページで、社名・エリア名は伏せています。",
      "alt": "左の紺の箱「誰から・どう増やすか」から論点0〜3の赤枠へ広がり、各論点の下に未決・仮置き・決着済みのラベル付きカード",
      "focus": "55% 45%",
-     "tone": "light",
-     "ratio": 0.576
-    },
-    {
-     "src": "assets/works/urban-inbound/08-issue-log.jpg",
-     "kind": "image",
-     "title": "論点一覧表（議事の1枚）",
-     "caption": "会議の冒頭と最後に見る論点一覧表の実ページで、社名・エリア名・実数は伏せています。",
-     "alt": "紺のヘッダの表に論点番号・問い・期限・材料が並び、右端に赤（未決）・黄（仮置き）・緑（決着済み）の状態ラベル",
-     "focus": "50% 45%",
      "tone": "light",
      "ratio": 0.576
     },
@@ -1657,16 +1570,6 @@ window.SLASH_WORKS = {
      "title": "実施ロードマップ",
      "caption": "スタッフ投稿ツールの導入準備から、オムニチャネル化の検証、変革までを3つの段階に分けた9か月の計画。提案資料の実ページで、社名・ブランド名・ツール名・個人名は伏せています。",
      "alt": "3段階の行と月の列に、作業の帯が並ぶガントチャート",
-     "focus": "50% 40%",
-     "tone": "light",
-     "ratio": 0.562
-    },
-    {
-     "src": "assets/works/omni-cx/02-team.jpg",
-     "kind": "image",
-     "title": "体制",
-     "caption": "PM、分析・KPI、店舗研修、EC運用、ツール提供会社が役割を分け、クライアントの各部門の担当と組む体制。提案資料の実ページで、社名・ブランド名・ツール名・個人名は伏せています。",
-     "alt": "クライアント、PMチーム、CX戦略の3つの枠に、役割ごとの担当業務の帯が並ぶ体制図",
      "focus": "50% 40%",
      "tone": "light",
      "ratio": 0.562
@@ -1978,16 +1881,6 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     },
     {
-     "src": "assets/works/isp-loyalty/01-depth-report-cover.jpg",
-     "kind": "image",
-     "title": "デプスインタビュー分析レポート（表紙）",
-     "caption": "光回線ユーザーへのデプスインタビューを分析したHTMLレポートの実ページで、事業者名・地域名を伏せ、第三者の写真は外しています。",
-     "alt": "黒い表紙に白と黄色の見出し「デプスインタビュー分析レポート」、右に写真枠と回答者6・3タイプ・7つの罠の数字",
-     "focus": "35% 45%",
-     "tone": "dark",
-     "ratio": 0.625
-    },
-    {
      "src": "assets/works/isp-loyalty/02-loyalty-implications.jpg",
      "kind": "image",
      "title": "ロイプロ設計への示唆（継続・離脱の心理マップ）",
@@ -2016,16 +1909,6 @@ window.SLASH_WORKS = {
      "focus": "50% 40%",
      "tone": "dark",
      "ratio": 0.561
-    },
-    {
-     "src": "assets/works/isp-loyalty/05-ten-axis-catalog.jpg",
-     "kind": "image",
-     "title": "セグメンテーション10軸カタログ",
-     "caption": "顧客を分ける10の軸（A〜J）を網羅したセグメンテーション論考の実ページで、事業者名は伏せています。",
-     "alt": "白いカードに紺の丸A〜Fと、人口統計・地理・心理・行動・取引履歴・顧客生涯価値の各軸の説明",
-     "focus": "50% 40%",
-     "tone": "light",
-     "ratio": 0.624
     },
     {
      "src": "assets/works/isp-loyalty/06-staged-roadmap.jpg",
@@ -2265,16 +2148,6 @@ window.SLASH_WORKS = {
      "ratio": 0.624
     },
     {
-     "src": "assets/works/fx-loyalty/03-prize-compliance.jpg",
-     "kind": "image",
-     "title": "景品の上限（コンプラ確認済みの算定ルール）",
-     "caption": "景品表示法の上限算定ルールを踏まえて出せる景品額を整理したレポートの実ページで、金額・取引量の数値は伏せています。",
-     "alt": "算定2方式の囲み、重大論点の見出し、ランク別の取引価額・個別上限（赤い網掛け）・出せる最高賞の表",
-     "focus": "50% 45%",
-     "tone": "light",
-     "ratio": 0.624
-    },
-    {
      "src": "assets/works/fx-loyalty/04-segment-decision-tree.jpg",
      "kind": "image",
      "title": "再セグメントの判定ツリー",
@@ -2320,16 +2193,6 @@ window.SLASH_WORKS = {
      "title": "アウター目標とインナー目標",
      "caption": "社外への認知（アウター）と社内への浸透（インナー）を左右の円に分け、それぞれの状態目標と主要KPIを示したゴール設定ページの実物です。",
      "alt": "青と赤の2つの大きな円が重なり、それぞれに状態目標と主要KPIの箇条書きが入る図",
-     "focus": "50% 55%",
-     "tone": "light",
-     "ratio": 0.562
-    },
-    {
-     "src": "assets/works/fx-loyalty/14-four-phases.jpg",
-     "kind": "image",
-     "title": "リブランディングの4フェーズ",
-     "caption": "Discovery・Strategy・Design・Promotionの4フェーズで問いと実行内容を整理したリブランディングの進め方のページの実物です。",
-     "alt": "4列のフェーズごとに、問い、実行内容（水色の帯）、ロイヤルティプログラム開発への流用が並ぶ表",
      "focus": "50% 55%",
      "tone": "light",
      "ratio": 0.562
@@ -2462,16 +2325,6 @@ window.SLASH_WORKS = {
    ],
    "gallery": [
     {
-     "src": "assets/works/owned-media/01-salesheet-cover.jpg",
-     "kind": "image",
-     "title": "統合セールシート（表紙）",
-     "caption": "事業部向けにオウンドメディアを媒体資料として整理した統合セールシートの実ページで、メーカー名・運用会社名・媒体数は伏せています。",
-     "alt": "白地に大きな黒と赤の見出し「事業のKPIに、オウンドで効く。」と、右に目次の枠",
-     "focus": "35% 40%",
-     "tone": "light",
-     "ratio": 0.625
-    },
-    {
      "src": "assets/works/owned-media/02-owned-media-map.jpg",
      "kind": "image",
      "title": "オウンド全体像（5レイヤー）",
@@ -2498,16 +2351,6 @@ window.SLASH_WORKS = {
      "caption": "各オウンドチャネルを1ページの媒体資料にしたチャネルプロファイルの実ページで、サイト名・車種名を置換し、規模や利用者属性の実数値は伏せています。",
      "alt": "上に伏字の規模KPI4枚、左に特性・利用者属性の表と事例、右に6軸レーダーと推奨事業・指標・掲載仕様のカード",
      "focus": "45% 40%",
-     "tone": "light",
-     "ratio": 0.625
-    },
-    {
-     "src": "assets/works/owned-media/05-listing-process.jpg",
-     "kind": "image",
-     "title": "掲載までの6stepプロセス",
-     "caption": "事業部からの相談から月次レポートまでの掲載フローと注意点・所要日数をまとめた実ページで、担当者名・運用会社名は置換しています。",
-     "alt": "上に01〜06の段組みのプロセス、中央に注意点の表、下に掲載までの典型的な所要日数の表",
-     "focus": "50% 40%",
      "tone": "light",
      "ratio": 0.625
     },
@@ -2612,26 +2455,6 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     },
     {
-     "src": "assets/works/owned-media/21-report-image-basic.jpg",
-     "kind": "image",
-     "title": "月次KPIレポートのイメージ（基本版）",
-     "caption": "設定したKPIの進捗とコメントを毎月まとめる月次レポートの提案用イメージで、社名・媒体名とモック内の数値は伏せています。",
-     "alt": "「レポートイメージ」と重ね書きされた月次サマリーのモック。主要KPIの数値カード、日次推移の折れ線、上位投稿の一覧が並ぶ",
-     "focus": "50% 55%",
-     "tone": "light",
-     "ratio": 0.563
-    },
-    {
-     "src": "assets/works/owned-media/22-report-image-detailed.jpg",
-     "kind": "image",
-     "title": "月次パフォーマンスレポートのイメージ（詳細版）",
-     "caption": "SNS横断の指標や競合比較まで含めた詳細版の月次レポートの提案用イメージで、社名・車種名・競合名と数値は伏せています。",
-     "alt": "「レポートイメージ」と重ね書きされた詳細レポートのモック。上部に指標の帯、中段に推移グラフとファネル、下段に投稿ランキングと競合比較",
-     "focus": "50% 55%",
-     "tone": "light",
-     "ratio": 0.563
-    },
-    {
      "src": "assets/works/owned-media/23-dashboard-image.jpg",
      "kind": "image",
      "title": "オウンドメディアのダッシュボード（イメージ）",
@@ -2685,13 +2508,13 @@ window.SLASH_WORKS = {
    "layers": [
     {
      "type": "image",
-     "name": "SALES SHEET",
+     "name": "MAP",
      "tag": "資料",
-     "src": "assets/works/owned-media/01-salesheet-cover.jpg",
-     "alt": "白地に大きな黒と赤の見出し「事業のKPIに、オウンドで効く。」と、右に目次の枠",
-     "focus": "35% 40%",
+     "src": "assets/works/owned-media/02-owned-media-map.jpg",
+     "alt": "中央の赤い円HUBから、STORY・ENGAGE・RELATION・REACHの4つの円へ点線が伸びる放射図と、下に規模感の4セル",
+     "focus": "50% 45%",
      "tone": "light",
-     "title": "統合セールシート（表紙）",
+     "title": "オウンド全体像（5レイヤー）",
      "ratio": 0.625
     },
     {
@@ -2749,17 +2572,17 @@ window.SLASH_WORKS = {
     "f-tel"
    ],
    "subtitle": "社員のアイデアを、その場で事業のかたちにするワークショップ用Webツール",
-   "summary": "地域の通信事業者の新規事業ワークショップのために、進行のタイムライン、タイマー、アイデアの整理、立場の違う審査役との対話、発表用のプレビューまでを一つにしたWebツールを制作した。事前に、社会や生活者の変化を一覧にした資料も用意した。",
+   "summary": "地域の通信事業者の新規事業ワークショップのために、進行のタイムライン、アイデアの整理、立場の違う審査役との対話、発表用のプレビューまでを一つにしたWebツールを制作した。事前に、社会や生活者の変化を一覧にした資料も用意した。",
    "can": [
     "ワークショップの進行設計",
     "社会・生活者の変化の整理",
-    "進行・タイマー・アイデア整理のWebツール",
+    "進行とアイデア整理のWebツール",
     "立場の異なるAIの審査役との対話",
     "アイデアを発表用の画面にまとめるプレビュー"
    ],
    "process": [
     "ワークショップの進行設計と、社会・生活者の変化を整理した資料の作成",
-    "進行・タイマー・アイデア整理・発表プレビューを一つにしたWebツールの制作",
+    "進行・アイデア整理・発表プレビューを一つにしたWebツールの制作",
     "立場の異なる審査役（AI）にアイデアをぶつけられる対話パネルの設計"
    ],
    "team": [
@@ -2836,17 +2659,6 @@ window.SLASH_WORKS = {
      "ratio": 0.625
     },
     {
-     "src": "assets/works/idea-studio/07-console-flow.webm",
-     "kind": "video",
-     "title": "進行とタイマー（動画）",
-     "caption": "タイマーを開始し、進行表の工程を切り替えていく操作の実画面録画で、事業者名・地域名・実在人物は置換しています。",
-     "alt": "10分タイマーがカウントダウンし、進行表で「ルールと3人のAI」「AIに聞いて選ぶ」へ切り替わる約8秒の動画",
-     "focus": "50% 40%",
-     "tone": "light",
-     "ratio": 0.562,
-     "poster": "assets/works/idea-studio/07-console-flow.jpg"
-    },
-    {
      "src": "assets/works/idea-studio/08-pitch-experience.webm",
      "kind": "video",
      "title": "完成発表の体験（動画）",
@@ -2861,25 +2673,25 @@ window.SLASH_WORKS = {
    "layers": [
     {
      "type": "video",
-     "name": "FLOW",
+     "name": "PITCH",
      "tag": "実画面",
-     "src": "assets/works/idea-studio/07-console-flow.webm",
-     "alt": "10分タイマーがカウントダウンし、進行表で「ルールと3人のAI」「AIに聞いて選ぶ」へ切り替わる約8秒の動画",
-     "focus": "50% 40%",
-     "tone": "light",
-     "title": "進行とタイマー（動画）",
+     "src": "assets/works/idea-studio/08-pitch-experience.webm",
+     "alt": "古民家の写真の発表から、強みと目標、スマホのサービス体験へと場面が切り替わる約9秒の動画",
+     "focus": "45% 45%",
+     "tone": "dark",
+     "title": "完成発表の体験（動画）",
      "ratio": 0.562,
-     "poster": "assets/works/idea-studio/07-console-flow.jpg"
+     "poster": "assets/works/idea-studio/08-pitch-experience.jpg"
     },
     {
      "type": "image",
-     "name": "PITCH",
+     "name": "PREVIEW",
      "tag": "実画面",
-     "src": "assets/works/idea-studio/02-pitch-hero.jpg",
-     "alt": "山あいの古民家の写真に「帰れない日も、実家に、気配を。」の白い見出しと引用文、下に場面の切替",
-     "focus": "40% 45%",
-     "tone": "dark",
-     "title": "完成発表の体験（顧客の場面）",
+     "src": "assets/works/idea-studio/06-pitch-preview.jpg",
+     "alt": "左にチームの議論メモの入力欄、右に古民家の写真を使った発表のプレビュー",
+     "focus": "55% 45%",
+     "tone": "light",
+     "title": "発表プレビュー",
      "ratio": 0.625
     },
     {
@@ -3008,16 +2820,6 @@ window.SLASH_WORKS = {
      "caption": "吸収率の段階目標と感度シミュレーターをまとめた画面の実画面で、ブランド・国名を置換し、計画値は公開用の置換値です。",
      "alt": "上に67%→70%→78%→約90%の4段のカード、左に72.0%の半円ゲージ、右に3本のスライダー",
      "focus": "50% 40%",
-     "tone": "dark",
-     "ratio": 0.625
-    },
-    {
-     "src": "assets/works/dealer-demo/07-action-studio.jpg",
-     "kind": "image",
-     "title": "アクション・スタジオ",
-     "caption": "打ち手に担当と期日を付けて進めるカンバン画面の実画面で、ブランド・国名・販売店名を置換し、数値はサンプル値です。",
-     "alt": "上に「Five minutes on Monday.」のブリーフィング、下に「Next to move／In progress／Completed」の3列カンバン",
-     "focus": "50% 45%",
      "tone": "dark",
      "ratio": 0.625
     },
@@ -3196,16 +2998,6 @@ window.SLASH_WORKS = {
      "focus": "50% 40%",
      "tone": "light",
      "ratio": 0.569
-    },
-    {
-     "src": "assets/works/condition-ui/16-components.jpg",
-     "kind": "image",
-     "title": "UIコンポーネント",
-     "caption": "見出し・本文・ボタン・タイマーのメーターなど、画面を組み立てる部品をまとめたコンポーネントシートの実物です。",
-     "alt": "左にテキストスタイルとボタンの見本、右に円形のタイマーとメーターの部品が並ぶシート",
-     "focus": "40% 45%",
-     "tone": "light",
-     "ratio": 0.583
     }
    ],
    "layers": [
@@ -3432,8 +3224,7 @@ window.SLASH_WORKS = {
     "施設とアプリのコンセプト",
     "アプリ・Webの画面設計と管理画面",
     "限られた予算でのポイントの仕組み",
-    "取材から始める地域メディアの立ち上げ",
-    "施設運用のタスク整理"
+    "取材から始める地域メディアの立ち上げ"
    ],
    "results": [
     "アプリのダウンロード数は目標を超えた",
@@ -3442,7 +3233,7 @@ window.SLASH_WORKS = {
    "process": [
     "施設とアプリのコンセプト、取り組みの全体像の設計",
     "アプリ・Webの画面設計と管理画面、ポイントの仕組み",
-    "地域メディアの立ち上げと、施設運用のタスク整理"
+    "地域メディアの立ち上げと運営"
    ],
    "team": [
     "lead",
@@ -3611,7 +3402,7 @@ window.SLASH_WORKS = {
    ],
    "kind": "実施",
    "title": "体験型のPoC（ペアリングとセミナー）",
-   "detail": "日本酒のペアリングとセミナーを組み合わせた2日間の体験を設計し、教材と台本を作り、協力店の手配と運営を担当。続く調査も受託した。",
+   "detail": "日本酒のペアリングとセミナーを組み合わせた2日間の体験を設計し、教材と台本を作り、運営まで担当。続く調査も受託した。",
    "results": []
   },
   {
@@ -3747,7 +3538,7 @@ window.SLASH_WORKS = {
    ],
    "kind": "実施",
    "title": "業務ワークフロー製品の企業サイトのリニューアル",
-   "detail": "検索の資産を失わずにリードを獲得できるサイトへ。サーバーの移行、CMSのカスタマイズ、動画とチラシの制作まで。",
+   "detail": "検索の資産を失わずにリードを獲得できるサイトへ。サーバーの移行とCMSのカスタマイズまで。",
    "results": [
     "主要なキーワードで検索1位",
     "約7,000ページを半年足らずでリニューアル"
@@ -3858,8 +3649,7 @@ window.SLASH_WORKS = {
     "デプスインタビュー",
     "消費者調査",
     "競合・市場調査",
-    "ペルソナ",
-    "スクリーニング設計"
+    "ペルソナ"
    ],
    "works": [
     "fx-loyalty",
