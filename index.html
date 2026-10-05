@@ -20,13 +20,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261003q">
+<link rel="stylesheet" href="site.css?v=20261005a">
 <link rel="preload" href="assets/logo-w-600.png" as="image">
-<script src="boot.js?v=20261003q"></script>
-<script src="intro.js?v=20261003q" defer></script>
-<script src="works.js?v=20261003q" defer></script>
-<script src="site.js?v=20261003q" defer></script>
-<script src="works-ui.js?v=20261003q" defer></script>
+<script src="boot.js?v=20261005a"></script>
+<script src="intro.js?v=20261005a" defer></script>
+<script src="works.js?v=20261005a" defer></script>
+<script src="site.js?v=20261005a" defer></script>
+<script src="works-ui.js?v=20261005a" defer></script>
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -43,32 +43,40 @@
 
 <header class="site-header" id="header">
   <a class="site-brand" href="#top" aria-label="株式会社スラッシュ トップへ"><img class="logo-ink" src="assets/logo-120.png" alt="" width="89" height="120"><img class="logo-paper" src="assets/logo-w-120.png" alt="" width="89" height="120"><span class="brand-name">株式会社スラッシュ</span></a>
-  <p class="here" id="here" aria-hidden="true"><b id="here-no">01</b><span id="here-en">WORKS</span><em id="here-ja">実績</em></p>
   <nav class="gnav" aria-label="サイト内">
-    <a href="#works" data-scramble><b>WORKS</b><span>実績</span></a>
-    <a href="#ai" data-scramble><b>AI</b><span>AI活用</span></a>
-    <a href="#services" data-scramble><b>SERVICES</b><span>領域</span></a>
-    <a href="#team" data-scramble><b>TEAM</b><span>体制</span></a>
-    <a href="#profile" data-scramble><b>PROFILE</b><span>代表</span></a>
-    <a href="#company" data-scramble><b>COMPANY</b><span>会社</span></a>
+    <a href="#works" data-sec="works"><i>01</i><b>実績</b></a>
+    <a href="#ai" data-sec="ai"><i>02</i><b>AI活用</b></a>
+    <a href="#services" data-sec="services"><i>03</i><b>業務領域</b></a>
+    <a href="#team" data-sec="team"><i>04</i><b>体制</b></a>
+    <a href="#profile" data-sec="profile"><i>05</i><b>代表</b></a>
+    <a href="#company" data-sec="company"><i>06</i><b>会社</b></a>
+    <a href="#contact" data-sec="contact" class="gnav-cta"><i>07</i><b>相談する</b></a>
   </nav>
-  <button type="button" class="motion-btn" id="motion-toggle" aria-pressed="false"><i aria-hidden="true"></i><span>MOTION</span></button>
-  <a class="head-cta" href="#contact" data-magnetic><b>CONTACT</b><span>相談する ↗</span></a>
-  <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu"><span>MENU</span><i aria-hidden="true"></i></button>
+  <button type="button" class="motion-btn" id="motion-toggle" aria-pressed="false"><i aria-hidden="true"></i><span>動き：オン</span></button>
+  <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu"><span>メニュー</span><i aria-hidden="true"></i></button>
 </header>
 
 <div class="menu" id="menu" hidden>
-  <nav aria-label="メニュー">
-    <a href="#works"><small>01</small>WORKS<span>実績</span></a>
-    <a href="#ai"><small>02</small>AI<span>AI活用</span></a>
-    <a href="#services"><small>03</small>SERVICES<span>領域</span></a>
-    <a href="#team"><small>04</small>TEAM<span>体制</span></a>
-    <a href="#profile"><small>05</small>PROFILE<span>代表</span></a>
-    <a href="#company"><small>06</small>COMPANY<span>会社</span></a>
-    <a href="#contact"><small>07</small>CONTACT<span>相談する</span></a>
+  <p class="menu-k">目次 — 押すと、その節へ移動します</p>
+  <nav aria-label="目次">
+    <a href="#works" data-sec="works"><small>01</small><b>実績</b><span>実際の画面と資料で見る事例</span></a>
+    <a href="#ai" data-sec="ai"><small>02</small><b>AI活用</b><span>AIを業務に組み込んだ例</span></a>
+    <a href="#services" data-sec="services"><small>03</small><b>業務領域</b><span>8つの領域と、できること</span></a>
+    <a href="#team" data-sec="team"><small>04</small><b>体制</b><span>約20名の専門家で組むチーム</span></a>
+    <a href="#profile" data-sec="profile"><small>05</small><b>代表</b><span>代表の経歴</span></a>
+    <a href="#company" data-sec="company"><small>06</small><b>会社</b><span>会社の概要</span></a>
+    <a href="#contact" data-sec="contact"><small>07</small><b>相談する</b><span>お問い合わせ</span></a>
   </nav>
-  <div class="menu-foot"><span>STRATEGY / DATA / AI / DESIGN / FILM</span><button type="button" class="motion-btn" data-motion-alt aria-pressed="false"><i aria-hidden="true"></i><span>MOTION</span></button></div>
+  <div class="menu-foot"><span>株式会社スラッシュ</span><button type="button" class="motion-btn" data-motion-alt aria-pressed="false"><i aria-hidden="true"></i><span>動き：オン</span></button></div>
 </div>
+
+<!-- スマホ：いまの節と、前後の節への移動（ヒーローを過ぎてから出す） -->
+<nav class="dock" id="dock" aria-label="節の移動">
+  <button type="button" class="dock-step" data-dock="-1" aria-label="前の節へ"><i aria-hidden="true">‹</i></button>
+  <button type="button" class="dock-here" id="dock-here" aria-controls="menu" aria-expanded="false"><small>目次</small><b id="dock-no">01</b><span id="dock-name">実績</span><i aria-hidden="true"></i><s class="dock-bar" id="dock-bar"></s></button>
+  <button type="button" class="dock-act" id="dock-act" hidden>絞り込む</button>
+  <button type="button" class="dock-step" data-dock="1" aria-label="次の節へ"><i aria-hidden="true">›</i></button>
+</nav>
 
 <main>
 <!-- ============ HERO ============ -->
@@ -77,108 +85,110 @@
   <div class="hero-slash" aria-hidden="true"></div>
   <div class="hero-type" id="hero-type" aria-hidden="true"></div>
   <div class="hero-copy">
-    <p class="hero-kicker"><span>s/ash</span><em data-scramble-loop>DIVISION / CONNECT</em></p>
-    <h1 id="hero-title">戦略、調査・統計解析、AI活用、<br class="pc">デザイン、映像。</h1>
-    <p class="hero-lead">課題を分けて捉え、約20名の専門家から必要な人をつないで、実装と運用まで動かします。</p>
+    <p class="hero-kicker"><span>s/ash</span><em>株式会社スラッシュ</em></p>
+    <h1 id="hero-title">戦略から実装・運用まで、<br>ひとつのチームで。</h1>
+    <p class="hero-lead">マーケティングと事業の課題を、調査・統計解析で見極め、AI活用・デザイン・映像で形にして、運用まで進めます。案件ごとに、約20名の専門家から必要な人を集めます。</p>
     <div class="hero-actions"><a class="btn-primary" href="#works" data-magnetic>実績を見る <span>↓</span></a><a class="btn-ghost" href="#contact" data-magnetic>相談する <span>↗</span></a></div>
   </div>
   <dl class="hero-facts" id="hero-facts">
-    <div><dt>CASES</dt><dd data-count="cases">00</dd></div>
-    <div><dt>PROS</dt><dd data-count="team">00</dd></div>
-    <div><dt>SINCE</dt><dd>2020</dd></div>
+    <div><dt>専門家のチーム</dt><dd><small>約</small><b data-count="team">20</b><small>名</small></dd></div>
+    <div><dt>設立</dt><dd><b>2020</b><small>年</small></dd></div>
   </dl>
 </section>
 
 <!-- ============ WORKS ============ -->
 <section class="works" id="works" aria-labelledby="works-heading">
   <div class="section-head">
-    <p class="sec-no" data-scramble>01 / WORKS</p>
+    <p class="sec-no"><b>01</b><span>実績</span></p>
     <h2 id="works-heading" class="sec-title"><span class="st-en" data-split>WORKS</span><span class="st-ja">実物の画面と資料で見る、実績</span></h2>
-    <p class="sec-note">画面を選ぶと、事例ファイル（CASE FILE）が開きます。<small class="disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</small></p>
+    <p class="sec-note">手がけた画面や資料を、事例ごとにまとめています。<small class="disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</small></p>
   </div>
 
   <div class="works-bar" id="works-bar">
-    <div class="view-switch" role="tablist" aria-label="表示の切り替え">
-      <button type="button" role="tab" data-view="layers" aria-selected="true" data-magnetic><b>LAYERS</b><span>立体</span></button>
-      <button type="button" role="tab" data-view="grid" aria-selected="false" data-magnetic><b>GRID</b><span>カード</span></button>
-      <button type="button" role="tab" data-view="list" aria-selected="false" data-magnetic><b>LIST</b><span>一覧</span></button>
-    </div>
-    <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="works-filters"><b>FILTER</b><span id="filter-toggle-label">できること・業種で絞り込む</span><i aria-hidden="true">+</i></button>
+    <div class="vs-wrap"><span class="vs-k" id="vs-k">表示</span>
+    <div class="view-switch" role="tablist" aria-labelledby="vs-k">
+      <button type="button" role="tab" data-view="layers" aria-selected="true"><b>1件ずつ</b><span>大きく見る</span></button>
+      <button type="button" role="tab" data-view="grid" aria-selected="false"><b>カード</b><span>並べて見る</span></button>
+      <button type="button" role="tab" data-view="list" aria-selected="false"><b>一覧</b><span>表で見る</span></button>
+    </div></div>
+    <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="works-filters"><b>絞り込み</b><span id="filter-toggle-label">できること・業種で絞り込む</span><i aria-hidden="true">+</i></button>
     <div class="filters" id="works-filters">
       <div class="filter-row"><span class="fr-label">できること</span><div class="chips" id="f-do" role="group" aria-label="できることで絞り込む"></div></div>
       <div class="filter-row"><span class="fr-label">業種</span><div class="chips" id="f-field" role="group" aria-label="業種で絞り込む"></div></div>
     </div>
-    <div class="works-count"><output id="works-count" aria-live="polite">00</output><span id="works-count-label">CASES</span><button type="button" class="filter-clear" id="filter-clear" hidden>解除 ×</button></div>
+    <div class="works-count"><button type="button" class="filter-clear" id="filter-clear" hidden>絞り込みを解除 ×</button></div>
   </div>
+  <p class="howto works-howto" id="works-howto"><b>使い方</b><span id="works-howto-text">左の一覧から事例を選び、画面をクリックすると、事例の詳細が開きます。</span></p>
 
   <div class="works-views" id="works-views">
-    <!-- 立体 -->
-    <div class="view view-layers" id="view-layers" role="tabpanel" aria-label="立体表示">
-      <aside class="plist" aria-label="実績を選ぶ"><ol class="plist-items" id="plist"></ol></aside>
+    <!-- 1件ずつ（立体） -->
+    <div class="view view-layers" id="view-layers" role="tabpanel" aria-label="1件ずつ大きく見る">
+      <aside class="plist" aria-label="事例を選ぶ"><p class="plist-k" aria-hidden="true"><b>①</b>事例を選ぶ</p><ol class="plist-items" id="plist"></ol></aside>
       <div class="stage-col">
-        <div class="stage" id="stage" role="group" aria-label="実績の展示。画面を選ぶと事例ファイルが開きます">
+        <div class="stage" id="stage" role="group" aria-label="事例の画面。画面を選ぶと、事例の詳細が開きます">
           <div class="ghost" id="ghost" aria-hidden="true">01</div>
           <div class="stage-band" aria-hidden="true"></div>
           <div class="exhibit" id="exhibit"><div class="scene" id="scene"></div></div>
-          <p class="stage-hint" aria-hidden="true"><span>CLICK A LAYER</span> 画面を選ぶと事例ファイルが開きます</p>
-          <div class="stage-steps"><button type="button" data-step="-1" aria-label="前の実績">←</button><button type="button" data-step="1" aria-label="次の実績">→</button></div>
+          <p class="stage-hint" aria-hidden="true"><b>②</b>画面をクリックすると、詳細が開きます</p>
+          <div class="stage-steps"><button type="button" data-step="-1" aria-label="前の事例"><i aria-hidden="true">←</i><span>前へ</span></button><button type="button" data-step="1" aria-label="次の事例"><span>次へ</span><i aria-hidden="true">→</i></button></div>
         </div>
         <div class="stage-caption" id="stage-caption">
           <div class="sc-head"><p class="sc-kicker" id="sc-kicker"></p><h3 class="sc-title" id="sc-title"></h3><p class="sc-sub" id="sc-sub"></p></div>
           <div class="sc-side">
-            <ul class="sc-tags" id="sc-tags" aria-label="この事例のタグ"></ul>
-            <div class="sc-actions"><button type="button" class="case-cta" id="case-cta" aria-haspopup="dialog" data-magnetic><span>CASE FILE を開く</span><i>↗</i></button><span class="sc-status" id="sc-status"></span></div>
-            <div class="layer-nav" id="layer-nav" role="group" aria-label="レイヤーから事例ファイルを開く"></div>
+            <div class="sc-actions"><button type="button" class="case-cta" id="case-cta" aria-haspopup="dialog" data-magnetic><span>この事例を詳しく見る</span><i>↗</i></button></div>
+            <div class="sc-tagbox"><p class="sc-tags-k" id="sc-tags-k">同じタグの事例を探す</p><ul class="sc-tags" id="sc-tags" aria-labelledby="sc-tags-k"></ul></div>
           </div>
         </div>
       </div>
     </div>
     <!-- カード -->
-    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カード表示" hidden><div class="grid" id="grid"></div></div>
+    <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カードで並べて見る" hidden><div class="grid" id="grid"></div></div>
     <!-- 一覧 -->
-    <div class="view view-list" id="view-list" role="tabpanel" aria-label="一覧表示" hidden>
-      <p class="list-note">事例ファイルのある実績と、これまでの取り組み（ARCHIVE）を年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
+    <div class="view view-list" id="view-list" role="tabpanel" aria-label="表で見る" hidden>
+      <p class="list-note">詳細を見られる事例（CASE）と、これまでの取り組み（ARCHIVE）を、年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
       <div class="lv-head" aria-hidden="true"><span>NO.</span><span>TITLE</span><span>業種</span><span>年</span><span>タグ</span><span></span></div>
       <ol class="lv" id="lv"></ol>
     </div>
     <p class="works-empty" id="works-empty" hidden></p>
     <div class="hover-preview" id="hover-preview" aria-hidden="true"><img alt=""></div>
   </div>
-  <button type="button" class="works-jump" id="works-jump" hidden><b>FILTER</b><span>絞り込み・表示を変える</span><output id="works-jump-count">00</output><i aria-hidden="true">↑</i></button>
+  <button type="button" class="works-jump" id="works-jump" hidden><span>絞り込み・表示を変える</span><i aria-hidden="true">↑</i></button>
   <div class="kinetic-strip" aria-hidden="true"><div class="strip-skew" id="strip-skew"><div class="strip-track" id="strip-track"></div></div></div>
 </section>
 
 <!-- ============ AI ============ -->
 <section class="ai" id="ai" aria-labelledby="ai-heading">
   <div class="section-head on-dark">
-    <p class="sec-no" data-scramble>02 / AI</p>
+    <p class="sec-no"><b>02</b><span>AI活用</span></p>
     <h2 id="ai-heading" class="sec-title"><span class="st-en" data-split>AI × WORK</span><span class="st-ja">AIを、業務の中で使えるかたちに</span></h2>
     <p class="sec-note">どこに入れると効くかを決め、作り、毎日の運用で直す。計測、エージェント、映像、ツールまで、AIを組み込んだ仕事の例です。</p>
   </div>
+  <p class="howto on-dark-howto ai-howto"><b>使い方</b><span>カードを押すと、その事例の詳細が開きます。</span></p>
   <div class="ai-ticker" aria-hidden="true"><div class="ai-ticker-track" id="ai-ticker"></div></div>
   <ol class="ai-grid" id="ai-grid"></ol>
-  <div class="ai-foot"><p>このほか、化粧品のアプリと店頭で使うAI肌診断の画面設計（2020–2021）など。AIの使いどころの検討から、ご相談いただけます。</p><a class="btn-line" href="#contact" data-magnetic>AI活用について相談する <span>↗</span></a></div>
+  <div class="ai-foot"><p>このほか、<button type="button" class="ai-more" data-open="beauty-ui">化粧品のアプリと店頭で使うAI診断の画面設計</button>など。AIの使いどころの検討から、ご相談いただけます。</p><a class="btn-line" href="#contact" data-magnetic>AI活用について相談する <span>↗</span></a></div>
 </section>
 
 <!-- ============ SERVICES ============ -->
 <section class="services" id="services" aria-labelledby="services-heading">
   <div class="section-head">
-    <p class="sec-no" data-scramble>03 / SERVICES</p>
+    <p class="sec-no"><b>03</b><span>業務領域</span></p>
     <h2 id="services-heading" class="sec-title"><span class="st-en" data-split>SERVICES</span><span class="st-ja">8つの領域を、ひとつながりで</span></h2>
     <p class="sec-note">戦略だけ、制作だけで終わらせず、調査・分析・デザイン・実装・運用までを同じチームで進めます。</p>
   </div>
+  <p class="howto sv-howto"><b>使い方</b><span>領域を押すと、できることと、関係する事例が開きます。</span></p>
   <ol class="service-list" id="service-list"></ol>
 </section>
 
 <!-- ============ TEAM ============ -->
 <section class="team" id="team" aria-labelledby="team-heading">
   <div class="section-head on-dark">
-    <p class="sec-no" data-scramble>04 / TEAM</p>
+    <p class="sec-no"><b>04</b><span>体制</span></p>
     <h2 id="team-heading" class="sec-title"><span class="st-en" data-split>20 PROS</span><span class="st-ja">約20名の専門家で、案件ごとにチームを組む</span></h2>
     <p class="sec-note">社員は代表の1名。戦略、調査・統計、デザイン、開発、運用の現場まで、業務委託のメンバー約20名と協力会社から、案件に合う人を集めます。</p>
   </div>
   <div class="team-body">
-    <div class="team-cases"><span class="tc-label">事例を選ぶと、その体制を表示</span><div class="tc-chips" id="team-cases" role="group" aria-label="事例を選ぶ"></div></div>
+    <div class="team-cases"><p class="howto on-dark-howto tc-howto"><b>使い方</b><span>事例を選ぶと、その案件の体制が光ります。役割を押すと、その役割が入った事例が出ます。</span></p><div class="tc-chips" id="team-cases" role="group" aria-label="事例を選ぶ"></div></div>
     <div class="team-net" id="team-net"></div>
     <div class="team-panel" id="team-panel" aria-live="polite"></div>
   </div>
@@ -191,7 +201,7 @@
 <!-- ============ PROFILE ============ -->
 <section class="profile" id="profile" aria-labelledby="profile-heading">
   <div class="section-head">
-    <p class="sec-no" data-scramble>05 / PROFILE</p>
+    <p class="sec-no"><b>05</b><span>代表</span></p>
     <h2 id="profile-heading" class="sec-title"><span class="st-en" data-split>PROFILE</span><span class="st-ja">代表について</span></h2>
   </div>
   <div class="profile-grid" id="profile-body"></div>
@@ -200,7 +210,7 @@
 <!-- ============ COMPANY ============ -->
 <section class="company" id="company" aria-labelledby="company-heading">
   <div class="section-head">
-    <p class="sec-no" data-scramble>06 / COMPANY</p>
+    <p class="sec-no"><b>06</b><span>会社</span></p>
     <h2 id="company-heading" class="sec-title"><span class="st-en" data-split>DIVISION / CONNECT</span><span class="st-ja">会社について</span></h2>
   </div>
   <div class="about-grid">
@@ -226,7 +236,7 @@
 <section class="contact" id="contact" aria-labelledby="contact-heading">
   <div class="contact-inner">
     <div class="contact-head">
-      <p class="sec-no" data-scramble>07 / CONTACT</p>
+      <p class="sec-no"><b>07</b><span>相談する</span></p>
       <h2 id="contact-heading" class="contact-title" data-proximity>LET'S<br>TALK<span class="ct-slash">/</span></h2>
       <p class="contact-lead">ご相談の内容が固まっていなくても構いません。課題の整理からご一緒します。</p>
       <p class="contact-mail">メール：<a href="mailto:nakai@slashslash.jp">nakai@slashslash.jp</a></p>
@@ -248,19 +258,19 @@
 <footer class="site-footer">
   <p class="foot-disclaimer">掲載している画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</p>
   <div class="foot-mark" aria-hidden="true"><img src="assets/logo-w-600.png" alt="" width="443" height="600" loading="lazy"><span class="foot-word" data-proximity>s/ash</span></div>
-  <div class="foot-row"><span>© 2020 s/ash Inc.</span><nav aria-label="フッター"><a href="#works">WORKS</a><a href="#ai">AI</a><a href="#services">SERVICES</a><a href="#team">TEAM</a><a href="#profile">PROFILE</a><a href="#company">COMPANY</a><a href="#contact">CONTACT</a></nav></div>
+  <div class="foot-row"><span>© 2020 s/ash Inc.</span><nav aria-label="フッター"><a href="#works">実績</a><a href="#ai">AI活用</a><a href="#services">業務領域</a><a href="#team">体制</a><a href="#profile">代表</a><a href="#company">会社</a><a href="#contact">相談する</a></nav></div>
 </footer>
 
 <dialog id="case" class="case-file" aria-labelledby="case-title">
-  <div class="cf-scrim" id="cf-scrim" aria-hidden="true" data-cursor="CLOSE"></div>
+  <div class="cf-scrim" id="cf-scrim" aria-hidden="true" data-cursor="閉じる" data-cursor-mark="×"></div>
   <div class="cf-sheet" id="cf-sheet">
   <div class="cf-bar">
     <span class="cf-label" id="case-label">CASE</span>
-    <div class="cf-nav"><button type="button" id="case-prev" aria-label="前の事例">←</button><button type="button" id="case-next" aria-label="次の事例">→</button></div>
+    <div class="cf-nav"><button type="button" id="case-prev" aria-label="前の事例" title="前の事例">←</button><button type="button" id="case-next" aria-label="次の事例" title="次の事例">→</button></div>
     <button type="button" id="case-close" class="cf-close">閉じる <span aria-hidden="true">×</span></button>
   </div>
   <div class="case-scroll" id="case-scroll"><div id="case-body"></div></div>
-  <button type="button" class="cf-fab" id="cf-fab" aria-label="事例ファイルを閉じる" aria-hidden="true" tabindex="-1"><i aria-hidden="true">×</i><span>閉じる</span></button>
+  <button type="button" class="cf-fab" id="cf-fab" aria-label="事例の詳細を閉じる" aria-hidden="true" tabindex="-1"><i aria-hidden="true">×</i><span>閉じる</span></button>
   </div>
   <div class="cf-zoom" id="cf-zoom" hidden><button type="button" class="cf-zoom-close" id="cf-zoom-close">閉じる <span aria-hidden="true">×</span></button><div class="cf-zoom-stage" id="cf-zoom-stage"></div><p class="cf-zoom-cap" id="cf-zoom-cap"></p></div>
 </dialog>

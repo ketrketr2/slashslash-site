@@ -1,5 +1,5 @@
-/* s/ash WORKS — 実績の3つの表示（立体・カード・一覧）、タグの絞り込み、事例ファイル（CASE FILE）。
- * データは works.js（window.SLASH_WORKS）。立体表示は4枚の面を透視変換で並べ、選んだ面から事例ファイルへ切り替える。
+/* s/ash WORKS — 実績の3つの表示（1件ずつ・カード・一覧）、タグの絞り込み、事例の詳細（CASE）。
+ * データは works.js（window.SLASH_WORKS）。「1件ずつ」は4枚の面を透視変換で並べ、選んだ面から事例の詳細へ切り替える。
  * 動きを止める設定（OS・ヘッダーのボタン）では、浮遊・自動再生・切り替えの演出を止める。 */
 (function () {
 'use strict';
@@ -19,7 +19,7 @@ let reduced = document.body.classList.contains('reduced');
 const announce = t => { const a = $('#announcement'); if (a) a.textContent = t; };
 
 /* ================= 状態 ================= */
-const state = { do: null, field: null, view: innerWidth <= 720 ? 'grid' : 'layers', current: 0, spTab: 'pick' };
+const state = { do: null, field: null, view: innerWidth <= 720 ? 'grid' : 'layers', current: 0 };
 try { const v = localStorage.getItem('slash-view2'); if (v && ['layers', 'grid', 'list'].includes(v)) state.view = v; } catch (e) { }
 const hasTags = (tags, f = state) => (!f.do || tags.includes(f.do)) && (!f.field || tags.includes(f.field));
 const visibleProjects = () => projects.map((p, i) => ({ p, i })).filter(({ p }) => hasTags(p.tags));
@@ -30,7 +30,8 @@ const listItems = () => {
 };
 
 /* ================= 絞り込み ================= */
-const fDo = $('#f-do'), fField = $('#f-field'), countOut = $('#works-count'), countLabel = $('#works-count-label'), clearBtn = $('#filter-clear');
+const fDo = $('#f-do'), fField = $('#f-field'), clearBtn = $('#filter-clear');
+const resultCount = () => state.view === 'list' ? listItems().length : visibleProjects().length;
 // スマホでは、タグの絞り込みを最初はたたんでおく（「FILTER」で開く）
 const worksBarEl = $('#works-bar'), fToggle = $('#filter-toggle'), fToggleLabel = $('#filter-toggle-label');
 function setFiltersOpen(on) { if (!worksBarEl) return; worksBarEl.classList.toggle('filters-open', on); if (fToggle) fToggle.setAttribute('aria-expanded', String(on)); if (on) requestAnimationFrame(fitChips); }
@@ -48,13 +49,11 @@ function renderFilters() {
       return { t, n, total };
     }).filter(x => x.total > 0).sort((a, b) => b.total - a.total);
     el.innerHTML = `<button type="button" class="chip" data-key="${key}" data-tag="" aria-pressed="${!state[key]}">すべて</button>` +
-      chips.map(({ t, n }) => `<button type="button" class="chip ${n ? '' : 'zero'}" data-key="${key}" data-tag="${t.id}" aria-pressed="${state[key] === t.id}">${esc(t.label)}<sup>${pad(n)}</sup></button>`).join('') +
+      chips.map(({ t, n }) => `<button type="button" class="chip ${n ? '' : 'zero'}" data-key="${key}" data-tag="${t.id}" aria-pressed="${state[key] === t.id}">${esc(t.label)}</button>`).join('') +
       `<button type="button" class="chip-more" data-more="${key}" aria-expanded="${chipOpen[key]}"><b>+00</b><span>もっと見る</span></button>`;
   };
   build('do', fDo, 'do'); build('field', fField, 'field');
   fitChips();
-  const n = state.view === 'list' ? listItems().length : visibleProjects().length;
-  countOut.textContent = pad(n); countLabel.textContent = state.view === 'list' ? 'ITEMS' : 'CASES';
   clearBtn.hidden = !state.do && !state.field;
   if (fToggleLabel) { const lab = [state.do && TAG[state.do].label, state.field && TAG[state.field].label].filter(Boolean).join(' × '); fToggleLabel.textContent = lab ? `絞り込み中：${lab}` : 'できること・業種で絞り込む'; fToggle.classList.toggle('active', !!lab); }
   if (typeof checkJump === 'function') checkJump();
@@ -88,7 +87,7 @@ function setFilter(key, tag, opts = {}) {
   if (opts.clearOther) state[key === 'do' ? 'field' : 'do'] = null;
   renderFilters(); renderView(true);
   const label = [state.do && TAG[state.do].label, state.field && TAG[state.field].label].filter(Boolean).join(' × ');
-  announce(label ? `${label}で絞り込み、${countOut.textContent}件。` : '絞り込みを解除しました。');
+  announce(label ? `${label}で絞り込み、${resultCount()}件。` : '絞り込みを解除しました。');
 }
 [fDo, fField].forEach(el => el.addEventListener('click', e => {
   const m = e.target.closest('.chip-more');
@@ -110,7 +109,19 @@ function filterByTag(id) {
 
 /* ================= 表示の切り替え ================= */
 const views = { layers: $('#view-layers'), grid: $('#view-grid'), list: $('#view-list') }, viewsBox = $('#works-views');
-function syncViewButtons() { $$('.view-switch [data-view]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === state.view))); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== state.view; }); }
+function syncViewButtons() { $$('.view-switch [data-view]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === state.view))); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== state.view; }); syncHowto(); }
+/* 使い方の一文（表示ごと・画面の幅ごと） */
+const howto = $('#works-howto-text');
+function syncHowto() {
+  if (!howto) return;
+  const wide = innerWidth > 960, touch = !fine.matches;
+  if (state.view === 'layers') howto.innerHTML = wide
+    ? '<b class="n">①</b>左の一覧から事例を選ぶ <i aria-hidden="true">→</i> <b class="n">②</b>画面をクリックすると、事例の詳細が開きます'
+    : `<b class="n">①</b>上の一覧から事例を選ぶ <i aria-hidden="true">→</i> <b class="n">②</b>画面を${touch ? 'タップ' : 'クリック'}すると、事例の詳細が開きます${touch ? '（左右のスワイプで前後の事例へ）' : ''}`;
+  else if (state.view === 'grid') howto.textContent = touch ? 'カードをタップすると、事例の詳細が開きます。' : 'カードを押すと、事例の詳細が開きます。カードの中のタグを押すと、そのタグで絞り込みます。';
+  else howto.textContent = '「CASE」の行を押すと事例の詳細が、そのほかの行を押すと概要が開きます。';
+}
+addEventListener('resize', () => { clearTimeout(syncHowto._t); syncHowto._t = setTimeout(syncHowto, 150); });
 function setView(v) {
   if (v === state.view) return;
   const go = () => { state.view = v; try { localStorage.setItem('slash-view2', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
@@ -125,7 +136,7 @@ function renderView(changed) {
   const vis = visibleProjects();
   if (state.view !== 'list' && !vis.length) {
     empty.hidden = false; Object.values(views).forEach(el => { el.hidden = true; });
-    empty.innerHTML = `この条件の事例ファイルはありません。<button type="button" id="to-list">一覧（LIST）で、これまでの取り組みを見る →</button>`;
+    empty.innerHTML = `この条件の事例はありません。<button type="button" id="to-list">「一覧」で、これまでの取り組みを見る →</button>`;
     $('#to-list').addEventListener('click', () => setView('list'));
     stopStage(); return;
   }
@@ -142,11 +153,11 @@ let planes = [], hot = -1, hotAmt = [0, 0, 0, 0], running = false, raf = 0, cloc
 let brain = null, brainTimer = 0, brainStep = 0, brainLoading = null;
 function renderPlist() {
   const vis = visibleProjects();
-  plist.innerHTML = vis.map(({ p, i }) => `<li><button type="button" class="pl-item" data-i="${i}" aria-current="${i === state.current}"><span class="pl-no">${p.no}</span><span class="pl-copy"><strong>${esc(p.title)}</strong><span>${esc(p.label)}</span><small>${esc(p.industry)} / ${esc(p.year)}</small></span><span class="pl-arrow" aria-hidden="true">↗</span></button></li>`).join('');
+  plist.innerHTML = vis.map(({ p, i }) => `<li><button type="button" class="pl-item" data-i="${i}" aria-current="${i === state.current}"><span class="pl-no">${p.no}</span><span class="pl-copy"><strong>${esc(p.title)}</strong><span>${esc(p.label)}</span><small>${esc(p.industry)} / ${esc(p.year)}</small></span><span class="pl-arrow" aria-hidden="true">→</span></button></li>`).join('');
 }
 plist.addEventListener('click', e => { const b = e.target.closest('.pl-item'); if (b) selectProject(+b.dataset.i); });
 function markPlist() { $$('.pl-item', plist).forEach(b => b.setAttribute('aria-current', String(+b.dataset.i === state.current))); const a = $('.pl-item[aria-current=true]', plist); if (a) { const lr = plist.getBoundingClientRect(), ar = a.getBoundingClientRect(); if (ar.top < lr.top || ar.bottom > lr.bottom || ar.left < lr.left || ar.right > lr.right) a.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' }); } }
-const shell = (inner, cls, i, L, p) => `<div class="plane ${cls}" data-plane="${i}" tabindex="0" role="button" data-cursor="OPEN" aria-label="${pad(i + 1)} ${esc(L.name)} — ${esc(p.title)} の事例ファイルを開く" style="--layer:${i}"><div class="plane-content">${inner}</div><span class="plane-open" aria-hidden="true"><span>${pad(i + 1)} / ${esc(L.name)}</span><span>CASE FILE ↗</span></span></div>`;
+const shell = (inner, cls, i, L, p) => `<div class="plane ${cls}" data-plane="${i}" tabindex="0" role="button" data-cursor="詳しく見る" aria-label="${pad(i + 1)} ${esc(L.name)} — ${esc(p.label)}の事例の詳細を開く" style="--layer:${i}"><div class="plane-content">${inner}</div><span class="plane-open" aria-hidden="true"><span>${pad(i + 1)} / ${esc(L.name)}</span><span>詳しく見る ↗</span></span></div>`;
 function layerHTML(L, i, p) {
   const lab = `<span class="layer-label">${pad(i + 1)} / ${esc(L.name)}</span>`, tag = L.tag ? `<span class="layer-tag">${esc(L.tag)}</span>` : '';
   const pos = esc(L.focus || '50% 50%');
@@ -175,9 +186,8 @@ function mount(index) {
   const tape = (p.tape || [p.title]).map(esc).join(' <i>/</i> ');
   $('#strip-track').innerHTML = `<span>${tape} <i>/</i> </span><span>${tape} <i>/</i> </span><span>${tape} <i>/</i> </span><span>${tape} <i>/</i> </span>`;
   $('#sc-kicker').textContent = `${p.no} — ${p.kicker} / ${p.industry} / ${p.year}`;
-  $('#sc-title').textContent = p.title; $('#sc-sub').textContent = p.subtitle; $('#sc-status').textContent = p.status;
+  $('#sc-title').textContent = p.title; $('#sc-sub').textContent = p.subtitle;
   $('#sc-tags').innerHTML = p.tags.map(t => `<li><button type="button" class="${TAG[t].group === 'field' ? 'is-field' : ''}" data-tag="${t}">${esc(TAG[t].label)}</button></li>`).join('');
-  $('#layer-nav').innerHTML = p.layers.map((L, i) => `<button type="button" data-layer="${i}" aria-label="${pad(i + 1)} ${esc(L.name)}から事例ファイルを開く"><b>${pad(i + 1)}</b><span>${esc(L.name)}</span></button>`).join('');
   const head = $('.sc-head'); head.classList.remove('entering'); void head.offsetWidth; head.classList.add('entering');
   scene.classList.remove('revealing'); requestAnimationFrame(() => scene.classList.add('revealing'));
   markPlist(); measure();
@@ -186,13 +196,9 @@ function mount(index) {
   if (location.hash.startsWith('#w-') || location.hash === '#works') history.replaceState(null, '', `#w-${p.id}`);
 }
 $('#sc-tags').addEventListener('click', e => { const b = e.target.closest('[data-tag]'); if (b) filterByTag(b.dataset.tag); });
-$('#layer-nav').addEventListener('click', e => { const b = e.target.closest('[data-layer]'); if (b) openCase(state.current, { layer: +b.dataset.layer, from: planes[+b.dataset.layer] }); });
-$('#layer-nav').addEventListener('pointerover', e => { const b = e.target.closest('[data-layer]'); if (b) setHot(+b.dataset.layer); });
-$('#layer-nav').addEventListener('pointerleave', () => setHot(-1));
 $('#case-cta').addEventListener('click', e => openCase(state.current, { from: planes[0] || e.currentTarget }));
 function setHot(i) {
   hot = i; planes.forEach((el, k) => { el.classList.toggle('hot', k === i); el.style.zIndex = k === i ? '9' : String(4 - k); });
-  $$('#layer-nav [data-layer]').forEach(b => b.classList.toggle('hot', +b.dataset.layer === i));
   if (reduced) drawScene();
 }
 function selectProject(index, force) {
@@ -268,7 +274,7 @@ function stopStage() { running = false; cancelAnimationFrame(raf); raf = 0; sync
 stage.addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; const r = stage.getBoundingClientRect(); tx = clamp((e.clientX - r.left) / r.width) * 2 - 1; ty = clamp((e.clientY - r.top) / r.height) * 2 - 1; });
 stage.addEventListener('pointerleave', () => { tx = ty = 0; overStage = false; });
 stage.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') overStage = true; });
-// クリック（タップ）で事例ファイル。スマホは左右のスワイプで前後の事例へ
+// クリック（タップ）で事例の詳細。スマホは左右のスワイプで前後の事例へ
 let swipe = null;
 stage.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') swipe = { x: e.clientX, y: e.clientY, t: performance.now() }; });
 stage.addEventListener('pointerup', e => { if (!swipe) return; const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y; if (Math.abs(dx) > 60 && Math.abs(dy) < 50 && performance.now() - swipe.t < 700) { swipe.used = true; step(dx < 0 ? 1 : -1); } setTimeout(() => { swipe = null; }, 0); });
@@ -321,33 +327,27 @@ function cardHTML({ p, i }) {
   const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(c.poster)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
   const kinds = p.layers.map(l => l.tag).filter(Boolean); const kind = kinds[0] || '';
   return `<article class="card" data-i="${i}">
-      <button type="button" class="card-hit" aria-label="${esc(p.title)}（${esc(p.label)}）の事例ファイルを開く" data-cursor="OPEN"></button>
+      <button type="button" class="card-hit" aria-label="${esc(p.title)}（${esc(p.label)}）の事例の詳細を開く" data-cursor="詳しく見る"></button>
       <div class="card-media tone-${esc(tone)}">${media}<span class="card-no">${p.no}</span>${kind ? `<span class="card-kind">${esc(kind)}</span>` : ''}</div>
       <div class="card-body"><h3>${esc(p.title)}</h3><p class="card-label">${esc(p.label)}</p><p class="card-meta">${esc(p.industry)} / ${esc(p.year)}</p>
       <ul class="card-tags">${p.tags.filter(t => TAG[t].group === 'do').slice(0, 5).map(t => `<li><button type="button" class="tag-btn" data-tag="${t}">${esc(TAG[t].label)}</button></li>`).join('')}</ul></div>
       <span class="card-open" aria-hidden="true">↗</span></article>`;
 }
-/* スマホ：いきなり17件を並べない。最初は注目の2件だけを大きく見せ、残りは「ALL」のタブで一覧（小さなサムネと事例名）として開く */
+/* スマホ：注目の2件を大きなカードで見せ、そのほかは小さなサムネと事例名の一覧で続ける（切り替えのタブは使わない）。絞り込み中は一覧だけ */
 const narrow = matchMedia('(max-width: 720px)');
 const wallOf = src => String(src || '').replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
 const PICK = 2;
 function rowHTML({ p, i }) {
   const c = coverOf(p), thumb = c ? wallOf(c.poster || c.src) : '';
   const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
-  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.title)}（${esc(p.label)}）の事例ファイルを開く">
+  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.title)}（${esc(p.label)}）の事例の詳細を開く">
     <span class="sp-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">` : ''}${vid ? `<video muted loop playsinline preload="none" data-src="${esc(vid)}"></video>` : ''}</span>
     <span class="sp-text"><small>${p.no}</small><b>${esc(p.title)}</b><span>${esc(p.label)}</span><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></button></li>`;
 }
 function renderSpGrid(vis) {
-  const filtered = !!(state.do || state.field), tab = filtered ? 'all' : state.spTab;
-  const pick = vis.slice(0, PICK), rest = vis.length - pick.length;
-  const tabs = `<div class="sp-tabs" role="tablist" aria-label="事例の見せ方">
-    <button type="button" role="tab" data-sptab="pick" aria-selected="${tab === 'pick'}" ${filtered ? 'disabled' : ''}><b>PICK UP</b><span>注目の${pick.length}件</span></button>
-    <button type="button" role="tab" data-sptab="all" aria-selected="${tab === 'all'}"><b>ALL</b><span>${filtered ? '絞り込み' : 'すべて'} ${vis.length}件</span></button></div>`;
-  const body = tab === 'pick'
-    ? `<div class="sp-pick">${pick.map(cardHTML).join('')}</div>${rest > 0 ? `<button type="button" class="sp-more" data-sptab="all"><span>ほかの事例を一覧で見る</span><b>+${rest}</b><i aria-hidden="true">→</i></button>` : ''}`
-    : `<ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`;
-  grid.innerHTML = tabs + body;
+  if (state.do || state.field) { grid.innerHTML = `<p class="sp-k">絞り込んだ事例</p><ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`; return; }
+  const pick = vis.slice(0, PICK), rest = vis.slice(PICK);
+  grid.innerHTML = `<p class="sp-k">注目の事例</p><div class="sp-pick">${pick.map(cardHTML).join('')}</div>` + (rest.length ? `<p class="sp-k">そのほかの事例</p><ol class="sp-list">${rest.map(rowHTML).join('')}</ol>` : '');
   $$('.card', grid).forEach(c => c.classList.add('in'));
 }
 function renderGrid() {
@@ -360,7 +360,7 @@ function renderGrid() {
   $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced) c.classList.add('in'); else cardObserver.observe(c); });
   watchCovers();
 }
-/* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例ファイルを開いている間・タブが裏にある間は止める） */
+/* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例の詳細を開いている間・タブが裏にある間は止める） */
 let coverIO = null;
 function coverPlay(v) {
   const c = v.closest('.card, .sp-row');
@@ -380,8 +380,6 @@ new MutationObserver(syncCovers).observe(document.documentElement, { attributes:
 
 narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); });
 grid.addEventListener('click', e => {
-  const tb = e.target.closest('[data-sptab]');
-  if (tb) { if (tb.disabled) return; state.spTab = tb.dataset.sptab; renderGrid(); const top = grid.getBoundingClientRect().top; if (top < 0 || top > innerHeight * .6) grid.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); const sel = $(`.sp-tabs [data-sptab="${state.spTab}"]`, grid); if (sel && e.detail === 0) sel.focus({ preventScroll: true }); announce(state.spTab === 'all' ? `事例の一覧を表示しました。${visibleProjects().length}件。` : '注目の事例を表示しました。'); return; }
   const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row) }); return; }
   const t = e.target.closest('[data-tag]'); if (t) { filterByTag(t.dataset.tag); return; }
   const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c) });
@@ -437,7 +435,7 @@ if (pv) {
   });
 }
 
-/* ================= 事例ファイル（CASE FILE） ================= */
+/* ================= 事例の詳細（CASE） ================= */
 const dlg = $('#case'), body = $('#case-body'), scroller = $('#case-scroll'), cut = $('#cut'), fly = $('#fly');
 let caseOpen = false, caseIndex = 0, caseOrigin = null, caseObserver = null, caseList = [];
 function mediaHTML(a, opts = {}) {
@@ -457,7 +455,7 @@ function renderCase(index, layer) {
   const portraitCount = rest.filter(isPortrait).length, manyPortrait = portraitCount >= 3;
   const figures = rest.map((a, k) => {
     const portrait = isPortrait(a), wide = manyPortrait ? !portrait && a.ratio < .9 : (!portrait && k % 5 === 0);
-    return `<figure class="cf-fig ${a.kind === 'video' ? 'is-video' : ''} ${wide ? 'wide' : ''} ${portrait ? 'portrait' : ''} tone-${esc(a.tone)}"><button type="button" class="cf-frame" data-k="${k}" aria-label="${esc(a.title)}を大きく見る" data-cursor="${a.kind === 'video' ? 'PLAY' : 'ZOOM'}">${mediaHTML(a)}</button><figcaption><b>${pad(k + 2)} — ${esc(a.title)}</b><span>${esc(a.caption)}</span></figcaption></figure>`;
+    return `<figure class="cf-fig ${a.kind === 'video' ? 'is-video' : ''} ${wide ? 'wide' : ''} ${portrait ? 'portrait' : ''} tone-${esc(a.tone)}"><button type="button" class="cf-frame" data-k="${k}" aria-label="${esc(a.title)}を大きく見る" data-cursor="${a.kind === 'video' ? '再生' : '拡大'}" data-cursor-mark="${a.kind === 'video' ? '▶' : '＋'}">${mediaHTML(a)}</button><figcaption><b>${pad(k + 2)} — ${esc(a.title)}</b><span>${esc(a.caption)}</span></figcaption></figure>`;
   }).join('');
   const vis = caseList, at = vis.indexOf(index), next = projects[vis[(at + 1) % vis.length]];
   const heroCls = hero ? (isPortrait(hero) ? 'portrait' : (hero.tone === 'light' ? 'fit' : '')) : 'cf-hero-type';
@@ -468,10 +466,10 @@ function renderCase(index, layer) {
     <div class="cf-hero-text"><p class="cf-kicker">${p.no} — ${esc(p.kicker)} / ${esc(p.industry)} / ${esc(p.year)}</p><h2 id="case-title" aria-label="${esc(p.title)}">${splitTitle(p.title)}</h2><p class="cf-sub">${esc(p.subtitle)}</p></div>
     ${hero ? `<p class="cf-hero-cap">01 — ${esc(hero.title)}：${esc(hero.caption)}</p>` : ''}
   </header>
-  <div class="cf-tagbar"><span>TAGS</span>${tagBtns}</div>
+  <div class="cf-tagbar"><span>タグで探す</span>${tagBtns}</div>
   <section class="cf-intro">
     <p class="cf-summary">${esc(p.summary)}</p>
-    <dl class="cf-meta"><div><dt>業種</dt><dd>${esc(p.industry)}</dd></div><div><dt>時期</dt><dd>${esc(p.year)}</dd></div><div><dt>状態</dt><dd>${esc(p.status)}</dd></div><div><dt>体制</dt><dd>${p.team.length}つの役割</dd></div>${g.length ? `<div><dt>素材</dt><dd>${g.length}点</dd></div>` : ''}</dl>
+    <dl class="cf-meta"><div><dt>業種</dt><dd>${esc(p.industry)}</dd></div><div><dt>時期</dt><dd>${esc(p.year)}</dd></div></dl>
   </section>
   <section class="cf-sec"><h3 class="cf-h"><b>WHAT WE DO</b>この領域でできること</h3><ol class="cf-can">${p.can.map((x, k) => `<li><i>${pad(k + 1)}</i><span>${esc(x)}</span></li>`).join('')}</ol></section>
   ${p.results && p.results.length ? `<section class="cf-sec"><h3 class="cf-h"><b>RESULTS</b>結果</h3><ul class="cf-results">${p.results.map(r => `<li><span>${esc(r)}</span></li>`).join('')}</ul></section>` : ''}
@@ -482,10 +480,10 @@ function renderCase(index, layer) {
     <p class="cf-note">${esc(p.note)}</p>
     ${p.own ? '' : `<p class="cf-disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</p>`}
     <div class="cf-links">${(p.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}<a href="#contact" data-case-contact>この領域について相談する ↗</a></div>
-    ${vis.length > 1 ? `<button type="button" class="cf-next" data-case-next data-cursor="NEXT"><small>NEXT CASE ${next.no}</small><b>${esc(next.title)}</b><span>${esc(next.subtitle)}</span><i>→</i></button>` : ''}
-    <button type="button" class="cf-close-end" data-case-close><span>CLOSE</span><b>事例ファイルを閉じる</b><i aria-hidden="true">×</i></button>
+    ${vis.length > 1 ? `<button type="button" class="cf-next" data-case-next data-cursor="次の事例" data-cursor-mark="→"><small>次の事例 ${next.no}</small><b>${esc(next.title)}</b><span>${esc(next.subtitle)}</span><i>→</i></button>` : ''}
+    <button type="button" class="cf-close-end" data-case-close><span>CLOSE</span><b>事例の詳細を閉じる</b><i aria-hidden="true">×</i></button>
   </section>`;
-  $('#case-label').textContent = `CASE ${p.no} / ${pad(projects.length)} — ${p.label}`;
+  $('#case-label').textContent = `CASE ${p.no} — ${p.label}`;
   $('#case-prev').disabled = $('#case-next').disabled = vis.length < 2;
   scroller.scrollTop = 0; syncFab();
   if (caseObserver) caseObserver.disconnect();
@@ -493,10 +491,10 @@ function renderCase(index, layer) {
   $$('video', body).forEach(v => caseObserver.observe(v));
   body._rest = rest; body._p = p;
   if (location.hash !== `#case-${p.id}` || !(history.state && history.state.slashCase)) history.replaceState(casePushed ? { slashCase: p.id } : null, '', `#case-${p.id}`);
-  casePick = null; const net = $('.cf-net', body); if (net && window.SlashTeam) window.SlashTeam.paint(net, new Set(p.team), null);
-  announce(`${p.title}の事例ファイルを開きました。`);
+  casePick = null; const net = $('.cf-net', body); if (net && window.SlashTeam) { window.SlashTeam.paint(net, new Set(p.team), null); if (window.SlashTeam.animate) window.SlashTeam.animate(net); if (window.SlashTeam.sky) window.SlashTeam.sky($('.cf-teambox', body), 4200); }
+  announce(`${p.title}の事例の詳細を開きました。`);
 }
-// 事例ファイルの中の体制図：その事例の役割が光った状態で出す。役割を選ぶと、説明とほかの事例をその場で表示する
+// 事例の詳細の中の体制図：その事例の役割が光った状態で出す。役割を選ぶと、説明とほかの事例をその場で表示する
 let casePick = null;
 function teamSection(p) {
   const T = window.SlashTeam; if (!T) return '';
@@ -551,7 +549,7 @@ function flyFrom(fromEl, hero) {
   const top = clamp(r.top - t.top, 0, t.height), left = clamp(r.left - t.left, 0, t.width), right = clamp(t.left + t.width - r.right, 0, t.width), bottom = clamp(t.top + t.height - r.bottom, 0, t.height);
   return fly.animate([{ clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`, opacity: .4 }, { clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`, opacity: 1, offset: .15 }, { clipPath: 'inset(0px 0px 0px 0px)', opacity: 1 }], { duration: 480, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' }).finished;
 }
-// 開くときに履歴を1つ積み、ブラウザの「戻る」（スマホの戻る操作）で事例ファイルを閉じられるようにする
+// 開くときに履歴を1つ積み、ブラウザの「戻る」（スマホの戻る操作）で事例の詳細を閉じられるようにする
 let casePushed = false, zoomPushed = false, afterClose = null, openToken = 0, backPending = false, pendingOpen = null;
 function openCase(index, opts = {}) {
   if (backPending) { pendingOpen = [index, opts]; return; } // 「戻る」で閉じている途中なら、閉じ終わってから開く
@@ -570,7 +568,7 @@ function openCase(index, opts = {}) {
     document.documentElement.classList.add('case-open');
     dlg.classList.remove('leave');
   };
-  // ページを切り替えず、いまのページの上に事例ファイルを重ねる（PCは右から、スマホは下からのシート。後ろのページは暗く透けて見え、押すと閉じる）
+  // ページを切り替えず、いまのページの上に事例の詳細を重ねる（PCは右から、スマホは下からのシート。後ろのページは暗く透けて見え、押すと閉じる）
   show(); if (!reduced) { dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter'); }
 }
 function swapCase(index, layer) {
@@ -654,17 +652,22 @@ $('#cf-zoom-close').addEventListener('click', closeZoom);
 zoomStage.addEventListener('click', e => { if (e.target.tagName === 'IMG') { if (e.target.naturalWidth > zoomStage.clientWidth * 1.2) zoomStage.classList.toggle('full'); else closeZoom(); } else if (e.target === zoomStage) closeZoom(); });
 
 /* ================= 実績の操作へ戻るボタン（カード・一覧を下まで見たとき） ================= */
-const jump = $('#works-jump'), jumpCount = $('#works-jump-count'), worksSec = $('#works'), worksBar = $('#works-bar');
+const jump = $('#works-jump'), dockAct = $('#dock-act'), worksSec = $('#works'), worksBar = $('#works-bar');
+const dockWidth = matchMedia('(max-width: 960px)');
 let jumpRaf = 0;
 function checkJump() {
   jumpRaf = 0; if (!jump) return;
   const b = worksBar.getBoundingClientRect(), w = worksSec.getBoundingClientRect();
   const show = state.view !== 'layers' && !caseOpen && b.bottom < 70 && w.bottom > innerHeight * .55;
-  if (show === jump.hidden) jump.hidden = !show;
-  if (show) jumpCount.textContent = countOut.textContent + (state.view === 'list' ? ' ITEMS' : ' CASES');
+  const inDock = dockWidth.matches;
+  if ((show && !inDock) === jump.hidden) jump.hidden = !(show && !inDock);
+  if (dockAct && (show && inDock) === dockAct.hidden) { dockAct.hidden = !(show && inDock); if (dockAct.parentElement) dockAct.parentElement.classList.toggle('has-act', !dockAct.hidden); }
 }
 addEventListener('scroll', () => { if (!jumpRaf) jumpRaf = requestAnimationFrame(checkJump); }, { passive: true });
-if (jump) jump.addEventListener('click', () => { if (narrow.matches) setFiltersOpen(true); worksBar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); });
+dockWidth.addEventListener('change', checkJump);
+const toBar = () => { if (narrow.matches) setFiltersOpen(true); worksBar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); };
+if (jump) jump.addEventListener('click', toBar);
+if (dockAct) dockAct.addEventListener('click', toBar);
 
 /* ================= 横に並ぶ一覧は、マウスのホイールでも横に送れるようにする ================= */
 function wheelToX(el) {
