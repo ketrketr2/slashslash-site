@@ -4195,6 +4195,7 @@ window.SLASH_WORKS = {
  "services": [
   {
    "id": "strategy",
+   "short": "戦略・事業",
    "en": "STRATEGY",
    "name": "戦略・事業開発",
    "body": "事業の構想、新規事業、マーケティング戦略、ブランド体系。課題を分けて捉え、実行できる計画にする。",
@@ -4219,6 +4220,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "cx",
+   "short": "顧客体験",
    "en": "CX / LOYALTY",
    "name": "顧客体験・ロイヤルティ",
    "body": "店舗とECをつなぐオムニチャネル、会員制度、ロイヤルティプログラム。続けて選ばれる理由をつくる。",
@@ -4240,6 +4242,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "research",
+   "short": "調査",
    "en": "RESEARCH",
    "name": "調査",
    "body": "定量調査、デプスインタビュー、競合と市場の調査。問いに合う方法で、生活者の本音と数字を集める。",
@@ -4261,6 +4264,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "stats",
+   "short": "統計解析",
    "en": "STATISTICS",
    "name": "統計解析・プライシング",
    "body": "多変量解析、予測、因果推論、価格の分析。数字の裏にある構造を、意思決定に使える形で示す。",
@@ -4287,6 +4291,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "data",
+   "short": "データ・BI",
    "en": "DATA / BI",
    "name": "データ活用・BI",
    "body": "計測の設計、アクセス解析、決済データの分析、ダッシュボード。関係者が同じ数字で話せる場をつくる。",
@@ -4309,6 +4314,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "ai",
+   "short": "AI活用",
    "en": "AI",
    "name": "AI活用",
    "body": "AI検索での見え方の計測、業務に入るAIエージェント、AIでの映像制作、AIを組み込んだツール。使いどころの設計から実装、運用まで。",
@@ -4333,6 +4339,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "design",
+   "short": "デザイン",
    "en": "DESIGN / WEB",
    "name": "UI・UXデザイン・Web",
    "body": "サイト、アプリ、業務画面、プロトタイプ。情報の多い画面を、迷わず使えるかたちに。",
@@ -4355,6 +4362,7 @@ window.SLASH_WORKS = {
   },
   {
    "id": "content",
+   "short": "映像・広告",
    "en": "FILM / ADS / SNS",
    "name": "映像・広告・SNS",
    "body": "MV、商品動画、SNSのショート動画、広告の制作と運用。作って終わりにせず、反応を見て作り直す。",
@@ -4375,6 +4383,49 @@ window.SLASH_WORKS = {
    ]
   }
  ],
+ "areaTags": {
+  "strategy": [
+   "biz",
+   "mkt",
+   "brand",
+   "ws"
+  ],
+  "cx": [
+   "cx",
+   "omni",
+   "loyalty",
+   "store"
+  ],
+  "research": [
+   "research"
+  ],
+  "stats": [
+   "stats",
+   "pricing"
+  ],
+  "data": [
+   "bi"
+  ],
+  "ai": [
+   "ai",
+   "geo",
+   "agent"
+  ],
+  "design": [
+   "ui",
+   "web",
+   "proto"
+  ],
+  "content": [
+   "mv",
+   "video",
+   "visual",
+   "ads",
+   "sns",
+   "artist",
+   "pr"
+  ]
+ },
  "roles": [
   {
    "id": "lead",
@@ -4547,7 +4598,7 @@ window.SLASH_WORKS = {
  "profile": {
   "name": "中井 健太郎",
   "en": "KENTARO NAKAI",
-  "photo": "assets/profile/nakai-po.jpg",
+  "photo": "assets/profile/nakai-po2.jpg",
   "photo_note": "※目元と口元のぽーちゃん（猫）は本人の希望です",
   "pet": {
    "src": "assets/profile/po.jpg",

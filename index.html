@@ -20,13 +20,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=BIZ+UDPGothic:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=20261005a">
+<link rel="stylesheet" href="site.css?v=20261005b">
 <link rel="preload" href="assets/logo-w-600.png" as="image">
-<script src="boot.js?v=20261005a"></script>
-<script src="intro.js?v=20261005a" defer></script>
-<script src="works.js?v=20261005a" defer></script>
-<script src="site.js?v=20261005a" defer></script>
-<script src="works-ui.js?v=20261005a" defer></script>
+<script src="boot.js?v=20261005b"></script>
+<script src="intro.js?v=20261005b" defer></script>
+<script src="works.js?v=20261005b" defer></script>
+<script src="site.js?v=20261005b" defer></script>
+<script src="works-ui.js?v=20261005b" defer></script>
 </head>
 <body>
 <div class="intro" id="intro" aria-hidden="true">
@@ -74,7 +74,6 @@
 <nav class="dock" id="dock" aria-label="節の移動">
   <button type="button" class="dock-step" data-dock="-1" aria-label="前の節へ"><i aria-hidden="true">‹</i></button>
   <button type="button" class="dock-here" id="dock-here" aria-controls="menu" aria-expanded="false"><small>目次</small><b id="dock-no">01</b><span id="dock-name">実績</span><i aria-hidden="true"></i><s class="dock-bar" id="dock-bar"></s></button>
-  <button type="button" class="dock-act" id="dock-act" hidden>絞り込む</button>
   <button type="button" class="dock-step" data-dock="1" aria-label="次の節へ"><i aria-hidden="true">›</i></button>
 </nav>
 
@@ -104,21 +103,23 @@
     <p class="sec-note">手がけた画面や資料を、事例ごとにまとめています。<small class="disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</small></p>
   </div>
 
+  <!-- 業務領域のタブ（スクロールしても画面の上に残る）→ いまの条件・使い方・業種・表示 -->
   <div class="works-bar" id="works-bar">
-    <div class="vs-wrap"><span class="vs-k" id="vs-k">表示</span>
-    <div class="view-switch" role="tablist" aria-labelledby="vs-k">
-      <button type="button" role="tab" data-view="layers" aria-selected="true"><b>1件ずつ</b><span>大きく見る</span></button>
-      <button type="button" role="tab" data-view="grid" aria-selected="false"><b>カード</b><span>並べて見る</span></button>
-      <button type="button" role="tab" data-view="list" aria-selected="false"><b>一覧</b><span>表で見る</span></button>
-    </div></div>
-    <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="works-filters"><b>絞り込み</b><span id="filter-toggle-label">できること・業種で絞り込む</span><i aria-hidden="true">+</i></button>
-    <div class="filters" id="works-filters">
-      <div class="filter-row"><span class="fr-label">できること</span><div class="chips" id="f-do" role="group" aria-label="できることで絞り込む"></div></div>
-      <div class="filter-row"><span class="fr-label">業種</span><div class="chips" id="f-field" role="group" aria-label="業種で絞り込む"></div></div>
-    </div>
-    <div class="works-count"><button type="button" class="filter-clear" id="filter-clear" hidden>絞り込みを解除 ×</button></div>
+    <span class="wb-k" aria-hidden="true">業務領域で絞り込む</span>
+    <div class="wb-tabs" id="f-area" role="group" aria-label="業務領域で絞り込む"></div>
   </div>
-  <p class="howto works-howto" id="works-howto"><b>使い方</b><span id="works-howto-text">左の一覧から事例を選び、画面をクリックすると、事例の詳細が開きます。</span></p>
+  <div class="works-sub">
+    <div class="ws-now" aria-live="polite"><b id="ws-title">すべての事例</b><span class="ws-desc" id="ws-desc"></span><span class="ws-pills" id="ws-pills"></span></div>
+    <p class="howto ws-howto"><b>使い方</b><span id="works-howto-text">カードを押すと、事例の詳細が開きます。</span></p>
+    <div class="ws-tools">
+      <label class="ws-field"><span class="ws-k">業種</span><span class="ws-select"><select id="f-field" aria-label="業種で絞り込む"><option value="">すべての業種</option></select></span></label>
+      <div class="ws-views" role="tablist" aria-label="表示の切り替え">
+        <button type="button" role="tab" data-view="grid" aria-selected="true" title="カードで並べて見る"><i class="ic ic-grid" aria-hidden="true"></i><span>カード</span></button>
+        <button type="button" role="tab" data-view="list" aria-selected="false" title="表で見る（これまでの取り組みも含む）"><i class="ic ic-list" aria-hidden="true"></i><span>一覧</span></button>
+        <button type="button" role="tab" data-view="layers" aria-selected="false" title="1件ずつ大きく見る"><i class="ic ic-layers" aria-hidden="true"></i><span>1件ずつ</span></button>
+      </div>
+    </div>
+  </div>
 
   <div class="works-views" id="works-views">
     <!-- 1件ずつ（立体） -->
@@ -145,14 +146,13 @@
     <div class="view view-grid" id="view-grid" role="tabpanel" aria-label="カードで並べて見る" hidden><div class="grid" id="grid"></div></div>
     <!-- 一覧 -->
     <div class="view view-list" id="view-list" role="tabpanel" aria-label="表で見る" hidden>
-      <p class="list-note">詳細を見られる事例（CASE）と、これまでの取り組み（ARCHIVE）を、年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
-      <div class="lv-head" aria-hidden="true"><span>NO.</span><span>TITLE</span><span>業種</span><span>年</span><span>タグ</span><span></span></div>
+      <p class="list-note">詳細を見られる「事例」と、これまでの取り組み（「実施」「提案」「試作」）を、年の新しい順に並べています。代表がチームの一員として参画したものを含みます。</p>
+      <div class="lv-head" aria-hidden="true"><span>NO.</span><span>事例・取り組み</span><span>業種</span><span>年</span><span>業務領域</span><span></span></div>
       <ol class="lv" id="lv"></ol>
     </div>
     <p class="works-empty" id="works-empty" hidden></p>
     <div class="hover-preview" id="hover-preview" aria-hidden="true"><img alt=""></div>
   </div>
-  <button type="button" class="works-jump" id="works-jump" hidden><span>絞り込み・表示を変える</span><i aria-hidden="true">↑</i></button>
   <div class="kinetic-strip" aria-hidden="true"><div class="strip-skew" id="strip-skew"><div class="strip-track" id="strip-track"></div></div></div>
 </section>
 

@@ -1263,3 +1263,113 @@ section[tabindex="-1"]:focus{outline:none}
 @media(max-width:720px){.role button,.cf-net .role button{max-width:none}}
 /* 口元のぽーちゃんは、目元の帯と少し間をあけて */
 .pf-sticker{top:61.2%}
+
+/* =====================================================================
+   2026-10-05 夜：実績（WORKS）の操作を一本化
+   ・主の操作は「業務領域」のタブ（8つ＋すべて）。スクロールしても画面の上に残る
+   ・業種は選択欄、表示（カード・一覧・1件ずつ）は右の小さな切り替え。初めの表示はカード
+   ・いまの条件（「統計解析・プライシングの事例」と説明、業種・タグの札）を結果のすぐ上に
+   ・カードと一覧は日本語の事例名を主に、英字の名前は小さく。カードのタグのボタンはやめ、業務領域を文字で
+   ===================================================================== */
+.works-bar{position:sticky;top:var(--head);z-index:20;display:flex;align-items:center;gap:14px;padding:10px var(--gutter);background:#f4f3ecf2;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);transition:box-shadow .3s}
+.works-bar.stuck{box-shadow:0 12px 22px -18px #0007}
+.wb-sentinel{display:block;height:0}
+.wb-k{flex:none;font:700 11px var(--jp);color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.wb-tabs{display:flex;gap:6px;min-width:0;overflow-x:auto;scrollbar-width:none;padding:2px}
+.wb-tabs::-webkit-scrollbar{display:none}
+.wb-tabs button{flex:none;display:inline-flex;align-items:center;height:38px;padding:0 16px;border:1.5px solid var(--ink);border-radius:999px;background:var(--paper);font:700 13px/1 var(--jp);letter-spacing:.04em;white-space:nowrap;transition:background .2s,color .2s,opacity .2s}
+.wb-tabs button:hover:not([aria-pressed=true]){background:var(--accent)}
+.wb-tabs button[aria-pressed=true]{background:var(--ink);color:#fff}
+.wb-tabs button.zero{opacity:.36}
+.wb-tabs button.zero:hover{opacity:.7}
+/* いまの条件・使い方・業種・表示 */
+.works-sub{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'now tools' 'how tools';gap:8px 28px;align-items:start;padding:18px var(--gutter) 2px}
+.ws-now{grid-area:now;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;min-width:0}
+.ws-now>b{font:700 clamp(17px,1.4vw,20px)/1.45 var(--jp);letter-spacing:.03em}
+.ws-desc{flex-basis:100%;order:3;font:400 13px/1.85 var(--jp);color:var(--muted);max-width:64em;word-break:auto-phrase;text-wrap:pretty}
+.ws-desc:empty,.ws-pills:empty{display:none}
+.ws-pills{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.ws-pills button{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 10px 0 13px;border-radius:999px;background:var(--ink);color:#fff;font:700 12px/1 var(--jp);letter-spacing:.03em}
+.ws-pills button i{font:400 15px/1 var(--display);font-style:normal;opacity:.85}
+.ws-pills button:hover{background:var(--blue)}
+.ws-pills .ws-reset{height:auto;padding:2px 0;border-radius:0;background:none;color:var(--ink);border-bottom:1.5px solid var(--ink)}
+.ws-pills .ws-reset:hover{background:none;color:var(--blue);border-color:var(--blue)}
+.ws-howto{grid-area:how;font-size:12.5px}
+.ws-tools{grid-area:tools;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px 16px}
+.ws-field{display:flex;align-items:center;gap:8px;min-width:0}
+.ws-k{font:700 11px var(--jp);color:var(--muted);letter-spacing:.04em;white-space:nowrap}
+.ws-select{position:relative;display:inline-flex;min-width:0;color:var(--ink)}
+.ws-select select{-webkit-appearance:none;appearance:none;height:40px;max-width:240px;padding:0 38px 0 16px;border:1.5px solid var(--ink);border-radius:999px;background:var(--paper);color:inherit;font:700 13px var(--jp);letter-spacing:.03em;cursor:pointer;text-overflow:ellipsis}
+.ws-select:after{content:'';position:absolute;right:16px;top:50%;width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.ws-select.on{color:#fff}
+.ws-select.on select{background:var(--ink)}
+.ws-select select:hover{background-color:var(--accent);color:var(--ink)}
+.ws-select.on select:hover{background:var(--blue);color:#fff}
+.ws-views{display:flex;gap:2px;padding:3px;border:1.5px solid var(--ink);border-radius:999px}
+.ws-views button{position:relative;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 13px;border-radius:999px;font:700 13px/1 var(--jp);letter-spacing:.03em;color:var(--ink);transition:background .2s,color .2s}
+.ws-views button[aria-selected=true]{background:var(--ink);color:#fff}
+.ws-views button:hover:not([aria-selected=true]){background:var(--accent)}
+.ic{position:relative;display:block;width:14px;height:14px;flex:none}
+.ic-grid{background:linear-gradient(currentColor,currentColor) 0 0/6px 6px no-repeat,linear-gradient(currentColor,currentColor) 8px 0/6px 6px no-repeat,linear-gradient(currentColor,currentColor) 0 8px/6px 6px no-repeat,linear-gradient(currentColor,currentColor) 8px 8px/6px 6px no-repeat}
+.ic-list{background:linear-gradient(currentColor,currentColor) 0 1px/14px 2px no-repeat,linear-gradient(currentColor,currentColor) 0 6px/14px 2px no-repeat,linear-gradient(currentColor,currentColor) 0 11px/14px 2px no-repeat}
+.ic-layers:before,.ic-layers:after{content:'';position:absolute;width:8px;height:9px;border:2px solid currentColor;transform:rotate(-10deg)}
+.ic-layers:before{left:0;top:3px}
+.ic-layers:after{left:5px;top:0;background:var(--paper);transform:rotate(8deg)}
+.ws-views button[aria-selected=true] .ic-layers:after{background:var(--ink)}
+.ws-views button:hover:not([aria-selected=true]) .ic-layers:after{background:var(--accent)}
+.view-grid,.view-list{padding-top:clamp(16px,1.6vw,24px)}
+.works-empty button{display:inline-block;margin:10px 18px 0 0}
+/* カード：日本語の事例名を主に */
+.card-body{gap:3px;padding:14px 16px 16px}
+.card-en{margin:0;font:800 11px/1.3 var(--display);font-stretch:112%;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.card-body h3{margin:2px 0 4px;font:700 clamp(16px,1.25vw,19px)/1.55 var(--jp);letter-spacing:.02em;text-transform:none;word-break:auto-phrase;text-wrap:pretty}
+.card-meta{font:700 11.5px/1.5 var(--jp);letter-spacing:.02em;color:var(--muted)}
+.card-meta i{font-style:normal;margin:0 6px;opacity:.6}
+.card-areas{margin:6px 0 0;font:700 12px/1.6 var(--jp);letter-spacing:.02em;display:flex;align-items:baseline;gap:7px}
+.card-areas:before{content:'';flex:none;width:9px;height:9px;background:var(--accent);border:1.5px solid var(--ink);transform:translateY(1px)}
+.card-cta{margin-top:auto;padding-top:14px;align-self:flex-end;display:inline-flex;align-items:center;gap:6px;font:700 13px/1 var(--jp);letter-spacing:.04em;position:relative;z-index:1;transition:color .2s}
+.card-cta i{font:900 16px/1 var(--display);font-style:normal;transition:transform .3s var(--ease)}
+.card:hover .card-cta{color:var(--blue)}
+.card:hover .card-cta i{transform:translate(3px,-3px)}
+.card-open,.card-tags{display:none}
+/* スマホの一覧の行 */
+.sp-text small{display:flex;align-items:baseline;gap:8px}
+.sp-text small span{font:800 10px/1.3 var(--display);font-stretch:112%;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sp-text b{font:700 15px/1.5 var(--jp);letter-spacing:.02em;text-transform:none;overflow-wrap:anywhere}
+/* 一覧：日本語を主に、種類も日本語 */
+.lv-title b{font:700 clamp(15px,1.2vw,17px)/1.55 var(--jp);letter-spacing:.02em;text-transform:none}
+.is-arch .lv-title b{font:700 clamp(15px,1.2vw,17px)/1.55 var(--jp)}
+.lv-title .lv-en{font:800 10.5px/1.4 var(--display);font-stretch:112%;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.lv-hit:hover .lv-en,.lv-hit:focus-visible .lv-en{color:#ffffffb8}
+.lv-kind{font:700 10px/1.5 var(--jp);letter-spacing:.06em;padding:0 6px;vertical-align:2px}
+.lv-tags{font-weight:700}
+/* 1件ずつ：一覧の右上の「事例を選ぶ」の番号は、使い方の番号と同じ */
+/* スマホ：表示の切り替えは、選んでいる表示だけ名前を出す（ほかはアイコン。名前は読み上げ・ツールチップに残す） */
+@media(max-width:720px){.ws-views button:not([aria-selected=true]) span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.ws-views button:not([aria-selected=true]){padding:0 11px}.ws-views button[aria-selected=true]{padding:0 13px 0 12px}}
+@media(max-width:1100px){.works-sub{grid-template-columns:1fr;grid-template-areas:'tools' 'now' 'how'}.ws-tools{justify-content:space-between}}
+@media(max-width:720px){
+  .works-bar{padding:8px 0 8px 16px;gap:0}
+  .wb-k{display:none}
+  .wb-tabs{padding:2px 44px 2px 2px;-webkit-mask-image:linear-gradient(90deg,#000 84%,#0000);mask-image:linear-gradient(90deg,#000 84%,#0000)}
+  .wb-tabs button{height:38px;padding:0 15px;font-size:13.5px}
+  .works-sub{padding:14px 16px 0;gap:10px}
+  .ws-tools{flex-wrap:nowrap;gap:10px}
+  .ws-field,.ws-select{flex:1}
+  .ws-field .ws-k{display:none}
+  .ws-select select{width:100%;max-width:none;height:42px;font-size:14px}
+  .ws-views button{height:36px;padding:0 12px}
+  .ws-now>b{font-size:17px}
+  .ws-howto{font-size:12.5px}
+  .card-body h3{font-size:17px}
+}
+@media(hover:none){.ws-views button:hover:not([aria-selected=true]),.wb-tabs button:hover:not([aria-pressed=true]){background:var(--paper);color:var(--ink)}.ws-select select:hover{background-color:var(--paper);color:inherit}.ws-select.on select:hover{background:var(--ink);color:#fff}}
+.reduced .works-bar{transition:none}
+.sv-ask{display:flex;flex-wrap:wrap;gap:12px 26px}
+.sv-ask button{display:inline-flex;gap:8px;font:700 14px var(--jp);border-bottom:2px solid var(--ink);padding:0 0 3px;text-align:left}
+.sv-ask button:hover{color:var(--blue);border-color:var(--blue)}
+/* タブの続きがある側をぼかす（幅に関係なく、はみ出しているときだけ） */
+.wb-tabs.more-right{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 56px),#0000);mask-image:linear-gradient(90deg,#000 calc(100% - 56px),#0000)}
+.wb-tabs.more-left{-webkit-mask-image:linear-gradient(90deg,#0000,#000 40px);mask-image:linear-gradient(90deg,#0000,#000 40px)}
+.wb-tabs.more-left.more-right{-webkit-mask-image:linear-gradient(90deg,#0000,#000 40px,#000 calc(100% - 56px),#0000);mask-image:linear-gradient(90deg,#0000,#000 40px,#000 calc(100% - 56px),#0000)}
+@media(max-width:960px){.wb-k{display:none}}
+@media(max-width:720px){.wb-tabs{-webkit-mask-image:none;mask-image:none;padding-right:16px}}

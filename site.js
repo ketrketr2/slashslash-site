@@ -31,7 +31,8 @@ document.addEventListener('click', e => {
   if (!menu.hidden) setMenu(false);
   if (id === 'top') { window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' }); history.replaceState(null, '', location.pathname + location.search); return; }
   jump(el); history.replaceState(null, '', '#' + id);
-  if (e.detail === 0) { el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true }); } // キーボードで選んだときは、移った先から続けて操作できるように
+  // キーボードで選んだときは、移った先から続けて操作できるように。焦点が離れたら tabindex を外す（「戻る」で節に焦点が奪われないように）
+  if (e.detail === 0) { el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true }); el.addEventListener('blur', () => el.removeAttribute('tabindex'), { once: true }); }
 });
 
 /* ---------- 動きの設定（OSの設定＋ボタン。選択は端末に保存） ---------- */
@@ -270,11 +271,14 @@ if (svList) {
    <div class="sv-body" id="sv-${esc(s.id)}" role="region" aria-label="${esc(s.name)}"><div><div class="sv-inner">
      <div class="sv-col"><p class="sv-k">できること</p><ul class="sv-can">${s.can.map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>
      ${works.length ? `<div class="sv-col"><p class="sv-k">関係する事例<small>押すと、事例の詳細が開きます</small></p><ul class="sv-cases">${works.map(id => `<li><button type="button" data-work="${esc(id)}"><span>${esc(byId[id].label)}</span><small>${esc(byId[id].title)}</small><i aria-hidden="true">↗</i></button></li>`).join('')}</ul></div>` : ''}
-     <p class="sv-ask"><a href="#contact">この領域について相談する <span aria-hidden="true">→</span></a></p>
+     <p class="sv-ask">${works.length ? `<button type="button" data-area-works="${esc(s.id)}">実績で、この領域の事例を並べて見る <span aria-hidden="true">→</span></button>` : ''}<a href="#contact">この領域について相談する <span aria-hidden="true">→</span></a></p>
    </div></div></div></li>`;
   }).join('');
   $$('.sv-head', svList).forEach(h => h.addEventListener('click', () => { const item = h.closest('.sv-item'), on = !item.classList.contains('open'); item.classList.toggle('open', on); h.setAttribute('aria-expanded', String(on)); }));
-  svList.addEventListener('click', e => { const b = e.target.closest('[data-work]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.work, b); });
+  svList.addEventListener('click', e => {
+    const w = e.target.closest('[data-area-works]'); if (w && window.SlashWorks && window.SlashWorks.area) { window.SlashWorks.area(w.dataset.areaWorks); return; }
+    const b = e.target.closest('[data-work]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.work, b);
+  });
 }
 
 /* ---------- 体制（TEAM） ----------

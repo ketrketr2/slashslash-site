@@ -19,130 +19,136 @@ let reduced = document.body.classList.contains('reduced');
 const announce = t => { const a = $('#announcement'); if (a) a.textContent = t; };
 
 /* ================= 状態 ================= */
-const state = { do: null, field: null, view: innerWidth <= 720 ? 'grid' : 'layers', current: 0 };
-try { const v = localStorage.getItem('slash-view2'); if (v && ['layers', 'grid', 'list'].includes(v)) state.view = v; } catch (e) { }
-const hasTags = (tags, f = state) => (!f.do || tags.includes(f.do)) && (!f.field || tags.includes(f.field));
-const visibleProjects = () => projects.map((p, i) => ({ p, i })).filter(({ p }) => hasTags(p.tags));
-const listItems = () => {
-  const items = projects.map((p, i) => ({ kind: 'case', p, i, year: yearOf(p.year), tags: p.tags }))
-    .concat(archive.map((a, i) => ({ kind: 'arch', a, i, year: yearOf(a.year), tags: a.tags })));
-  return items.filter(x => hasTags(x.tags)).sort((x, y) => y.year - x.year || (x.kind === 'case' ? -1 : 1) - (y.kind === 'case' ? -1 : 1) || 0);
-};
+// 初めての人には、いちばん迷わない「カード」を見せる（表示の選択は端末に保存。2026-10-05 に鍵を改め、全員カードから）
+const state = { area: null, field: null, tag: null, view: 'grid', current: 0 };
+try { const v = localStorage.getItem('slash-view3'); if (v && ['layers', 'grid', 'list'].includes(v)) state.view = v; } catch (e) { }
+const SV = D.services || [], AREA = Object.fromEntries(SV.map(s => [s.id, s])), AREA_TAGS = D.areaTags || {};
+// 事例の業務領域は、業務領域の節の「関係する事例」と同じ（食い違わない）。これまでの取り組みは、タグから領域を引く
+const PA = Object.fromEntries(projects.map(p => [p.id, SV.filter(s => s.works.includes(p.id)).map(s => s.id)]));
+const archAreas = a => SV.filter(s => (AREA_TAGS[s.id] || []).some(t => a.tags.includes(t))).map(s => s.id);
+const areaText = ids => ids.map(id => (AREA[id] || {}).short || '').filter(Boolean).join('・');
+const CASES = projects.map((p, i) => ({ kind: 'case', p, i, tags: p.tags, areas: PA[p.id], year: yearOf(p.year) }));
+const ARCH = archive.map((a, i) => ({ kind: 'arch', a, i, tags: a.tags, areas: archAreas(a), year: yearOf(a.year) }));
+const fits = (x, f = state) => (!f.area || x.areas.includes(f.area)) && (!f.field || x.tags.includes(f.field)) && (!f.tag || x.tags.includes(f.tag));
+const visibleProjects = (f = state) => CASES.filter(x => fits(x, f)).map(({ p, i }) => ({ p, i }));
+const listItems = (f = state) => CASES.concat(ARCH).filter(x => fits(x, f)).sort((x, y) => y.year - x.year || (x.kind === 'case' ? -1 : 1) - (y.kind === 'case' ? -1 : 1) || 0);
+const resultCount = (f = state) => state.view === 'list' ? listItems(f).length : visibleProjects(f).length;
+const filtered = () => !!(state.area || state.field || state.tag);
 
-/* ================= 絞り込み ================= */
-const fDo = $('#f-do'), fField = $('#f-field'), clearBtn = $('#filter-clear');
-const resultCount = () => state.view === 'list' ? listItems().length : visibleProjects().length;
-// スマホでは、タグの絞り込みを最初はたたんでおく（「FILTER」で開く）
-const worksBarEl = $('#works-bar'), fToggle = $('#filter-toggle'), fToggleLabel = $('#filter-toggle-label');
-function setFiltersOpen(on) { if (!worksBarEl) return; worksBarEl.classList.toggle('filters-open', on); if (fToggle) fToggle.setAttribute('aria-expanded', String(on)); if (on) requestAnimationFrame(fitChips); }
-if (fToggle) fToggle.addEventListener('click', () => setFiltersOpen(!worksBarEl.classList.contains('filters-open')));
-// タグは横スクロールさせず折り返す。決めた行数に収まらない分は「＋N もっと見る」でまとめて出す
-const chipOpen = { do: false, field: false }, CHIP_LINES = { do: 2, field: 1 };
-function datasetTags() { return state.view === 'list' ? projects.map(p => p.tags).concat(archive.map(a => a.tags)) : projects.map(p => p.tags); }
+/* ================= 絞り込み：業務領域のタブ（主）・業種（従）・タグ（事例の中のタグから） ================= */
+const fArea = $('#f-area'), fField = $('#f-field'), wsTitle = $('#ws-title'), wsDesc = $('#ws-desc'), wsPills = $('#ws-pills'), worksBar = $('#works-bar');
+const FIELDS = D.tags.filter(t => t.group === 'field').map(t => ({ t, total: CASES.concat(ARCH).filter(x => x.tags.includes(t.id)).length })).filter(x => x.total).sort((a, b) => b.total - a.total);
 function renderFilters() {
-  const all = datasetTags();
-  const build = (group, el, key) => {
-    const other = key === 'do' ? 'field' : 'do';
-    const chips = D.tags.filter(t => t.group === group).map(t => {
-      const n = all.filter(tags => tags.includes(t.id) && (!state[other] || tags.includes(state[other]))).length;
-      const total = all.filter(tags => tags.includes(t.id)).length;
-      return { t, n, total };
-    }).filter(x => x.total > 0).sort((a, b) => b.total - a.total);
-    el.innerHTML = `<button type="button" class="chip" data-key="${key}" data-tag="" aria-pressed="${!state[key]}">すべて</button>` +
-      chips.map(({ t, n }) => `<button type="button" class="chip ${n ? '' : 'zero'}" data-key="${key}" data-tag="${t.id}" aria-pressed="${state[key] === t.id}">${esc(t.label)}</button>`).join('') +
-      `<button type="button" class="chip-more" data-more="${key}" aria-expanded="${chipOpen[key]}"><b>+00</b><span>もっと見る</span></button>`;
-  };
-  build('do', fDo, 'do'); build('field', fField, 'field');
-  fitChips();
-  clearBtn.hidden = !state.do && !state.field;
-  if (fToggleLabel) { const lab = [state.do && TAG[state.do].label, state.field && TAG[state.field].label].filter(Boolean).join(' × '); fToggleLabel.textContent = lab ? `絞り込み中：${lab}` : 'できること・業種で絞り込む'; fToggle.classList.toggle('active', !!lab); }
-  if (typeof checkJump === 'function') checkJump();
+  // 業務領域：選ぶと該当がなくなる領域は薄く（押せる）
+  fArea.innerHTML = [{ id: '', label: 'すべて' }].concat(SV.map(s => ({ id: s.id, label: s.short || s.name }))).map(({ id, label }) => {
+    const n = id ? resultCount({ ...state, area: id }) : 1, on = (state.area || '') === id;
+    return `<button type="button" data-area="${id}" aria-pressed="${on}" class="${n ? '' : 'zero'}"${id ? ` title="${esc(AREA[id].name)}"` : ''}>${esc(label)}</button>`;
+  }).join('');
+  // 業種：件数の多い順。選ぶと該当がなくなる業種には（該当なし）
+  fField.innerHTML = `<option value="">すべての業種</option>` + FIELDS.map(({ t }) => `<option value="${t.id}"${state.field === t.id ? ' selected' : ''}>${esc(t.label)}${resultCount({ ...state, field: t.id }) ? '' : '（該当なし）'}</option>`).join('');
+  fField.closest('.ws-select').classList.toggle('on', !!state.field);
+  // いまの条件
+  const s = state.area && AREA[state.area];
+  const what = state.view === 'list' ? '事例・取り組み' : '事例';
+  wsTitle.textContent = s ? `${s.name}の${what}` : filtered() ? `絞り込んだ${what}` : (state.view === 'list' ? 'すべての事例と、これまでの取り組み' : 'すべての事例');
+  wsDesc.textContent = s ? s.body : '';
+  wsPills.innerHTML = (state.field ? `<button type="button" data-clear="field">業種：${esc(TAG[state.field].label)}<i aria-hidden="true">×</i></button>` : '') +
+    (state.tag ? `<button type="button" data-clear="tag">タグ：${esc(TAG[state.tag].label)}<i aria-hidden="true">×</i></button>` : '') +
+    (filtered() ? `<button type="button" data-clear="all" class="ws-reset">条件をすべて解除</button>` : '');
+  requestAnimationFrame(() => { showActiveTab(); tabEdges(); });
 }
-function fitRow(el, key, moved) {
-  const chips = $$('.chip', el), more = $('.chip-more', el); if (!more || !chips.length) return;
-  chips.forEach(c => { c.hidden = false; });
-  el.classList.toggle('open', chipOpen[key]); more.setAttribute('aria-expanded', String(chipOpen[key]));
-  const label = (b, t) => { more.querySelector('b').textContent = b; more.querySelector('span').textContent = t; };
-  if (!el.getClientRects().length) return; // 見えていない間は測れない
-  if (chipOpen[key]) { more.hidden = false; label('−', 'たたむ'); return; }
-  more.hidden = true;
-  const lineTops = []; chips.forEach(c => { const y = c.offsetTop; if (!lineTops.some(v => Math.abs(v - y) < 6)) lineTops.push(y); }); lineTops.sort((a, b) => a - b);
-  if (lineTops.length <= CHIP_LINES[key]) return; // 全部収まる
-  const limit = lineTops[CHIP_LINES[key] - 1] + 6;
-  more.hidden = false; label('+00', 'もっと見る');
-  chips.forEach(c => { if (c.offsetTop > limit) c.hidden = true; });
-  const vis = chips.filter(c => !c.hidden);
-  while (more.offsetTop > limit && vis.length > 1) vis.pop().hidden = true;
-  // 選んでいるタグが隠れる場合は「すべて」の次へ移して見せる
-  const sel = chips.find(c => c.dataset.tag && c.getAttribute('aria-pressed') === 'true');
-  if (sel && sel.hidden && !moved) { el.insertBefore(sel, chips[1]); fitRow(el, key, true); return; }
-  label('+' + chips.filter(c => c.hidden).length, 'もっと見る');
+// 選んだタブが横にはみ出していたら、見える位置へ寄せる（スマホ）
+function showActiveTab() { const b = $('[aria-pressed=true]', fArea); if (!b) return; const r = fArea.getBoundingClientRect(), br = b.getBoundingClientRect(); if (br.left < r.left + 8 || br.right > r.right - 8) fArea.scrollTo({ left: b.offsetLeft - (r.width - br.width) / 2, behavior: reduced ? 'instant' : 'smooth' }); }
+// 条件を変えたら、結果の頭が見える位置へ（下の方で押したときだけ）
+function toResults() {
+  const sub = $('.works-sub'); if (!sub) return;
+  const head = document.getElementById('header'), barH = worksBar.offsetHeight, top = sub.getBoundingClientRect().top, want = (head ? head.offsetHeight : 0) + barH;
+  if (top < want - 2) window.scrollBy({ top: top - want, behavior: reduced ? 'instant' : 'smooth' });
 }
-function fitChips() { fitRow(fDo, 'do'); fitRow(fField, 'field'); }
-let chipW = 0;
-new ResizeObserver(es => { const w = Math.round(es[0].contentRect.width); if (w !== chipW) { chipW = w; requestAnimationFrame(fitChips); } }).observe($('.filters'));
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitChips);
-function setFilter(key, tag, opts = {}) {
-  state[key] = tag || null;
-  if (opts.clearOther) state[key === 'do' ? 'field' : 'do'] = null;
+function setFilters(patch, opts = {}) {
+  Object.assign(state, patch);
+  if (state.view === 'layers' && !visibleProjects().length && opts.fallback) state.view = 'list';
   renderFilters(); renderView(true);
-  const label = [state.do && TAG[state.do].label, state.field && TAG[state.field].label].filter(Boolean).join(' × ');
-  announce(label ? `${label}で絞り込み、${resultCount()}件。` : '絞り込みを解除しました。');
+  const s = state.area && AREA[state.area];
+  const label = [s && s.name, state.field && TAG[state.field].label, state.tag && TAG[state.tag].label].filter(Boolean).join('、');
+  announce(label ? `${label}で絞り込みました。${resultCount()}件。` : 'すべての事例を表示しています。');
+  if (!opts.noScroll) toResults();
 }
-[fDo, fField].forEach(el => el.addEventListener('click', e => {
-  const m = e.target.closest('.chip-more');
-  if (m) { const k = m.dataset.more; chipOpen[k] = !chipOpen[k]; fitRow(el, k); return; }
-  const b = e.target.closest('.chip'); if (!b) return; const key = b.dataset.key, tag = b.dataset.tag;
-  setFilter(key, state[key] === tag ? null : tag);
-  // 描き直したあとも、押したタグにフォーカスを残す（キーボード操作のため）
-  const again = el.querySelector(`.chip[data-tag="${tag}"]`); if (again && e.detail === 0) again.focus({ preventScroll: true });
-}));
-clearBtn.addEventListener('click', () => { state.do = state.field = null; renderFilters(); renderView(true); announce('絞り込みを解除しました。'); });
+fArea.addEventListener('click', e => {
+  const b = e.target.closest('[data-area]'); if (!b) return;
+  const id = b.dataset.area || null; if (id === state.area) return;
+  setFilters({ area: id });
+  if (e.detail === 0) { const again = fArea.querySelector(`[data-area="${b.dataset.area}"]`); if (again) again.focus({ preventScroll: true }); }
+});
+fField.addEventListener('change', () => setFilters({ field: fField.value || null }, { noScroll: true }));
+wsPills.addEventListener('click', e => { const b = e.target.closest('[data-clear]'); if (!b) return; const k = b.dataset.clear; setFilters(k === 'all' ? { area: null, field: null, tag: null } : { [k]: null }, { noScroll: true }); });
+// 事例の中のタグ（1件ずつの表示・事例の詳細）から：業種のタグは業種に、ほかはタグとして絞る
 function filterByTag(id) {
   const t = TAG[id]; if (!t) return;
-  const key = t.group === 'field' ? 'field' : 'do';
-  state.do = state.field = null; state[key] = id;
-  if (state.view === 'layers' && !visibleProjects().length) state.view = 'list';
-  renderFilters(); renderView(true); syncViewButtons();
-  const bar = $('#works-bar'); if (bar) bar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' });
+  setFilters(t.group === 'field' ? { field: id, area: null, tag: null } : { tag: id, area: null }, { fallback: true, noScroll: true });
+  jumpToBar();
 }
+// 帯は画面の上に貼り付く（sticky）ため、帯そのものの位置ではなく、帯の直前に置いた目印の位置で移る。止まったあと、ずれていれば合わせ直す
+function jumpToBar() {
+  const headH = () => { const h = document.getElementById('header'); return h ? h.offsetHeight : 0; };
+  const off = () => barSentinel.getBoundingClientRect().top - headH();
+  window.scrollTo({ top: off() + scrollY, behavior: reduced ? 'instant' : 'smooth' });
+  const fix = () => { const d = off(); if (Math.abs(d) > 2) window.scrollBy({ top: d, behavior: 'instant' }); };
+  if ('onscrollend' in window && !reduced) addEventListener('scrollend', fix, { once: true }); else requestAnimationFrame(() => requestAnimationFrame(fix));
+}
+// タブの帯が画面の上に貼り付いたら、影をつける
+const barSentinel = document.createElement('i'); barSentinel.className = 'wb-sentinel'; barSentinel.setAttribute('aria-hidden', 'true'); worksBar.before(barSentinel);
+new IntersectionObserver(es => { const r = es[0]; worksBar.classList.toggle('stuck', !r.isIntersecting && r.boundingClientRect.top < 200); }, { rootMargin: '-80px 0px 0px 0px' }).observe(barSentinel);
+// タブが横にはみ出すときは、続きがある側の端をぼかす（スクロールできることを見せる）
+function tabEdges() { const max = fArea.scrollWidth - fArea.clientWidth; fArea.classList.toggle('more-left', fArea.scrollLeft > 4); fArea.classList.toggle('more-right', max > 4 && fArea.scrollLeft < max - 4); }
+fArea.addEventListener('scroll', tabEdges, { passive: true }); new ResizeObserver(tabEdges).observe(fArea);
+// タブはマウスのホイールでも横に送れる
+fArea.addEventListener('wheel', e => { if (!fine.matches || Math.abs(e.deltaX) > Math.abs(e.deltaY) || fArea.scrollWidth <= fArea.clientWidth + 2) return; e.preventDefault(); fArea.scrollLeft += e.deltaY; }, { passive: false });
 
-/* ================= 表示の切り替え ================= */
+/* ================= 表示の切り替え（カード・一覧・1件ずつ） ================= */
 const views = { layers: $('#view-layers'), grid: $('#view-grid'), list: $('#view-list') }, viewsBox = $('#works-views');
-function syncViewButtons() { $$('.view-switch [data-view]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === state.view))); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== state.view; }); syncHowto(); }
+function syncViewButtons() { $$('.ws-views [data-view]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === state.view))); Object.entries(views).forEach(([k, el]) => { el.hidden = k !== state.view; }); syncHowto(); }
 /* 使い方の一文（表示ごと・画面の幅ごと） */
 const howto = $('#works-howto-text');
 function syncHowto() {
   if (!howto) return;
-  const wide = innerWidth > 960, touch = !fine.matches;
-  if (state.view === 'layers') howto.innerHTML = wide
-    ? '<b class="n">①</b>左の一覧から事例を選ぶ <i aria-hidden="true">→</i> <b class="n">②</b>画面をクリックすると、事例の詳細が開きます'
-    : `<b class="n">①</b>上の一覧から事例を選ぶ <i aria-hidden="true">→</i> <b class="n">②</b>画面を${touch ? 'タップ' : 'クリック'}すると、事例の詳細が開きます${touch ? '（左右のスワイプで前後の事例へ）' : ''}`;
-  else if (state.view === 'grid') howto.textContent = touch ? 'カードをタップすると、事例の詳細が開きます。' : 'カードを押すと、事例の詳細が開きます。カードの中のタグを押すと、そのタグで絞り込みます。';
-  else howto.textContent = '「CASE」の行を押すと事例の詳細が、そのほかの行を押すと概要が開きます。';
+  const wide = innerWidth > 960, touch = !fine.matches, press = touch ? 'タップ' : 'クリック';
+  if (state.view === 'layers') howto.innerHTML = `<b class="n">①</b>${wide ? '左' : '上'}の一覧から事例を選ぶ <i aria-hidden="true">→</i> <b class="n">②</b>画面を${press}すると、詳細が開きます${touch ? '（左右のスワイプで前後の事例へ）' : ''}`;
+  else if (state.view === 'grid') howto.textContent = `カードを${press}すると、事例の詳細が開きます。`;
+  else howto.textContent = `「事例」の行は詳細が、「実施」「提案」「試作」の行は概要が開きます。`;
 }
 addEventListener('resize', () => { clearTimeout(syncHowto._t); syncHowto._t = setTimeout(syncHowto, 150); });
 function setView(v) {
   if (v === state.view) return;
-  const go = () => { state.view = v; try { localStorage.setItem('slash-view2', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
+  const go = () => { state.view = v; try { localStorage.setItem('slash-view3', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
   if (reduced) { go(); return; }
   viewsBox.classList.remove('wipe'); void viewsBox.offsetWidth; viewsBox.classList.add('wipe');
   setTimeout(go, 330); setTimeout(() => viewsBox.classList.remove('wipe'), 760);
 }
-$$('.view-switch [data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
-$('.view-switch').addEventListener('keydown', e => { if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return; const order = ['layers', 'grid', 'list']; const i = order.indexOf(state.view); const n = order[(i + (e.key === 'ArrowRight' ? 1 : 2)) % 3]; setView(n); setTimeout(() => $(`.view-switch [data-view="${n}"]`).focus(), 360); });
+$$('.ws-views [data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+$('.ws-views').addEventListener('keydown', e => { if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return; const order = ['grid', 'list', 'layers']; const i = order.indexOf(state.view); const n = order[(i + (e.key === 'ArrowRight' ? 1 : 2)) % 3]; setView(n); setTimeout(() => $(`.ws-views [data-view="${n}"]`).focus(), 360); });
+// 流れる帯：1件ずつの表示ではその事例の言葉、ほかの表示では事例の名前を流す
+function tapeAll() { const t = projects.map(p => esc(p.title)).join(' <i>/</i> '); $('#strip-track').innerHTML = `<span>${t} <i>/</i> </span><span>${t} <i>/</i> </span>`; }
 function renderView(changed) {
   const empty = $('#works-empty');
   const vis = visibleProjects();
   if (state.view !== 'list' && !vis.length) {
     empty.hidden = false; Object.values(views).forEach(el => { el.hidden = true; });
-    empty.innerHTML = `この条件の事例はありません。<button type="button" id="to-list">「一覧」で、これまでの取り組みを見る →</button>`;
-    $('#to-list').addEventListener('click', () => setView('list'));
+    const inList = listItems().length;
+    empty.innerHTML = `この条件の事例はありません。<button type="button" data-clear-all>条件をすべて解除する</button>${inList ? `<button type="button" id="to-list">「一覧」で、これまでの取り組みを見る →</button>` : ''}`;
+    const tl = $('#to-list'); if (tl) tl.addEventListener('click', () => setView('list'));
+    $('[data-clear-all]', empty).addEventListener('click', () => setFilters({ area: null, field: null, tag: null }, { noScroll: true }));
+    stopStage(); return;
+  }
+  if (state.view === 'list' && !listItems().length) {
+    empty.hidden = false; Object.values(views).forEach(el => { el.hidden = true; });
+    empty.innerHTML = `この条件の事例・取り組みはありません。<button type="button" data-clear-all>条件をすべて解除する</button>`;
+    $('[data-clear-all]', empty).addEventListener('click', () => setFilters({ area: null, field: null, tag: null }, { noScroll: true }));
     stopStage(); return;
   }
   empty.hidden = true; syncViewButtons();
   if (state.view === 'layers') { renderPlist(); if (!vis.some(x => x.i === state.current)) selectProject(vis[0].i, true); else if (changed) mount(state.current); startStage(); }
-  else stopStage();
+  else { stopStage(); tapeAll(); }
   if (state.view === 'grid') renderGrid();
   if (state.view === 'list') renderList();
 }
@@ -319,33 +325,32 @@ function syncPlayback() {
 }
 
 /* ================= カード（GRID） ================= */
+const wallOf = src => String(src || '').replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
 const grid = $('#grid');
 let cardObserver = null;
 function coverOf(p) { const L = p.layers.find(l => l.type === 'image' || l.type === 'video'); return L || (p.gallery || [])[0]; }
 function cardHTML({ p, i }) {
   const c = coverOf(p); const tone = c ? c.tone : 'dark';
-  const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(c.poster)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(c.src)}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
+  const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(wallOf(c.poster))}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(wallOf(c.src))}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
   const kinds = p.layers.map(l => l.tag).filter(Boolean); const kind = kinds[0] || '';
   return `<article class="card" data-i="${i}">
-      <button type="button" class="card-hit" aria-label="${esc(p.title)}（${esc(p.label)}）の事例の詳細を開く" data-cursor="詳しく見る"></button>
+      <button type="button" class="card-hit" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く" data-cursor="詳しく見る"></button>
       <div class="card-media tone-${esc(tone)}">${media}<span class="card-no">${p.no}</span>${kind ? `<span class="card-kind">${esc(kind)}</span>` : ''}</div>
-      <div class="card-body"><h3>${esc(p.title)}</h3><p class="card-label">${esc(p.label)}</p><p class="card-meta">${esc(p.industry)} / ${esc(p.year)}</p>
-      <ul class="card-tags">${p.tags.filter(t => TAG[t].group === 'do').slice(0, 5).map(t => `<li><button type="button" class="tag-btn" data-tag="${t}">${esc(TAG[t].label)}</button></li>`).join('')}</ul></div>
-      <span class="card-open" aria-hidden="true">↗</span></article>`;
+      <div class="card-body"><p class="card-en">${esc(p.title)}</p><h3>${esc(p.label)}</h3><p class="card-meta">${esc(p.industry)}<i>/</i>${esc(p.year)}</p>
+      ${PA[p.id].length ? `<p class="card-areas">${esc(areaText(PA[p.id]))}</p>` : ''}<span class="card-cta" aria-hidden="true">詳しく見る<i>↗</i></span></div></article>`;
 }
-/* スマホ：注目の2件を大きなカードで見せ、そのほかは小さなサムネと事例名の一覧で続ける（切り替えのタブは使わない）。絞り込み中は一覧だけ */
+/* スマホ：注目の2件を大きなカードで見せ、そのほかは小さなサムネと事例名の一覧で続ける。絞り込み中は一覧だけ（いまの条件は上の帯と見出しに出る） */
 const narrow = matchMedia('(max-width: 720px)');
-const wallOf = src => String(src || '').replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
 const PICK = 2;
 function rowHTML({ p, i }) {
   const c = coverOf(p), thumb = c ? wallOf(c.poster || c.src) : '';
   const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
-  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.title)}（${esc(p.label)}）の事例の詳細を開く">
+  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く">
     <span class="sp-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">` : ''}${vid ? `<video muted loop playsinline preload="none" data-src="${esc(vid)}"></video>` : ''}</span>
-    <span class="sp-text"><small>${p.no}</small><b>${esc(p.title)}</b><span>${esc(p.label)}</span><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></button></li>`;
+    <span class="sp-text"><small>${p.no}<span>${esc(p.title)}</span></small><b>${esc(p.label)}</b><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></button></li>`;
 }
 function renderSpGrid(vis) {
-  if (state.do || state.field) { grid.innerHTML = `<p class="sp-k">絞り込んだ事例</p><ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`; return; }
+  if (filtered()) { grid.innerHTML = `<ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`; return; }
   const pick = vis.slice(0, PICK), rest = vis.slice(PICK);
   grid.innerHTML = `<p class="sp-k">注目の事例</p><div class="sp-pick">${pick.map(cardHTML).join('')}</div>` + (rest.length ? `<p class="sp-k">そのほかの事例</p><ol class="sp-list">${rest.map(rowHTML).join('')}</ol>` : '');
   $$('.card', grid).forEach(c => c.classList.add('in'));
@@ -380,9 +385,8 @@ new MutationObserver(syncCovers).observe(document.documentElement, { attributes:
 
 narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); });
 grid.addEventListener('click', e => {
-  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row) }); return; }
-  const t = e.target.closest('[data-tag]'); if (t) { filterByTag(t.dataset.tag); return; }
-  const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c) });
+  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row), focusTo: row }); return; }
+  const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c), focusTo: $('.card-hit', c) });
 });
 grid.addEventListener('pointerout', e => { const c = e.target.closest('.card'); if (!c || c.contains(e.relatedTarget)) return; c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); });
 grid.addEventListener('pointermove', e => {
@@ -393,20 +397,19 @@ grid.addEventListener('pointermove', e => {
 
 /* ================= 一覧（LIST） ================= */
 const lv = $('#lv'), pv = $('#hover-preview'), pimg = pv && $('img', pv);
-function tagText(tags) { return tags.filter(t => TAG[t] && TAG[t].group === 'do').map(t => TAG[t].label).join(' / '); }
 function renderList() {
   lv.innerHTML = listItems().map(x => {
     if (x.kind === 'case') {
       const p = x.p, c = coverOf(p);
       const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
       return `<li class="lv-row is-case"><button type="button" class="lv-hit" data-i="${x.i}" data-thumb="${esc(c ? (c.poster || c.src) : '')}" data-vid="${esc(vid)}" aria-haspopup="dialog">
-        <span class="lv-no">${p.no}</span><span class="lv-title"><b><span class="lv-kind">CASE</span>${esc(p.title)}</b><span>${esc(p.label)}</span><span class="lv-meta">${esc(p.industry)} / ${esc(p.year)}</span></span>
-        <span class="lv-ind">${esc(p.industry)}</span><span class="lv-year">${esc(p.year)}</span><span class="lv-tags">${esc(tagText(p.tags))}</span><span class="lv-arrow" aria-hidden="true">↗</span></button></li>`;
+        <span class="lv-no">${p.no}</span><span class="lv-title"><b><span class="lv-kind">事例</span>${esc(p.label)}</b><span class="lv-en">${esc(p.title)}</span><span class="lv-meta">${esc(p.industry)} / ${esc(p.year)}</span></span>
+        <span class="lv-ind">${esc(p.industry)}</span><span class="lv-year">${esc(p.year)}</span><span class="lv-tags">${esc(areaText(x.areas))}</span><span class="lv-arrow" aria-hidden="true">↗</span></button></li>`;
     }
     const a = x.a, id = `lvd-${a.no}`;
     return `<li class="lv-row is-arch"><button type="button" class="lv-hit" aria-expanded="false" aria-controls="${id}">
-      <span class="lv-no">${a.no}</span><span class="lv-title"><b><span class="lv-kind">${esc(a.kind === '実施' ? 'ARCHIVE' : a.kind === '提案' ? 'PROPOSAL' : 'PROTOTYPE')}</span>${esc(a.title)}</b><span class="lv-meta">${esc(a.industry)} / ${esc(a.year)}</span></span>
-      <span class="lv-ind">${esc(a.industry)}</span><span class="lv-year">${esc(a.year)}</span><span class="lv-tags">${esc(tagText(a.tags))}</span><span class="lv-arrow" aria-hidden="true">+</span></button>
+      <span class="lv-no">${a.no}</span><span class="lv-title"><b><span class="lv-kind">${esc(a.kind)}</span>${esc(a.title)}</b><span class="lv-meta">${esc(a.industry)} / ${esc(a.year)}</span></span>
+      <span class="lv-ind">${esc(a.industry)}</span><span class="lv-year">${esc(a.year)}</span><span class="lv-tags">${esc(areaText(x.areas))}</span><span class="lv-arrow" aria-hidden="true">+</span></button>
       <div class="lv-detail" id="${id}"><div><div class="lv-detail-in"><p>${esc(a.detail)}</p>${a.results && a.results.length ? `<ul class="lv-results"><li class="lr-label">RESULT</li>${a.results.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}</div></div></div></li>`;
   }).join('');
 }
@@ -437,7 +440,7 @@ if (pv) {
 
 /* ================= 事例の詳細（CASE） ================= */
 const dlg = $('#case'), body = $('#case-body'), scroller = $('#case-scroll'), cut = $('#cut'), fly = $('#fly');
-let caseOpen = false, caseIndex = 0, caseOrigin = null, caseObserver = null, caseList = [];
+let caseOpen = false, caseIndex = 0, caseOrigin = null, caseObserver = null, caseList = [], caseScrollY = 0;
 function mediaHTML(a, opts = {}) {
   const pos = esc(a.focus || '50% 50%');
   if (a.kind === 'video' || a.type === 'video') return `<video muted loop playsinline ${opts.autoplay && !reduced ? 'autoplay' : ''} preload="${opts.eager ? 'auto' : 'none'}" poster="${esc(a.poster || '')}" aria-label="${esc(a.alt || a.title)}" style="object-position:${pos}"><source src="${esc(a.src)}" type="video/webm"><source src="${esc(mp4(a.src))}" type="video/mp4"></video>`;
@@ -555,9 +558,11 @@ function openCase(index, opts = {}) {
   if (backPending) { pendingOpen = [index, opts]; return; } // 「戻る」で閉じている途中なら、閉じ終わってから開く
   if (caseOpen) { swapCase(index, opts.layer); return; }
   caseList = visibleProjects().map(x => x.i); if (!caseList.includes(index)) caseList = projects.map((_, i) => i);
-  caseIndex = index; caseOrigin = opts.from && opts.from.focus ? opts.from : document.activeElement; caseOpen = true;
+  // 閉じたあとに焦点を戻す先：押したボタン（カードは画像ではなく、カードのボタン）
+  const focusable = el => el && el.matches && el.matches('a[href],button,input,select,textarea,[tabindex]');
+  caseIndex = index; caseOrigin = opts.focusTo || (focusable(opts.from) ? opts.from : document.activeElement); caseOpen = true; caseScrollY = scrollY;
   const token = ++openToken;
-  if (!opts.noPush) { history.pushState({ slashCase: projects[index].id }, '', `#case-${projects[index].id}`); casePushed = true; }
+  if (!opts.noPush) { try { history.scrollRestoration = 'manual'; } catch (e) { } history.pushState({ slashCase: projects[index].id }, '', `#case-${projects[index].id}`); casePushed = true; }
   document.body.classList.add('reading'); syncPlayback();
   const hero = heroOf(projects[index], opts.layer);
   const show = () => {
@@ -583,10 +588,10 @@ function closeCase(then) {
   if (casePushed && history.state && history.state.slashCase) { afterClose = then || null; backPending = true; history.back(); return; }
   closeNow(then);
 }
-function closeNow(then) {
+function closeNow(then, keep = !then) {
   casePushed = false;
   if (!dlg.open) { caseOpen = false; document.body.classList.remove('reading'); cut.classList.remove('on'); fly.classList.remove('on'); syncPlayback(); if (then) then(); return; }
-  const done = () => { dlg.classList.remove('leave'); dlg.close(); afterClosed(); if (then) then(); };
+  const done = () => { dlg.classList.remove('leave'); dlg.close(); afterClosed(keep); if (then) then(); };
   if (reduced) { done(); return; }
   dlg.classList.remove('enter'); dlg.classList.add('leave');
   let finished = false; const fin = () => { if (finished) return; finished = true; done(); };
@@ -595,13 +600,13 @@ function closeNow(then) {
 addEventListener('popstate', e => {
   const st = e.state || {};
   if (zoomPushed && !st.zoom) { zoomPushed = false; closeZoomNow(); }
-  if (caseOpen && !st.slashCase) { backPending = false; const t = afterClose; afterClose = null; closeNow(() => { if (t) t(); if (pendingOpen) { const [i, o] = pendingOpen; pendingOpen = null; openCase(i, o); } }); return; }
+  if (caseOpen && !st.slashCase) { backPending = false; const t = afterClose; afterClose = null; closeNow(() => { if (t) t(); if (pendingOpen) { const [i, o] = pendingOpen; pendingOpen = null; openCase(i, o); } }, !t); return; }
   if (!caseOpen && st.slashCase) { const i = projects.findIndex(p => p.id === st.slashCase); if (i >= 0) { casePushed = true; openCase(i, { noPush: true }); } }
 });
 const scrim = $('#cf-scrim'); if (scrim) scrim.addEventListener('click', () => closeCase());
 dlg.addEventListener('cancel', e => { e.preventDefault(); if (!zoom.hidden) { closeZoom(); return; } closeCase(); });
 // 閉じたあとの片付け。close イベントは少し遅れて届くので、自分で閉じたときはその場で済ませる
-function afterClosed() {
+function afterClosed(keepScroll = true) {
   if (!caseOpen) return;
   if (caseObserver) caseObserver.disconnect(); $$('video', body).forEach(v => { v.pause(); v.removeAttribute('src'); v.load && v.load(); });
   body.innerHTML = ''; document.documentElement.classList.remove('case-open'); caseOpen = false; closeZoomNow(); zoomPushed = false; syncFab();
@@ -609,7 +614,17 @@ function afterClosed() {
   // ブラウザが自分で閉じた場合（戻る操作など）も、積んだ履歴を残さない
   if (casePushed) { casePushed = false; if (history.state && history.state.slashCase) history.back(); }
   else if (location.hash.startsWith('#case-')) history.replaceState(null, '', '#works');
-  if (caseOrigin && caseOrigin.isConnected) caseOrigin.focus({ preventScroll: true });
+  // 焦点を、開いたときに押したものへ戻す。「戻る」の直後はブラウザが URL の #… への移動で焦点を外すことがあるので、外れていたらもう一度戻す
+  // 見ていた位置も戻す（初めに開いた URL へ「戻る」と、ブラウザが #works の頭へ送ることがあるため）。閉じたあとに別の場所へ移る操作（相談するなど）のときは戻さない
+  const origin = caseOrigin, keepY = caseScrollY;
+  const refocus = () => {
+    if (caseOpen) return;
+    if (keepScroll && Math.abs(scrollY - keepY) > 2) window.scrollTo({ top: keepY, behavior: 'instant' });
+    const a = document.activeElement; if (origin && origin.isConnected && (!a || a === document.body || a.matches('section'))) origin.focus({ preventScroll: true });
+  };
+  if (origin && origin.isConnected) origin.focus({ preventScroll: true });
+  addEventListener('hashchange', () => setTimeout(refocus, 0), { once: true }); setTimeout(refocus, 150); requestAnimationFrame(refocus);
+  setTimeout(() => { if (!caseOpen) { try { history.scrollRestoration = 'auto'; } catch (e) { } } }, 600);
 }
 dlg.addEventListener('close', () => { if (!dlg.open) afterClosed(); });
 $('#case-close').addEventListener('click', () => closeCase());
@@ -651,24 +666,6 @@ function closeZoomNow() { if (!zoom || zoom.hidden) return; $$('video', zoomStag
 $('#cf-zoom-close').addEventListener('click', closeZoom);
 zoomStage.addEventListener('click', e => { if (e.target.tagName === 'IMG') { if (e.target.naturalWidth > zoomStage.clientWidth * 1.2) zoomStage.classList.toggle('full'); else closeZoom(); } else if (e.target === zoomStage) closeZoom(); });
 
-/* ================= 実績の操作へ戻るボタン（カード・一覧を下まで見たとき） ================= */
-const jump = $('#works-jump'), dockAct = $('#dock-act'), worksSec = $('#works'), worksBar = $('#works-bar');
-const dockWidth = matchMedia('(max-width: 960px)');
-let jumpRaf = 0;
-function checkJump() {
-  jumpRaf = 0; if (!jump) return;
-  const b = worksBar.getBoundingClientRect(), w = worksSec.getBoundingClientRect();
-  const show = state.view !== 'layers' && !caseOpen && b.bottom < 70 && w.bottom > innerHeight * .55;
-  const inDock = dockWidth.matches;
-  if ((show && !inDock) === jump.hidden) jump.hidden = !(show && !inDock);
-  if (dockAct && (show && inDock) === dockAct.hidden) { dockAct.hidden = !(show && inDock); if (dockAct.parentElement) dockAct.parentElement.classList.toggle('has-act', !dockAct.hidden); }
-}
-addEventListener('scroll', () => { if (!jumpRaf) jumpRaf = requestAnimationFrame(checkJump); }, { passive: true });
-dockWidth.addEventListener('change', checkJump);
-const toBar = () => { if (narrow.matches) setFiltersOpen(true); worksBar.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); };
-if (jump) jump.addEventListener('click', toBar);
-if (dockAct) dockAct.addEventListener('click', toBar);
-
 /* ================= 横に並ぶ一覧は、マウスのホイールでも横に送れるようにする ================= */
 function wheelToX(el) {
   if (!el) return;
@@ -684,8 +681,10 @@ wheelToX(plist); wheelToX($('#team-cases'));
 document.addEventListener('slash:motion', e => { reduced = !!e.detail.reduced; if (reduced) { mx = my = tx = ty = 0; } drawScene(); syncPlayback(); });
 window.SlashWorks = {
   open(id, from) { const i = projects.findIndex(p => p.id === id); if (i >= 0) openCase(i, { from }); },
-  select(id) { const i = projects.findIndex(p => p.id === id); if (i < 0) return; state.do = state.field = null; if (state.view !== 'layers') { state.view = 'layers'; } renderFilters(); renderView(); selectProject(i, true); const w = $('#works'); if (w) w.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); },
+  select(id) { const i = projects.findIndex(p => p.id === id); if (i < 0) return; state.area = state.field = state.tag = null; if (state.view !== 'layers') { state.view = 'layers'; } renderFilters(); renderView(); selectProject(i, true); const w = $('#works'); if (w) w.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); },
   filter: filterByTag,
+  // 業務領域の節から：その領域で絞って、実績の操作の帯へ移る
+  area(id) { if (!AREA[id]) return; setFilters({ area: id, field: null, tag: null }, { noScroll: true, fallback: true }); jumpToBar(); },
   projects
 };
 
@@ -696,7 +695,9 @@ state.current = fromHash >= 0 ? fromHash : 0;
 syncViewButtons(); renderFilters();
 if (state.view === 'layers') { renderPlist(); mount(state.current); startStage(); } else renderView();
 if (location.hash.startsWith('#case-')) { const i = projects.findIndex(p => p.id === location.hash.slice(6)); if (i >= 0) setTimeout(() => openCase(i, { noPush: true }), 300); }
-// 立体表示は URL を #w-… に書き換えるため、ブラウザのアンカー移動が効かない。#works・#w-… で来たときは自分で実績へ送る
+// 以前の「1件ずつ」の URL（#w-…）で来たときは、その事例の詳細を開く（初めの表示はカード）
+else if (fromHash >= 0 && state.view !== 'layers') setTimeout(() => openCase(fromHash, { noPush: true }), 300);
+// 「1件ずつ」は URL を #w-… に書き換えるため、ブラウザのアンカー移動が効かない。#works・#w-… で来たときは自分で実績へ送る
 if (startHash === '#works' || startHash.startsWith('#w-')) {
   let userMoved = false; ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(t => addEventListener(t, () => { userMoved = true; }, { once: true, passive: true }));
   const go = () => { if (userMoved) return; const w = $('#works'); if (!w) return; const top = w.getBoundingClientRect().top; if (top < 0 || top > 120) w.scrollIntoView({ behavior: 'instant', block: 'start' }); };
