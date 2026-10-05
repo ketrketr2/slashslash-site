@@ -1373,3 +1373,7 @@ section[tabindex="-1"]:focus{outline:none}
 .wb-tabs.more-left.more-right{-webkit-mask-image:linear-gradient(90deg,#0000,#000 40px,#000 calc(100% - 56px),#0000);mask-image:linear-gradient(90deg,#0000,#000 40px,#000 calc(100% - 56px),#0000)}
 @media(max-width:960px){.wb-k{display:none}}
 @media(max-width:720px){.wb-tabs{-webkit-mask-image:none;mask-image:none;padding-right:16px}}
+/* 計測（Google アナリティクス）についての注記 */
+.foot-privacy{margin:10px 0 0;font-size:11.5px;line-height:1.8;color:#ffffff8c;max-width:78ch}
+.foot-privacy a{display:inline-block;margin-left:12px;color:#ffffffc8;border-bottom:1px solid #ffffff55}
+.foot-privacy a:hover{color:var(--accent);border-color:var(--accent)}

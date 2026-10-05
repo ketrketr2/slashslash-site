@@ -17,6 +17,8 @@ const mp4 = src => src.replace(/\.webm$/, '.mp4');
 const fine = matchMedia('(hover:hover) and (pointer:fine)');
 let reduced = document.body.classList.contains('reduced');
 const announce = t => { const a = $('#announcement'); if (a) a.textContent = t; };
+// 計測（analytics.js。本番だけで動く）
+const track = (name, params) => { try { if (window.slashTrack) window.slashTrack(name, params); } catch (e) { } };
 
 /* ================= 状態 ================= */
 // 初めての人には、いちばん迷わない「カード」を見せる（表示の選択は端末に保存。2026-10-05 に鍵を改め、全員カードから）
@@ -78,14 +80,16 @@ fArea.addEventListener('click', e => {
   const b = e.target.closest('[data-area]'); if (!b) return;
   const id = b.dataset.area || null; if (id === state.area) return;
   setFilters({ area: id });
+  track('filter_works', { filter_type: 'area', filter_value: id ? AREA[id].name : 'すべて', ui_from: 'works' });
   if (e.detail === 0) { const again = fArea.querySelector(`[data-area="${b.dataset.area}"]`); if (again) again.focus({ preventScroll: true }); }
 });
-fField.addEventListener('change', () => setFilters({ field: fField.value || null }, { noScroll: true }));
-wsPills.addEventListener('click', e => { const b = e.target.closest('[data-clear]'); if (!b) return; const k = b.dataset.clear; setFilters(k === 'all' ? { area: null, field: null, tag: null } : { [k]: null }, { noScroll: true }); });
+fField.addEventListener('change', () => { setFilters({ field: fField.value || null }, { noScroll: true }); track('filter_works', { filter_type: 'field', filter_value: state.field ? TAG[state.field].label : 'すべての業種', ui_from: 'works' }); });
+wsPills.addEventListener('click', e => { const b = e.target.closest('[data-clear]'); if (!b) return; const k = b.dataset.clear; setFilters(k === 'all' ? { area: null, field: null, tag: null } : { [k]: null }, { noScroll: true }); track('filter_works', { filter_type: 'clear', filter_value: k, ui_from: 'works' }); });
 // 事例の中のタグ（1件ずつの表示・事例の詳細）から：業種のタグは業種に、ほかはタグとして絞る
-function filterByTag(id) {
+function filterByTag(id, from = 'case') {
   const t = TAG[id]; if (!t) return;
   setFilters(t.group === 'field' ? { field: id, area: null, tag: null } : { tag: id, area: null }, { fallback: true, noScroll: true });
+  track('filter_works', { filter_type: t.group === 'field' ? 'field' : 'tag', filter_value: t.label, ui_from: from });
   jumpToBar();
 }
 // 帯は画面の上に貼り付く（sticky）ため、帯そのものの位置ではなく、帯の直前に置いた目印の位置で移る。止まったあと、ずれていれば合わせ直す
@@ -120,6 +124,7 @@ function syncHowto() {
 addEventListener('resize', () => { clearTimeout(syncHowto._t); syncHowto._t = setTimeout(syncHowto, 150); });
 function setView(v) {
   if (v === state.view) return;
+  track('change_view', { view_mode: v });
   const go = () => { state.view = v; try { localStorage.setItem('slash-view3', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
   if (reduced) { go(); return; }
   viewsBox.classList.remove('wipe'); void viewsBox.offsetWidth; viewsBox.classList.add('wipe');
@@ -137,13 +142,13 @@ function renderView(changed) {
     const inList = listItems().length;
     empty.innerHTML = `この条件の事例はありません。<button type="button" data-clear-all>条件をすべて解除する</button>${inList ? `<button type="button" id="to-list">「一覧」で、これまでの取り組みを見る →</button>` : ''}`;
     const tl = $('#to-list'); if (tl) tl.addEventListener('click', () => setView('list'));
-    $('[data-clear-all]', empty).addEventListener('click', () => setFilters({ area: null, field: null, tag: null }, { noScroll: true }));
+    $('[data-clear-all]', empty).addEventListener('click', () => { setFilters({ area: null, field: null, tag: null }, { noScroll: true }); track('filter_works', { filter_type: 'clear', filter_value: 'all', ui_from: 'works_empty' }); });
     stopStage(); return;
   }
   if (state.view === 'list' && !listItems().length) {
     empty.hidden = false; Object.values(views).forEach(el => { el.hidden = true; });
     empty.innerHTML = `この条件の事例・取り組みはありません。<button type="button" data-clear-all>条件をすべて解除する</button>`;
-    $('[data-clear-all]', empty).addEventListener('click', () => setFilters({ area: null, field: null, tag: null }, { noScroll: true }));
+    $('[data-clear-all]', empty).addEventListener('click', () => { setFilters({ area: null, field: null, tag: null }, { noScroll: true }); track('filter_works', { filter_type: 'clear', filter_value: 'all', ui_from: 'works_empty' }); });
     stopStage(); return;
   }
   empty.hidden = true; syncViewButtons();
@@ -186,7 +191,7 @@ function mount(index) {
     el.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse') setHot(i); });
     el.addEventListener('pointerleave', ev => { if (ev.pointerType === 'mouse' && hot === i) setHot(-1); });
     el.addEventListener('focus', () => setHot(i)); el.addEventListener('blur', () => { if (hot === i) setHot(-1); });
-    el.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openCase(index, { layer: i, from: el }); } });
+    el.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openCase(index, { layer: i, from: el, src: 'layers' }); } });
   });
   $('#ghost').textContent = p.no;
   const tape = (p.tape || [p.title]).map(esc).join(' <i>/</i> ');
@@ -201,8 +206,8 @@ function mount(index) {
   syncPlayback();
   if (location.hash.startsWith('#w-') || location.hash === '#works') history.replaceState(null, '', `#w-${p.id}`);
 }
-$('#sc-tags').addEventListener('click', e => { const b = e.target.closest('[data-tag]'); if (b) filterByTag(b.dataset.tag); });
-$('#case-cta').addEventListener('click', e => openCase(state.current, { from: planes[0] || e.currentTarget }));
+$('#sc-tags').addEventListener('click', e => { const b = e.target.closest('[data-tag]'); if (b) filterByTag(b.dataset.tag, 'layers'); });
+$('#case-cta').addEventListener('click', e => openCase(state.current, { from: planes[0] || e.currentTarget, src: 'layers' }));
 function setHot(i) {
   hot = i; planes.forEach((el, k) => { el.classList.toggle('hot', k === i); el.style.zIndex = k === i ? '9' : String(4 - k); });
   if (reduced) drawScene();
@@ -287,7 +292,7 @@ stage.addEventListener('pointerup', e => { if (!swipe) return; const dx = e.clie
 stage.addEventListener('click', e => {
   if (swipe && swipe.used) return;
   const el = e.target.closest('.plane'); if (!el || switching) return;
-  openCase(state.current, { layer: +el.dataset.plane, from: el });
+  openCase(state.current, { layer: +el.dataset.plane, from: el, src: 'layers' });
 });
 new ResizeObserver(() => measure()).observe(stage);
 new IntersectionObserver(es => { inView = es.some(x => x.isIntersecting); syncPlayback(); }, { rootMargin: '80px 0px' }).observe(stage);
@@ -385,8 +390,8 @@ new MutationObserver(syncCovers).observe(document.documentElement, { attributes:
 
 narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); });
 grid.addEventListener('click', e => {
-  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row), focusTo: row }); return; }
-  const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c), focusTo: $('.card-hit', c) });
+  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row), focusTo: row, src: 'card' }); return; }
+  const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c), focusTo: $('.card-hit', c), src: 'card' });
 });
 grid.addEventListener('pointerout', e => { const c = e.target.closest('.card'); if (!c || c.contains(e.relatedTarget)) return; c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); });
 grid.addEventListener('pointermove', e => {
@@ -415,7 +420,7 @@ function renderList() {
 }
 lv.addEventListener('click', e => {
   const b = e.target.closest('.lv-hit'); if (!b) return;
-  if (b.dataset.i != null) { openCase(+b.dataset.i, { from: b }); return; }
+  if (b.dataset.i != null) { openCase(+b.dataset.i, { from: b, src: 'list' }); return; }
   const row = b.closest('.lv-row'), on = !row.classList.contains('open'); row.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on));
 });
 if (pv) {
@@ -452,8 +457,10 @@ function heroOf(p, layer) {
   if (L && (L.type === 'image' || L.type === 'video')) { const g = (p.gallery || []).find(a => a.src === L.src); return g || { ...L, kind: L.type }; }
   const g = p.gallery || []; return g.find(a => a.kind === 'video') || g[0] || null;
 }
+let caseFrom = 'other';
 function renderCase(index, layer) {
   const p = projects[index], g = p.gallery || [], hero = heroOf(p, layer);
+  track('view_case', { case_id: p.id, case_name: p.label, case_industry: p.industry, ui_from: caseFrom });
   const rest = g.filter(a => !hero || a.src !== hero.src);
   const portraitCount = rest.filter(isPortrait).length, manyPortrait = portraitCount >= 3;
   const figures = rest.map((a, k) => {
@@ -553,9 +560,15 @@ function flyFrom(fromEl, hero) {
   return fly.animate([{ clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`, opacity: .4 }, { clipPath: `inset(${top}px ${right}px ${bottom}px ${left}px)`, opacity: 1, offset: .15 }, { clipPath: 'inset(0px 0px 0px 0px)', opacity: 1 }], { duration: 480, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' }).finished;
 }
 // 開くときに履歴を1つ積み、ブラウザの「戻る」（スマホの戻る操作）で事例の詳細を閉じられるようにする
-let casePushed = false, zoomPushed = false, afterClose = null, openToken = 0, backPending = false, pendingOpen = null;
+let casePushed = false, zoomPushed = false, afterClose = null, openToken = 0, pendingOpen = null;
+/* こちらから「戻る」を呼んだ回数（popstate が届くまで）。連打や、ブラウザが自分で閉じた場合に「戻る」が重なって
+ * サイトの外（前のページ）まで戻ってしまわないよう、数えて扱う */
+let internalBacks = 0;
+const goBack = () => { internalBacks++; history.back(); };
+const runPendingOpen = () => { if (pendingOpen) { const [i, o] = pendingOpen; pendingOpen = null; openCase(i, o); } };
 function openCase(index, opts = {}) {
-  if (backPending) { pendingOpen = [index, opts]; return; } // 「戻る」で閉じている途中なら、閉じ終わってから開く
+  if (internalBacks > 0) { pendingOpen = [index, opts]; return; } // 「戻る」で閉じている途中なら、閉じ終わってから開く
+  caseFrom = opts.src || 'other';
   if (caseOpen) { swapCase(index, opts.layer); return; }
   caseList = visibleProjects().map(x => x.i); if (!caseList.includes(index)) caseList = projects.map((_, i) => i);
   // 閉じたあとに焦点を戻す先：押したボタン（カードは画像ではなく、カードのボタン）
@@ -576,16 +589,17 @@ function openCase(index, opts = {}) {
   // ページを切り替えず、いまのページの上に事例の詳細を重ねる（PCは右から、スマホは下からのシート。後ろのページは暗く透けて見え、押すと閉じる）
   show(); if (!reduced) { dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter'); }
 }
-function swapCase(index, layer) {
-  caseIndex = index;
+function swapCase(index, layer, src) {
+  caseIndex = index; if (src) caseFrom = src;
   body.classList.remove('case-body-swap'); void body.offsetWidth; renderCase(index, layer); if (!reduced) body.classList.add('case-body-swap');
   scroller.scrollTop = 0;
 }
-function stepCase(d) { const at = caseList.indexOf(caseIndex); swapCase(caseList[(at + d + caseList.length) % caseList.length]); }
+function stepCase(d) { const at = caseList.indexOf(caseIndex); swapCase(caseList[(at + d + caseList.length) % caseList.length], undefined, d < 0 ? 'case_prev' : 'case_next'); }
 // 閉じる：履歴を積んでいれば「戻る」で閉じる（popstate で実際に閉じる）
 function closeCase(then) {
   if (!caseOpen) return;
-  if (casePushed && history.state && history.state.slashCase) { afterClose = then || null; backPending = true; history.back(); return; }
+  if (internalBacks > 0) { if (then) afterClose = then; return; } // すでに閉じている途中（連打）
+  if (casePushed && history.state && history.state.slashCase) { afterClose = then || null; goBack(); return; }
   closeNow(then);
 }
 function closeNow(then, keep = !then) {
@@ -599,9 +613,20 @@ function closeNow(then, keep = !then) {
 }
 addEventListener('popstate', e => {
   const st = e.state || {};
+  const internal = internalBacks > 0; if (internal) internalBacks--;
   if (zoomPushed && !st.zoom) { zoomPushed = false; closeZoomNow(); }
-  if (caseOpen && !st.slashCase) { backPending = false; const t = afterClose; afterClose = null; closeNow(() => { if (t) t(); if (pendingOpen) { const [i, o] = pendingOpen; pendingOpen = null; openCase(i, o); } }, !t); return; }
-  if (!caseOpen && st.slashCase) { const i = projects.findIndex(p => p.id === st.slashCase); if (i >= 0) { casePushed = true; openCase(i, { noPush: true }); } }
+  if (!st.slashCase) {
+    // 事例の外の項目に戻った：開いていれば閉じる（こちらの「戻る」でも、ブラウザの戻るでも）
+    const t = afterClose; afterClose = null;
+    if (caseOpen) closeNow(() => { if (t) t(); runPendingOpen(); }, !t);
+    else if (internalBacks === 0) { if (t) t(); runPendingOpen(); }
+    return;
+  }
+  // 事例の項目に来た
+  if (!caseOpen) {
+    if (internal) { goBack(); return; } // 閉じたあとに残った事例の項目（ブラウザが自分で閉じた場合など）は、続けて戻って消す
+    const i = projects.findIndex(p => p.id === st.slashCase); if (i >= 0) { casePushed = true; openCase(i, { noPush: true, src: 'history' }); } // 「進む」で来た
+  }
 });
 const scrim = $('#cf-scrim'); if (scrim) scrim.addEventListener('click', () => closeCase());
 dlg.addEventListener('cancel', e => { e.preventDefault(); if (!zoom.hidden) { closeZoom(); return; } closeCase(); });
@@ -612,7 +637,7 @@ function afterClosed(keepScroll = true) {
   body.innerHTML = ''; document.documentElement.classList.remove('case-open'); caseOpen = false; closeZoomNow(); zoomPushed = false; syncFab();
   document.body.classList.remove('reading'); syncPlayback();
   // ブラウザが自分で閉じた場合（戻る操作など）も、積んだ履歴を残さない
-  if (casePushed) { casePushed = false; if (history.state && history.state.slashCase) history.back(); }
+  if (casePushed) { casePushed = false; if (internalBacks === 0 && history.state && history.state.slashCase) goBack(); } // 「戻る」がすでに進んでいれば重ねない
   else if (location.hash.startsWith('#case-')) history.replaceState(null, '', '#works');
   // 焦点を、開いたときに押したものへ戻す。「戻る」の直後はブラウザが URL の #… への移動で焦点を外すことがあるので、外れていたらもう一度戻す
   // 見ていた位置も戻す（初めに開いた URL へ「戻る」と、ブラウザが #works の頭へ送ることがあるため）。閉じたあとに別の場所へ移る操作（相談するなど）のときは戻さない
@@ -632,13 +657,13 @@ $('#case-prev').addEventListener('click', () => stepCase(-1));
 $('#case-next').addEventListener('click', () => stepCase(1));
 dlg.addEventListener('keydown', e => { if (e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight' && zoom.hidden) stepCase(1); if (e.key === 'ArrowLeft' && zoom.hidden) stepCase(-1); });
 body.addEventListener('click', e => {
-  const t = e.target.closest('[data-tag]'); if (t) { const id = t.dataset.tag; closeCase(() => filterByTag(id)); return; }
+  const t = e.target.closest('[data-tag]'); if (t) { const id = t.dataset.tag; closeCase(() => filterByTag(id, 'case')); return; }
   const tr = e.target.closest('[data-team-role], .cf-net .role'); if (tr) { const id = tr.dataset.teamRole || tr.dataset.role; pickTeamRole(id === casePick ? null : id); return; }
-  const oc = e.target.closest('[data-case-open]'); if (oc) { const i = projects.findIndex(p => p.id === oc.dataset.caseOpen); if (i >= 0) swapCase(i); return; }
+  const oc = e.target.closest('[data-case-open]'); if (oc) { const i = projects.findIndex(p => p.id === oc.dataset.caseOpen); if (i >= 0) swapCase(i, undefined, 'case_related'); return; }
   if (e.target.closest('[data-case-next]')) { stepCase(1); return; }
   if (e.target.closest('[data-case-close]')) { closeCase(); return; }
-  if (e.target.closest('[data-case-contact]')) { e.preventDefault(); closeCase(() => { const c = $('#contact'); if (c) c.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); }); return; }
-  const f = e.target.closest('.cf-frame'); if (f) { openZoom(body._rest[+f.dataset.k]); }
+  if (e.target.closest('[data-case-contact]')) { e.preventDefault(); track('nav_click', { section: 'contact', ui_from: 'case' }); closeCase(() => { const c = $('#contact'); if (c) c.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); }); return; }
+  const f = e.target.closest('.cf-frame'); if (f) { openZoom(body._rest[+f.dataset.k]); track('zoom_media', { case_id: projects[caseIndex].id, case_name: projects[caseIndex].label }); }
 });
 // 下へ読み進めたら、右下に「閉じる」を出し続ける（末尾の「閉じる」が見えている間と、拡大表示の間は隠す）
 const fab = $('#cf-fab'); let fabRaf = 0;
@@ -661,7 +686,7 @@ function openZoom(a) {
   zoom.hidden = false; syncFab(); $('#cf-zoom-close').focus();
   if (!zoomPushed) { history.pushState({ slashCase: projects[caseIndex].id, zoom: true }, '', location.hash); zoomPushed = true; }
 }
-function closeZoom() { if (!zoom || zoom.hidden) return; if (zoomPushed && history.state && history.state.zoom) { history.back(); return; } closeZoomNow(); }
+function closeZoom() { if (!zoom || zoom.hidden || internalBacks > 0) return; if (zoomPushed && history.state && history.state.zoom) { goBack(); return; } closeZoomNow(); }
 function closeZoomNow() { if (!zoom || zoom.hidden) return; $$('video', zoomStage).forEach(v => v.pause()); zoomStage.innerHTML = ''; zoom.hidden = true; syncFab(); }
 $('#cf-zoom-close').addEventListener('click', closeZoom);
 zoomStage.addEventListener('click', e => { if (e.target.tagName === 'IMG') { if (e.target.naturalWidth > zoomStage.clientWidth * 1.2) zoomStage.classList.toggle('full'); else closeZoom(); } else if (e.target === zoomStage) closeZoom(); });
@@ -680,11 +705,11 @@ wheelToX(plist); wheelToX($('#team-cases'));
 /* ================= 動きの設定・外部から呼ぶ ================= */
 document.addEventListener('slash:motion', e => { reduced = !!e.detail.reduced; if (reduced) { mx = my = tx = ty = 0; } drawScene(); syncPlayback(); });
 window.SlashWorks = {
-  open(id, from) { const i = projects.findIndex(p => p.id === id); if (i >= 0) openCase(i, { from }); },
+  open(id, from, src) { const i = projects.findIndex(p => p.id === id); if (i >= 0) openCase(i, { from, src: src || 'other' }); },
   select(id) { const i = projects.findIndex(p => p.id === id); if (i < 0) return; state.area = state.field = state.tag = null; if (state.view !== 'layers') { state.view = 'layers'; } renderFilters(); renderView(); selectProject(i, true); const w = $('#works'); if (w) w.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); },
   filter: filterByTag,
   // 業務領域の節から：その領域で絞って、実績の操作の帯へ移る
-  area(id) { if (!AREA[id]) return; setFilters({ area: id, field: null, tag: null }, { noScroll: true, fallback: true }); jumpToBar(); },
+  area(id) { if (!AREA[id]) return; setFilters({ area: id, field: null, tag: null }, { noScroll: true, fallback: true }); track('filter_works', { filter_type: 'area', filter_value: AREA[id].name, ui_from: 'services' }); jumpToBar(); },
   projects
 };
 
@@ -694,9 +719,9 @@ const fromHash = location.hash.startsWith('#w-') ? projects.findIndex(p => p.id 
 state.current = fromHash >= 0 ? fromHash : 0;
 syncViewButtons(); renderFilters();
 if (state.view === 'layers') { renderPlist(); mount(state.current); startStage(); } else renderView();
-if (location.hash.startsWith('#case-')) { const i = projects.findIndex(p => p.id === location.hash.slice(6)); if (i >= 0) setTimeout(() => openCase(i, { noPush: true }), 300); }
+if (location.hash.startsWith('#case-')) { const i = projects.findIndex(p => p.id === location.hash.slice(6)); if (i >= 0) setTimeout(() => openCase(i, { noPush: true, src: 'link' }), 300); }
 // 以前の「1件ずつ」の URL（#w-…）で来たときは、その事例の詳細を開く（初めの表示はカード）
-else if (fromHash >= 0 && state.view !== 'layers') setTimeout(() => openCase(fromHash, { noPush: true }), 300);
+else if (fromHash >= 0 && state.view !== 'layers') setTimeout(() => openCase(fromHash, { noPush: true, src: 'link' }), 300);
 // 「1件ずつ」は URL を #w-… に書き換えるため、ブラウザのアンカー移動が効かない。#works・#w-… で来たときは自分で実績へ送る
 if (startHash === '#works' || startHash.startsWith('#w-')) {
   let userMoved = false; ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(t => addEventListener(t, () => { userMoved = true; }, { once: true, passive: true }));

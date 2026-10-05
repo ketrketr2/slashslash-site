@@ -12,6 +12,9 @@ const fine = matchMedia('(hover:hover) and (pointer:fine)');
 const byId = Object.fromEntries(D.projects.map(p => [p.id, p]));
 const wallOf = src => src.replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
 const go = el => { if (el) el.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); };
+// 計測（analytics.js。本番だけで動く。ほかの環境では何もしない）
+const track = (name, params) => { try { if (window.slashTrack) window.slashTrack(name, params); } catch (e) { } };
+const fromOf = a => a.closest('.gnav') ? 'header' : a.closest('.menu') ? 'menu' : a.closest('.site-footer') ? 'footer' : a.closest('.hero') ? 'hero' : a.closest('.sv-ask') ? 'services' : a.closest('.ai-foot') ? 'ai' : a.closest('.contact') ? 'contact' : 'link';
 /* 節へ移る。途中の見出しが後から開いて（文字幅が変わって）着地点がずれないよう、目的の節より上の見出しを先に開いておく。
  * スクロールが止まったら、節の頭がヘッダーのすぐ下にあるかを確かめて合わせ直す */
 function jump(el) {
@@ -28,11 +31,18 @@ document.addEventListener('click', e => {
   const id = a.getAttribute('href').slice(1); const el = id === 'top' ? document.getElementById('top') : (['works', 'ai', 'services', 'team', 'profile', 'company', 'contact'].includes(id) ? document.getElementById(id) : null);
   if (!el) return;
   e.preventDefault();
+  track('nav_click', { section: id, ui_from: fromOf(a) });
   if (!menu.hidden) setMenu(false);
   if (id === 'top') { window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' }); history.replaceState(null, '', location.pathname + location.search); return; }
   jump(el); history.replaceState(null, '', '#' + id);
   // キーボードで選んだときは、移った先から続けて操作できるように。焦点が離れたら tabindex を外す（「戻る」で節に焦点が奪われないように）
   if (e.detail === 0) { el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true }); el.addEventListener('blur', () => el.removeAttribute('tabindex'), { once: true }); }
+});
+
+// メールアドレスのリンクを押した（問い合わせの入口）
+document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('a[href^="mailto:"]'); if (!a) return;
+  const sec = a.closest('section[id], footer'); track('contact_click', { contact_method: 'mail_link', ui_from: sec ? (sec.id || 'footer') : 'link' });
 });
 
 /* ---------- 動きの設定（OSの設定＋ボタン。選択は端末に保存） ---------- */
@@ -47,7 +57,7 @@ function setReduced(v, save) {
   document.dispatchEvent(new CustomEvent('slash:motion', { detail: { reduced: v } }));
   playVisible();
 }
-$$('#motion-toggle,[data-motion-alt]').forEach(b => b.addEventListener('click', () => setReduced(!reduced, true)));
+$$('#motion-toggle,[data-motion-alt]').forEach(b => b.addEventListener('click', () => { setReduced(!reduced, true); track(reduced ? 'motion_off' : 'motion_on', { ui_from: b.closest('.menu') ? 'menu' : 'header' }); }));
 osReduce.addEventListener('change', e => { if (!stored) setReduced(e.matches, false); });
 
 /* ---------- 目次（メニュー）。右上の「メニュー」と、スマホの移動バーの真ん中から開く ---------- */
@@ -60,7 +70,7 @@ function setMenu(openIt, opener) {
   else { const o = menuOpener && menuOpener.offsetParent ? menuOpener : menuBtn; o.focus({ preventScroll: true }); menuOpener = null; }
   syncDock();
 }
-menuBtn.addEventListener('click', () => setMenu(menu.hidden, menuBtn));
+menuBtn.addEventListener('click', () => { const opening = menu.hidden; setMenu(opening, menuBtn); if (opening) track('open_menu', { ui_from: 'header' }); });
 $$('a', menu).forEach(a => a.addEventListener('click', () => setMenu(false)));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
 menu.addEventListener('click', e => { if (e.target === menu) setMenu(false); });
@@ -172,9 +182,11 @@ function findSection() {
   if (scrollY + innerHeight >= root.scrollHeight - 2 && i >= 0) { i = SECS.length - 1; p = 1; }
   return [i, p];
 }
+const seenSecs = new Set();
 function paintSection(i, p) {
   if (i !== secIdx) {
     secIdx = i; const id = SECS[i] ? SECS[i].id : '';
+    if (id && !seenSecs.has(id)) { seenSecs.add(id); track('view_section', { section: id }); }
     [gnavLinks, menuLinks].forEach(list => list.forEach(a => { const on = a.dataset.sec === id; a.classList.toggle('current', on); if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }));
     if (SECS[i] && dock) {
       dockNo.textContent = SECS[i].no; dockName.textContent = SECS[i].ja;
@@ -196,11 +208,11 @@ function syncDock() {
 }
 if (dock) {
   $$('[data-dock]', dock).forEach(b => b.addEventListener('click', () => {
-    const i = secIdx + +b.dataset.dock;
-    if (i < 0) { window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' }); return; }
-    if (SECS[i]) jump(SECS[i].el);
+    const i = secIdx + +b.dataset.dock, ui = +b.dataset.dock < 0 ? 'dock_prev' : 'dock_next';
+    if (i < 0) { track('nav_click', { section: 'top', ui_from: ui }); window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' }); return; }
+    if (SECS[i]) { track('nav_click', { section: SECS[i].id, ui_from: ui }); jump(SECS[i].el); }
   }));
-  dockHere.addEventListener('click', () => setMenu(true, dockHere));
+  dockHere.addEventListener('click', () => { setMenu(true, dockHere); track('open_menu', { ui_from: 'dock' }); });
   // 入力中は、キーボードの上にかぶらないよう隠す
   document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('input,textarea,select')) { typing = true; syncDock(); } });
   document.addEventListener('focusout', e => { if (e.target.matches && e.target.matches('input,textarea,select')) { typing = false; setTimeout(syncDock, 60); } });
@@ -255,11 +267,11 @@ if (aiGrid) {
       <button type="button" class="ai-hit" data-open="${esc(it.id)}" aria-label="${esc(it.title)}：${esc(p.label)}の事例の詳細を開く" data-cursor="詳しく見る"></button></li>`;
   }).join('');
   $$('video[data-auto]', aiGrid).forEach(v => playIO.observe(v));
-  aiGrid.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.open, b.closest('.ai-item').querySelector('.ai-media')); });
+  aiGrid.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.open, b.closest('.ai-item').querySelector('.ai-media'), 'ai'); });
   const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
   $$('.ai-item', aiGrid).forEach((el, k) => { el.style.transitionDelay = `${(k % 3) * 80}ms`; io.observe(el); });
 }
-$$('.ai-more[data-open]').forEach(b => { if (!byId[b.dataset.open]) { b.replaceWith(document.createTextNode(b.textContent)); return; } b.addEventListener('click', () => { if (window.SlashWorks) window.SlashWorks.open(b.dataset.open, b); }); });
+$$('.ai-more[data-open]').forEach(b => { if (!byId[b.dataset.open]) { b.replaceWith(document.createTextNode(b.textContent)); return; } b.addEventListener('click', () => { if (window.SlashWorks) window.SlashWorks.open(b.dataset.open, b, 'ai'); }); });
 
 /* ---------- 業務領域（SERVICES）----------
  * 初めはすべて閉じ、領域の名前と説明だけを並べる。開くと、できることと、関係する事例（文字のリンク）を出す。 */
@@ -274,10 +286,10 @@ if (svList) {
      <p class="sv-ask">${works.length ? `<button type="button" data-area-works="${esc(s.id)}">実績で、この領域の事例を並べて見る <span aria-hidden="true">→</span></button>` : ''}<a href="#contact">この領域について相談する <span aria-hidden="true">→</span></a></p>
    </div></div></div></li>`;
   }).join('');
-  $$('.sv-head', svList).forEach(h => h.addEventListener('click', () => { const item = h.closest('.sv-item'), on = !item.classList.contains('open'); item.classList.toggle('open', on); h.setAttribute('aria-expanded', String(on)); }));
+  $$('.sv-head', svList).forEach((h, k) => h.addEventListener('click', () => { const item = h.closest('.sv-item'), on = !item.classList.contains('open'); item.classList.toggle('open', on); h.setAttribute('aria-expanded', String(on)); if (on) track('open_service', { service_area: (D.services[k] || {}).name }); }));
   svList.addEventListener('click', e => {
     const w = e.target.closest('[data-area-works]'); if (w && window.SlashWorks && window.SlashWorks.area) { window.SlashWorks.area(w.dataset.areaWorks); return; }
-    const b = e.target.closest('[data-work]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.work, b);
+    const b = e.target.closest('[data-work]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.work, b, 'services');
   });
 }
 
@@ -421,11 +433,11 @@ if (net && roles.length) {
       panel.innerHTML = `<p class="tp-kicker">${esc(r.en)} — ${esc((groups.find(g => g.id === r.group) || {}).label)}</p><h3 class="tp-title">${esc(r.label)}</h3><p class="tp-text">${esc(r.note)}。</p>${list.length ? `<ul class="tp-list">${list.map(p => `<li><button type="button" data-open="${p.id}">${esc(p.title)} ↗</button></li>`).join('')}</ul>` : '<p class="tp-text">案件に応じて参加します。</p>'}`;
     } else panel.innerHTML = defaultPanel();
   }
-  caseChips.addEventListener('click', e => { const b = e.target.closest('[data-case]'); if (!b) return; teamCase = b.dataset.case || null; teamRole = null; paint(); });
+  caseChips.addEventListener('click', e => { const b = e.target.closest('[data-case]'); if (!b) return; teamCase = b.dataset.case || null; teamRole = null; paint(); track('team_select', { team_kind: 'case', team_value: teamCase ? byId[teamCase].label : 'すべて' }); });
   // スマホ：役割を選んだら、説明の欄が画面の外なら見える位置へ送る
   const showPanel = () => { if (innerWidth > 720) return; const r = panel.getBoundingClientRect(), top = header.offsetHeight; if (r.top < top || r.top > innerHeight - 120) panel.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); };
-  rolesBox.addEventListener('click', e => { const li = e.target.closest('.role'); if (!li) return; teamRole = teamRole === li.dataset.role ? null : li.dataset.role; teamCase = null; paint(); if (teamRole) showPanel(); });
-  panel.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.open, b); });
+  rolesBox.addEventListener('click', e => { const li = e.target.closest('.role'); if (!li) return; teamRole = teamRole === li.dataset.role ? null : li.dataset.role; teamCase = null; paint(); if (teamRole) { showPanel(); track('team_select', { team_kind: 'role', team_value: (roleById[teamRole] || {}).label }); } });
+  panel.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.open, b, 'team'); });
   paint();
 }
 const partnerList = $('#partner-list');
@@ -468,12 +480,12 @@ if (form) {
     if (!$('#cf-consent').checked) bad.push('cf-consent');
     if (bad.length) { status.textContent = 'お名前、メールアドレス、ご相談内容（10文字以上）、同意をご確認ください。'; $('#' + bad[0]).focus(); return; }
     if (d.website) return; // 自動送信よけ
-    if (viaMail) { location.href = mailto(d); status.innerHTML = `メールアプリが開きます。開かない場合は、<a href="mailto:nakai@slashslash.jp">nakai@slashslash.jp</a> へ直接お送りください。`; return; }
+    if (viaMail) { track('generate_lead', { contact_method: 'form_mail' }); location.href = mailto(d); status.innerHTML = `メールアプリが開きます。開かない場合は、<a href="mailto:nakai@slashslash.jp">nakai@slashslash.jp</a> へ直接お送りください。`; return; }
     btn.disabled = true; status.textContent = '送信しています…';
     try {
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: d.name, company: d.company, email: d.email, message: (d.topics ? `【ご相談の領域】${d.topics}\n\n` : '') + d.message, website: d.website, consent: true }) });
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok !== false) { form.reset(); status.textContent = '送信しました。内容を確認のうえ、ご連絡します。'; }
+      if (res.ok && data.ok !== false) { track('generate_lead', { contact_method: 'form' }); form.reset(); status.textContent = '送信しました。内容を確認のうえ、ご連絡します。'; }
       else throw new Error(data.error || 'unavailable');
     } catch (err) {
       status.innerHTML = `フォームから送信できませんでした。お手数ですが、<a href="${esc(mailto(d))}">メールアプリで送る</a>か、nakai@slashslash.jp へ直接お送りください。入力内容は残しています。`;
