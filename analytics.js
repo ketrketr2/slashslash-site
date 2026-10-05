@@ -1,7 +1,7 @@
 /* s/ash — 計測（Google アナリティクス 4、測定ID G-1QMPV3ZY1P）。
  * ・本番（www.slashslash.jp）だけで読み込む。プレビュー・ローカルでは読み込まない（?ga=force で強制。強制時は確認用の印つき）。
  * ・この端末を計測から外す：?ga=off（戻す：?ga=on）。端末のブラウザに保存する。
- * ・確認用：?ga_debug=1（GA の DebugView に出る。開発者トラフィックとしてレポートからは除く）。
+ * ・確認用：?ga_debug=1（GA の DebugView に出る。開発者トラフィックとしてレポートからは除く）。外した端末でも、確認用なら読み込む。
  * ・お名前・メールアドレス・相談内容など、入力された内容は送らない。
  * 事例の詳細・絞り込み・節の到達などは site.js / works-ui.js から window.slashTrack(イベント名, パラメータ) で送る。 */
 (function () {
@@ -18,7 +18,7 @@
   var debug = forced || /[?&]ga_debug=1(&|$)/.test(q);
   var prod = /^(www\.)?slashslash\.jp$/.test(location.hostname);
   window.slashTrack = function () { };
-  if (!(prod || forced) || store('slash-ga') === 'off') return;
+  if (!(prod || forced) || (store('slash-ga') === 'off' && !debug)) return;
   window.dataLayer = window.dataLayer || [];
   var gtag = function () { window.dataLayer.push(arguments); };
   window.gtag = gtag;

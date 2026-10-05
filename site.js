@@ -182,11 +182,18 @@ function findSection() {
   if (scrollY + innerHeight >= root.scrollHeight - 2 && i >= 0) { i = SECS.length - 1; p = 1; }
   return [i, p];
 }
-const seenSecs = new Set();
+// 節に着いて少し（0.8秒）とどまったら「見た」と記録する（1回だけ）。目次から遠くの節へ飛ぶとき、途中で通り過ぎた節は数えない
+const seenSecs = new Set(); let seenTimer = 0;
+function noteSection(i) {
+  clearTimeout(seenTimer);
+  const id = SECS[i] ? SECS[i].id : '';
+  if (!id || seenSecs.has(id)) return;
+  seenTimer = setTimeout(() => { if (secIdx === i && !seenSecs.has(id)) { seenSecs.add(id); track('view_section', { section: id }); } }, 800);
+}
 function paintSection(i, p) {
   if (i !== secIdx) {
     secIdx = i; const id = SECS[i] ? SECS[i].id : '';
-    if (id && !seenSecs.has(id)) { seenSecs.add(id); track('view_section', { section: id }); }
+    noteSection(i);
     [gnavLinks, menuLinks].forEach(list => list.forEach(a => { const on = a.dataset.sec === id; a.classList.toggle('current', on); if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }));
     if (SECS[i] && dock) {
       dockNo.textContent = SECS[i].no; dockName.textContent = SECS[i].ja;
