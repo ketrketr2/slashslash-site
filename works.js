@@ -3541,6 +3541,146 @@ window.SLASH_WORKS = {
    "links": []
   },
   {
+   "id": "reader-site",
+   "label": "雑誌の公式サイトのリニューアル",
+   "title": "REASON TO VISIT",
+   "kicker": "SITE RENEWAL / UX",
+   "industry": "出版",
+   "year": "2023–2024",
+   "status": "調査・企画から公開まで",
+   "tags": [
+    "research",
+    "ui",
+    "web",
+    "media",
+    "kpi",
+    "f-media"
+   ],
+   "subtitle": "見た目を新しくするだけでなく、読者が公式サイトを「見る理由」から作り直す",
+   "summary": "出版社の雑誌の公式サイトと、新人作家を募るサイトのリニューアルを、読者の調査から企画、デザイン、CMSとサーバーの構築、公開まで進めた。調査では、公式サイトを見ない読者の多くが「特に見たいものがない」と答えていた。そこで、作り手と話しながら作品を選べる市場のようなサイトを掲げ、作品の魅力が一目で伝わる特集ページ、作家の声に触れられる導線、情報の多さに軽重をつけた画面を設計し、試し読みは自社のアプリへつないだ。公開後の更新は、社内の担当者がCMSで行う。",
+   "can": [
+    "読者の調査から、公式サイトを「見る理由」を見つける",
+    "コンセプトと情報設計（サイトマップ・ページの一覧・ワイヤーフレーム）",
+    "情報の多い画面に軽重をつけるUIとデザインのディレクション",
+    "CMSの要件定義と構築、既存のコンテンツの移行",
+    "サーバーの要件定義（アクセスの予測・セキュリティ・バックアップ）と、運用の引き継ぎ"
+   ],
+   "results": [
+    "利用金額・滞在時間・流入数・再訪率などの指標が増加",
+    "CMSの導入で、社内の運用の工数を削減"
+   ],
+   "process": [
+    "インターネット調査で読者の利用と不満を調べ、「見る理由」をつくるコンセプトを提案",
+    "サイトマップとページの一覧を決め、主要ページ、量産ページの順にワイヤーフレームとデザインを制作",
+    "CMSとサーバーの要件定義・構築、既存のコンテンツの移行、手引きと研修を経て、2つのサイトを公開"
+   ],
+   "team": [
+    "lead",
+    "researchd",
+    "planner",
+    "prodd",
+    "designer",
+    "sysd"
+   ],
+   "note": "パートナーのクリエイティブ・エージェンシーのチームとして、調査・企画とディレクションを担当しました。社名・誌名・作品名は伏せています。図は考え方を示す模式図で、実際の画面や作品の絵は使っていません。数値は架空です。",
+   "tape": [
+    "REASON TO VISIT",
+    "READERS",
+    "MARKET",
+    "CMS"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/reader-site/01-readers.jpg",
+     "kind": "image",
+     "title": "公式サイトを「見ない理由」",
+     "caption": "雑誌の読者への調査の流れと、公式サイトを使う理由・使わない理由、読者の声から決めた3つの設計の方針（模式図・数値は架空）",
+     "alt": "調査の流れの3つの箱と、理由の横棒グラフ、読者の声と設計の方針を矢印でつないだ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/reader-site/02-concept.jpg",
+     "kind": "image",
+     "title": "棚から、作り手と話せる市場へ",
+     "caption": "同じ大きさで並べる「棚」から、作品ごとに軽重をつけて作り手の声と一緒に見せる「市場」への転換と、公式サイトを起点に紙の雑誌・単行本・自社のアプリへ送る流れ（模式図）",
+     "alt": "左に棚と市場の配置の比較、右に公式サイトへ入ってくる流れと出ていく流れの図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/reader-site/03-sitemap.jpg",
+     "kind": "image",
+     "title": "2つのサイトの情報設計",
+     "caption": "公式サイトと新人を募るサイトのページを、ページごとにデザインする主要ページと、ひな形から展開する量産ページに分けた構成。作品には3つの入口からたどり着ける（模式図）",
+     "alt": "左に公式サイトのページの木構造、右に新人を募るサイトの構成とデザインの進め方",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/reader-site/04-build.jpg",
+     "kind": "image",
+     "title": "デザイン・CMS・サーバーを並行して",
+     "caption": "デザイン・CMS・サーバーの3つの領域を並行させた約6か月の工程と、公開後の更新の流れ、公開後に見た指標（模式図）",
+     "alt": "3色の帯の工程表と公開の節目の線、更新の流れの4つの箱、指標の4つの札",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "READERS",
+     "tag": "模式図",
+     "src": "assets/works/reader-site/01-readers.jpg",
+     "alt": "調査の流れの3つの箱と、理由の横棒グラフ、読者の声と設計の方針を矢印でつないだ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "公式サイトを「見ない理由」",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "CONCEPT",
+     "tag": "模式図",
+     "src": "assets/works/reader-site/02-concept.jpg",
+     "alt": "左に棚と市場の配置の比較、右に公式サイトへ入ってくる流れと出ていく流れの図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "棚から、作り手と話せる市場へ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "SITEMAP",
+     "tag": "模式図",
+     "src": "assets/works/reader-site/03-sitemap.jpg",
+     "alt": "左に公式サイトのページの木構造、右に新人を募るサイトの構成とデザインの進め方",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "2つのサイトの情報設計",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "BUILD",
+     "tag": "模式図",
+     "src": "assets/works/reader-site/04-build.jpg",
+     "alt": "3色の帯の工程表と公開の節目の線、更新の流れの4つの箱、指標の4つの札",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "デザイン・CMS・サーバーを並行して",
+     "ratio": 0.666
+    }
+   ],
+   "no": "20",
+   "links": []
+  },
+  {
    "id": "beauty-ui",
    "label": "AI診断の画面設計（アプリと店頭）",
    "title": "AI DIAGNOSIS UI",
@@ -3674,7 +3814,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "20",
+   "no": "21",
    "links": []
   },
   {
@@ -3825,7 +3965,7 @@ window.SLASH_WORKS = {
      "ratio": 0.693
     }
    ],
-   "no": "21",
+   "no": "22",
    "links": []
   },
   {
@@ -3968,7 +4108,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "22",
+   "no": "23",
    "links": []
   }
  ],
@@ -4054,25 +4194,6 @@ window.SLASH_WORKS = {
   },
   {
    "no": "A06",
-   "year": "2023",
-   "industry": "出版",
-   "tags": [
-    "f-media",
-    "research",
-    "ui",
-    "web",
-    "kpi"
-   ],
-   "kind": "実施",
-   "title": "雑誌のデジタル接点のリニューアル",
-   "detail": "読者のインサイトとターゲットを明確にし、読者に合うUI・UXへリニューアルした。",
-   "results": [
-    "利用金額・滞在時間・流入・再訪率が増加",
-    "CMSの導入で運用の工数を削減"
-   ]
-  },
-  {
-   "no": "A07",
    "year": "2022–2023",
    "industry": "自動車販売",
    "tags": [
@@ -4090,7 +4211,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A08",
+   "no": "A07",
    "year": "2022",
    "industry": "自動車",
    "tags": [
@@ -4107,7 +4228,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A09",
+   "no": "A08",
    "year": "2021",
    "industry": "自動車",
    "tags": [
@@ -4121,7 +4242,7 @@ window.SLASH_WORKS = {
    "results": []
   },
   {
-   "no": "A10",
+   "no": "A09",
    "year": "2020–2021",
    "industry": "自動車",
    "tags": [
@@ -4139,7 +4260,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A11",
+   "no": "A10",
    "year": "2020–2021",
    "industry": "SaaS",
    "tags": [
@@ -4157,7 +4278,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A12",
+   "no": "A11",
    "year": "2020",
    "industry": "金融（カード）",
    "tags": [
@@ -4175,7 +4296,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A13",
+   "no": "A12",
    "year": "2018–2019",
    "industry": "商業施設",
    "tags": [
@@ -4258,6 +4379,7 @@ window.SLASH_WORKS = {
     "isp-loyalty",
     "price-research",
     "taste-learn",
+    "reader-site",
     "condition-ui",
     "urban-inbound"
    ]
@@ -4353,6 +4475,7 @@ window.SLASH_WORKS = {
    ],
    "works": [
     "navi",
+    "reader-site",
     "condition-ui",
     "beauty-ui",
     "dealer-demo",
