@@ -1377,3 +1377,14 @@ section[tabindex="-1"]:focus{outline:none}
 .foot-privacy{margin:10px 0 0;font-size:11.5px;line-height:1.8;color:#ffffff8c;max-width:78ch}
 .foot-privacy a{display:inline-block;margin-left:12px;color:#ffffffc8;border-bottom:1px solid #ffffff55}
 .foot-privacy a:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ---------- 2026-10-06：事例のカード・一覧は初めは閉じ、「すべての事例を見る」で全部を開く ---------- */
+.more-bar{display:flex;align-items:center;gap:clamp(12px,2vw,24px);margin-top:clamp(24px,3vw,40px)}
+.more-bar:before,.more-bar:after{content:'';flex:1;height:1.5px;background:var(--ink)}
+.more-btn{display:inline-flex;align-items:center;gap:12px;height:52px;padding:0 24px 0 30px;border:2px solid var(--ink);border-radius:999px;background:var(--paper);font:700 15px/1 var(--jp);letter-spacing:.04em;color:var(--ink);white-space:nowrap;transition:background .2s,color .2s}
+.more-btn i{display:inline-block;font:700 15px/1 var(--mono);transition:transform .35s var(--ease)}
+.more-btn:hover{background:var(--ink);color:#fff}
+.more-bar.open .more-btn i{transform:rotate(180deg)}
+.view-list .more-bar{margin-top:clamp(20px,2.6vw,32px)}
+@media(max-width:720px){.more-bar{margin-top:22px;gap:10px}.more-btn{height:48px;padding:0 18px 0 22px;font-size:14px;gap:10px}}
+@media(prefers-reduced-motion:reduce){.more-btn i{transition:none}}

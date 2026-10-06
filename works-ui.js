@@ -36,6 +36,8 @@ const visibleProjects = (f = state) => CASES.filter(x => fits(x, f)).map(({ p, i
 const listItems = (f = state) => CASES.concat(ARCH).filter(x => fits(x, f)).sort((x, y) => y.year - x.year || (x.kind === 'case' ? -1 : 1) - (y.kind === 'case' ? -1 : 1) || 0);
 const resultCount = (f = state) => state.view === 'list' ? listItems(f).length : visibleProjects(f).length;
 const filtered = () => !!(state.area || state.field || state.tag);
+// カードと一覧は、初めは閉じて上の数件だけを見せ、「すべての事例を見る」で全部を開く（条件や表示を変えると、閉じた状態に戻る）
+let more = false;
 
 /* ================= 絞り込み：業務領域のタブ（主）・業種（従）・タグ（事例の中のタグから） ================= */
 const fArea = $('#f-area'), fField = $('#f-field'), wsTitle = $('#ws-title'), wsDesc = $('#ws-desc'), wsPills = $('#ws-pills'), worksBar = $('#works-bar');
@@ -68,7 +70,7 @@ function toResults() {
   if (top < want - 2) window.scrollBy({ top: top - want, behavior: reduced ? 'instant' : 'smooth' });
 }
 function setFilters(patch, opts = {}) {
-  Object.assign(state, patch);
+  Object.assign(state, patch); more = false;
   if (state.view === 'layers' && !visibleProjects().length && opts.fallback) state.view = 'list';
   renderFilters(); renderView(true);
   const s = state.area && AREA[state.area];
@@ -125,7 +127,7 @@ addEventListener('resize', () => { clearTimeout(syncHowto._t); syncHowto._t = se
 function setView(v) {
   if (v === state.view) return;
   track('change_view', { view_mode: v });
-  const go = () => { state.view = v; try { localStorage.setItem('slash-view3', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
+  const go = () => { state.view = v; more = false; try { localStorage.setItem('slash-view3', v); } catch (e) { } syncViewButtons(); renderFilters(); renderView(true); };
   if (reduced) { go(); return; }
   viewsBox.classList.remove('wipe'); void viewsBox.offsetWidth; viewsBox.classList.add('wipe');
   setTimeout(go, 330); setTimeout(() => viewsBox.classList.remove('wipe'), 760);
@@ -364,11 +366,11 @@ function renderGrid() {
   const vis = visibleProjects(), sp = narrow.matches;
   grid.classList.toggle('sp', sp);
   if (cardObserver) cardObserver.disconnect();
-  if (sp) { renderSpGrid(vis); watchCovers(); return; }
+  if (sp) { renderSpGrid(vis); watchCovers(); applyMore(); return; }
   grid.innerHTML = vis.map(cardHTML).join('');
   cardObserver = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.style.transitionDelay = `${(+x.target.dataset.k % 3) * 70}ms`; x.target.classList.add('in'); cardObserver.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
   $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced) c.classList.add('in'); else cardObserver.observe(c); });
-  watchCovers();
+  watchCovers(); applyMore();
 }
 /* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例の詳細を開いている間・タブが裏にある間は止める） */
 let coverIO = null;
@@ -417,12 +419,62 @@ function renderList() {
       <span class="lv-ind">${esc(a.industry)}</span><span class="lv-year">${esc(a.year)}</span><span class="lv-tags">${esc(areaText(x.areas))}</span><span class="lv-arrow" aria-hidden="true">+</span></button>
       <div class="lv-detail" id="${id}"><div><div class="lv-detail-in"><p>${esc(a.detail)}</p>${a.results && a.results.length ? `<ul class="lv-results"><li class="lr-label">RESULT</li>${a.results.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}</div></div></div></li>`;
   }).join('');
+  applyMore();
 }
 lv.addEventListener('click', e => {
   const b = e.target.closest('.lv-hit'); if (!b) return;
   if (b.dataset.i != null) { openCase(+b.dataset.i, { from: b, src: 'list' }); return; }
   const row = b.closest('.lv-row'), on = !row.classList.contains('open'); row.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on));
 });
+/* ================= 閉じた一覧（カード・一覧の「すべての事例を見る」） =================
+ * PC のカードは2行ぶん、スマホは注目の2件＋3行（絞り込み中は6行）、一覧は10行を見せる。少し余るだけなら閉じない。 */
+const MORE = { gridRows: 2, spRows: 3, spFiltered: 6, list: 10 };
+function moreBar(after, id) {
+  let bar = document.getElementById(id);
+  if (!bar) {
+    bar = document.createElement('div'); bar.className = 'more-bar'; bar.id = id;
+    bar.innerHTML = `<button type="button" class="more-btn" aria-expanded="false" aria-controls="${after.id}"><span class="more-t"></span><i aria-hidden="true">↓</i></button>`;
+    after.after(bar);
+    bar.firstElementChild.addEventListener('click', e => toggleMore(bar, e.detail === 0));
+  }
+  return bar;
+}
+function moreSet() {
+  if (state.view === 'list') return { items: $$('#lv > .lv-row'), limit: MORE.list, slack: 2, bar: moreBar(lv, 'lv-more'), label: 'すべての事例・取り組みを見る' };
+  if (narrow.matches) return { items: $$('#grid .sp-list > li'), limit: filtered() ? MORE.spFiltered : MORE.spRows, slack: 2, bar: moreBar(grid, 'grid-more'), label: 'すべての事例を見る' };
+  const cols = Math.max(1, getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length);
+  return { items: $$('#grid > .card'), limit: cols * MORE.gridRows, slack: 1, bar: moreBar(grid, 'grid-more'), label: 'すべての事例を見る' };
+}
+function applyMore() {
+  if (state.view === 'layers') return null;
+  const m = moreSet(), can = m.items.length > m.limit + m.slack;
+  m.items.forEach((el, k) => { el.hidden = can && !more && k >= m.limit; });
+  m.bar.hidden = !can; m.bar.classList.toggle('open', more);
+  const btn = m.bar.firstElementChild;
+  btn.setAttribute('aria-expanded', String(more));
+  $('.more-t', btn).textContent = more ? '閉じる' : m.label;
+  const other = document.getElementById(state.view === 'list' ? 'grid-more' : 'lv-more'); if (other) other.hidden = true;
+  return { ...m, can };
+}
+function toggleMore(bar, byKey) {
+  const btn = bar.firstElementChild, before = btn.getBoundingClientRect().top;
+  more = !more;
+  const m = applyMore();
+  if (!more) {
+    // 閉じたら、押したボタンが画面の同じ位置に来るように戻す（下の方で閉じても、見ていた場所を見失わない）
+    window.scrollBy({ top: btn.getBoundingClientRect().top - before, behavior: 'instant' });
+  } else if (byKey && m) {
+    // キーボードで開いたときは、新しく出た最初の項目へ移る
+    const first = m.items[m.limit], t = first && ($('.card-hit, .sp-row, .lv-hit', first) || first);
+    if (t) t.focus();
+  }
+  announce(more ? 'すべてを表示しました。' : '一覧を閉じました。');
+  if (more) track('open_more', { view_mode: state.view });
+}
+// 画面の幅が変わってカードの列の数が変わったら、見せる数も合わせる
+let moreW = 0;
+new ResizeObserver(() => { const w = grid.clientWidth; if (w && w !== moreW) { moreW = w; if (state.view === 'grid') applyMore(); } }).observe(grid);
+
 if (pv) {
   let px = 0, py = 0, vx = 0, rr = 0, prevX = 0;
   // 動画の事例は、浮かぶサムネも動画にする
