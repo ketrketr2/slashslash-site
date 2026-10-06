@@ -10,5 +10,10 @@
     var d = document.body.dataset;
     if (d.caseId && window.slashTrack) window.slashTrack('view_case', { case_id: d.caseId, case_name: d.caseName, case_industry: d.caseIndustry, ui_from: 'page' });
   }
+  // 文字の形（Google Fonts）は最初の描画のあとに読み込む（和文は小分けのファイルが多く、先に読むと最初の描画が遅れる）
+  function fonts() {
+    try { var n = document.getElementById('fonts-ns'), m = n && /href="([^"]+)"/.exec(n.textContent || n.innerHTML); if (m) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = m[1].replace(/&amp;/g, '&'); document.head.appendChild(l); } } catch (e) { }
+  }
+  requestAnimationFrame(function () { setTimeout(fonts, 0); });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();
