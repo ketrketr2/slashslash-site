@@ -333,6 +333,10 @@ function syncPlayback() {
 
 /* ================= カード（GRID） ================= */
 const wallOf = src => String(src || '').replace('assets/works/', 'assets/wall/').replace('assets/crydope-', 'assets/wall/crydope-');
+/* カード・一覧の事例は、事例のページ（/works/<id>/。tools/build_pages.py が書き出す）への本物のリンクにする。
+ * ふつうに押すと、これまでどおりこのページの中で「事例の詳細」を開く。⌘/Ctrl/Shift を押しながら・中ボタンなら、事例のページを開く。 */
+const pageOf = p => `/works/${encodeURIComponent(p.id)}/`;
+const plainClick = e => !(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || (e.button && e.button !== 0));
 const grid = $('#grid');
 let cardObserver = null;
 function coverOf(p) { const L = p.layers.find(l => l.type === 'image' || l.type === 'video'); return L || (p.gallery || [])[0]; }
@@ -341,7 +345,7 @@ function cardHTML({ p, i }) {
   const media = c ? (c.type === 'video' || c.kind === 'video' ? `<img src="${esc(wallOf(c.poster))}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}"><video muted loop playsinline preload="none" data-src="${esc(c.src)}" style="object-position:${esc(c.focus || '50% 50%')}"></video>` : `<img src="${esc(wallOf(c.src))}" alt="" loading="lazy" decoding="async" style="object-position:${esc(c.focus || '50% 50%')}">`) : '';
   const kinds = p.layers.map(l => l.tag).filter(Boolean); const kind = kinds[0] || '';
   return `<article class="card" data-i="${i}">
-      <button type="button" class="card-hit" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く" data-cursor="詳しく見る"></button>
+      <a class="card-hit" href="${pageOf(p)}" aria-haspopup="dialog" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く" data-cursor="詳しく見る"></a>
       <div class="card-media tone-${esc(tone)}">${media}<span class="card-no">${p.no}</span>${kind ? `<span class="card-kind">${esc(kind)}</span>` : ''}</div>
       <div class="card-body"><p class="card-en">${esc(p.title)}</p><h3>${esc(p.label)}</h3><p class="card-meta">${esc(p.industry)}<i>/</i>${esc(p.year)}</p>
       ${PA[p.id].length ? `<p class="card-areas">${esc(areaText(PA[p.id]))}</p>` : ''}<span class="card-cta" aria-hidden="true">詳しく見る<i>↗</i></span></div></article>`;
@@ -352,9 +356,9 @@ const PICK = 2;
 function rowHTML({ p, i }) {
   const c = coverOf(p), thumb = c ? wallOf(c.poster || c.src) : '';
   const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
-  return `<li><button type="button" class="sp-row" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く">
+  return `<li><a class="sp-row" href="${pageOf(p)}" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く">
     <span class="sp-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">` : ''}${vid ? `<video muted loop playsinline preload="none" data-src="${esc(vid)}"></video>` : ''}</span>
-    <span class="sp-text"><small>${p.no}<span>${esc(p.title)}</span></small><b>${esc(p.label)}</b><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></button></li>`;
+    <span class="sp-text"><small>${p.no}<span>${esc(p.title)}</span></small><b>${esc(p.label)}</b><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></a></li>`;
 }
 function renderSpGrid(vis) {
   if (filtered()) { grid.innerHTML = `<ol class="sp-list">${vis.map(rowHTML).join('')}</ol>`; return; }
@@ -392,8 +396,9 @@ new MutationObserver(syncCovers).observe(document.documentElement, { attributes:
 
 narrow.addEventListener('change', () => { if (state.view === 'grid') renderGrid(); });
 grid.addEventListener('click', e => {
-  const row = e.target.closest('.sp-row'); if (row) { openCase(+row.dataset.i, { from: $('.sp-thumb', row), focusTo: row, src: 'card' }); return; }
-  const c = e.target.closest('.card'); if (c) openCase(+c.dataset.i, { from: $('.card-media', c), focusTo: $('.card-hit', c), src: 'card' });
+  if (!plainClick(e)) return; // ⌘/Ctrl/Shift を押しながら：事例のページ（/works/…/）を新しいタブで開く
+  const row = e.target.closest('.sp-row'); if (row) { e.preventDefault(); openCase(+row.dataset.i, { from: $('.sp-thumb', row), focusTo: row, src: 'card' }); return; }
+  const c = e.target.closest('.card'); if (c) { e.preventDefault(); openCase(+c.dataset.i, { from: $('.card-media', c), focusTo: $('.card-hit', c), src: 'card' }); }
 });
 grid.addEventListener('pointerout', e => { const c = e.target.closest('.card'); if (!c || c.contains(e.relatedTarget)) return; c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); });
 grid.addEventListener('pointermove', e => {
@@ -409,9 +414,9 @@ function renderList() {
     if (x.kind === 'case') {
       const p = x.p, c = coverOf(p);
       const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
-      return `<li class="lv-row is-case"><button type="button" class="lv-hit" data-i="${x.i}" data-thumb="${esc(c ? (c.poster || c.src) : '')}" data-vid="${esc(vid)}" aria-haspopup="dialog">
+      return `<li class="lv-row is-case"><a class="lv-hit" href="${pageOf(p)}" data-i="${x.i}" data-thumb="${esc(c ? (c.poster || c.src) : '')}" data-vid="${esc(vid)}" aria-haspopup="dialog">
         <span class="lv-no">${p.no}</span><span class="lv-title"><b><span class="lv-kind">事例</span>${esc(p.label)}</b><span class="lv-en">${esc(p.title)}</span><span class="lv-meta">${esc(p.industry)} / ${esc(p.year)}</span></span>
-        <span class="lv-ind">${esc(p.industry)}</span><span class="lv-year">${esc(p.year)}</span><span class="lv-tags">${esc(areaText(x.areas))}</span><span class="lv-arrow" aria-hidden="true">↗</span></button></li>`;
+        <span class="lv-ind">${esc(p.industry)}</span><span class="lv-year">${esc(p.year)}</span><span class="lv-tags">${esc(areaText(x.areas))}</span><span class="lv-arrow" aria-hidden="true">↗</span></a></li>`;
     }
     const a = x.a, id = `lvd-${a.no}`;
     return `<li class="lv-row is-arch"><button type="button" class="lv-hit" aria-expanded="false" aria-controls="${id}">
@@ -423,7 +428,7 @@ function renderList() {
 }
 lv.addEventListener('click', e => {
   const b = e.target.closest('.lv-hit'); if (!b) return;
-  if (b.dataset.i != null) { openCase(+b.dataset.i, { from: b, src: 'list' }); return; }
+  if (b.dataset.i != null) { if (!plainClick(e)) return; e.preventDefault(); openCase(+b.dataset.i, { from: b, src: 'list' }); return; }
   const row = b.closest('.lv-row'), on = !row.classList.contains('open'); row.classList.toggle('open', on); b.setAttribute('aria-expanded', String(on));
 });
 /* ================= 閉じた一覧（カード・一覧の「すべての事例を見る」） =================

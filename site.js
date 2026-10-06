@@ -145,7 +145,7 @@ function buildWall() {
   const pool = wallSources.slice(); let k = 0; let html = '';
   for (let r = 0; r < rows; r++) {
     const imgs = []; for (let i = 0; i < per; i++) { imgs.push(pool[(k * 7 + r * 5) % pool.length]); k++; }
-    const strip = imgs.map(src => `<img src="${esc(src)}" alt="" loading="${r < 3 ? 'eager' : 'lazy'}" decoding="async">`).join('');
+    const strip = imgs.map(src => `<img src="${esc(src)}" alt="" loading="${r < 4 ? 'eager' : 'lazy'}" decoding="async">`).join('');
     html += `<div class="wall-row ${r % 2 ? 'rev' : ''}" style="--dur:${58 + r * 11}s">${strip}${strip}</div>`;
   }
   plane.innerHTML = html;
@@ -163,6 +163,10 @@ if (hero && wallPlane) {
   hero.addEventListener('pointermove', e => { if (reduced || e.pointerType !== 'mouse') return; const r = hero.getBoundingClientRect(); const nx = (e.clientX - r.left) / r.width * 2 - 1, ny = (e.clientY - r.top) / r.height * 2 - 1; wallPlane.style.setProperty('--mx', nx.toFixed(3)); wallPlane.style.setProperty('--my', ny.toFixed(3)); $$('.ht-row', heroType).forEach((row, i) => { row.style.setProperty('--fs', `${Math.round((i % 2 ? 125 : 68) + nx * (i % 2 ? -30 : 30))}%`); }); });
   new IntersectionObserver(es => hero.classList.toggle('off', !es[0].isIntersecting)).observe(hero);
 }
+/* 画面の外にある節の動き（CSS のアニメーション）は止める（.still）。
+ * 体制図の点線（stroke-dashoffset）や光（box-shadow）は、画面の外でも毎フレーム描き直しが走り、スマホでは重さの大半を占めていた */
+const stillIO = new IntersectionObserver(es => es.forEach(x => x.target.classList.toggle('still', !x.isIntersecting)), { rootMargin: '160px 0px' });
+$$('main > section:not(.hero), .site-footer').forEach(s => stillIO.observe(s));
 // 体制の人数を数え上げる
 function countUp(el, n) { if (!el) return; if (reduced) { el.textContent = pad(n); return; } let i = 0; const t = setInterval(() => { i++; el.textContent = pad(i); if (i >= n) clearInterval(t); }, 60); }
 countUp($('[data-count="team"]'), (D.roles || []).length || 20);
@@ -271,14 +275,37 @@ if (aiGrid) {
     const portrait = (p.gallery || []).some(a => a.src === it.media && a.ratio > 1.15);
     return `<li class="ai-item"><div class="ai-media ${portrait ? 'portrait' : ''}"><img src="${esc(poster)}" alt="" loading="lazy" decoding="async">${isVid ? `<video muted loop playsinline preload="none" data-auto data-src="${esc(it.media)}" poster="${esc(poster)}"></video>` : ''}<span class="ai-no">${pad(k + 1)} / ${esc(it.no)}</span></div>
       <div class="ai-body"><h3>${esc(it.title)}</h3><p>${esc(it.body)}</p><span class="ai-link"><small>${esc(p.title)}</small>事例を詳しく見る ↗</span></div>
-      <button type="button" class="ai-hit" data-open="${esc(it.id)}" aria-label="${esc(it.title)}：${esc(p.label)}の事例の詳細を開く" data-cursor="詳しく見る"></button></li>`;
+      <a class="ai-hit" href="/works/${encodeURIComponent(it.id)}/" data-open="${esc(it.id)}" aria-haspopup="dialog" aria-label="${esc(it.title)}：${esc(p.label)}の事例の詳細を開く" data-cursor="詳しく見る"></a></li>`;
   }).join('');
   $$('video[data-auto]', aiGrid).forEach(v => playIO.observe(v));
-  aiGrid.addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b && window.SlashWorks) window.SlashWorks.open(b.dataset.open, b.closest('.ai-item').querySelector('.ai-media'), 'ai'); });
+  aiGrid.addEventListener('click', e => {
+    const b = e.target.closest('[data-open]'); if (!b || !window.SlashWorks) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || (e.button && e.button !== 0)) return; // 押しながら：事例のページを新しいタブで開く
+    e.preventDefault(); window.SlashWorks.open(b.dataset.open, b.closest('.ai-item').querySelector('.ai-media'), 'ai');
+  });
   const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
   $$('.ai-item', aiGrid).forEach((el, k) => { el.style.transitionDelay = `${(k % 3) * 80}ms`; io.observe(el); });
+  // スマホでは、初めは上の2件だけを見せ、「すべてのAIの例を見る」で全部を開く（実績のカードと同じ形）
+  const aiNarrow = matchMedia('(max-width: 720px)'), AI_SHOW = 2;
+  let aiMore = false;
+  const aiBar = document.createElement('div'); aiBar.className = 'more-bar on-dark'; aiBar.id = 'ai-more';
+  aiBar.innerHTML = '<button type="button" class="more-btn" aria-expanded="false" aria-controls="ai-grid"><span class="more-t"></span><i aria-hidden="true">↓</i></button>';
+  aiGrid.after(aiBar);
+  const applyAiMore = () => {
+    const items = $$('.ai-item', aiGrid), can = aiNarrow.matches && items.length > AI_SHOW + 1;
+    items.forEach((el, k) => { el.hidden = can && !aiMore && k >= AI_SHOW; });
+    aiBar.hidden = !can; aiBar.classList.toggle('open', aiMore);
+    const b = aiBar.firstElementChild; b.setAttribute('aria-expanded', String(aiMore)); $('.more-t', b).textContent = aiMore ? '閉じる' : 'すべてのAIの例を見る';
+  };
+  aiBar.firstElementChild.addEventListener('click', e => {
+    const b = e.currentTarget, before = b.getBoundingClientRect().top;
+    aiMore = !aiMore; applyAiMore();
+    if (!aiMore) window.scrollBy({ top: b.getBoundingClientRect().top - before, behavior: 'instant' });
+    else { if (e.detail === 0) { const f = $$('.ai-item', aiGrid)[AI_SHOW], t = f && $('.ai-hit', f); if (t) t.focus(); } track('open_more', { view_mode: 'ai' }); }
+  });
+  aiNarrow.addEventListener('change', applyAiMore); applyAiMore();
 }
-$$('.ai-more[data-open]').forEach(b => { if (!byId[b.dataset.open]) { b.replaceWith(document.createTextNode(b.textContent)); return; } b.addEventListener('click', () => { if (window.SlashWorks) window.SlashWorks.open(b.dataset.open, b, 'ai'); }); });
+$$('.ai-more[data-open]').forEach(b => { if (!byId[b.dataset.open]) { b.replaceWith(document.createTextNode(b.textContent)); return; } b.addEventListener('click', e => { if (!window.SlashWorks || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); window.SlashWorks.open(b.dataset.open, b, 'ai'); }); });
 
 /* ---------- 業務領域（SERVICES）----------
  * 初めはすべて閉じ、領域の名前と説明だけを並べる。開くと、できることと、関係する事例（文字のリンク）を出す。 */
@@ -312,10 +339,12 @@ const placedRoles = (() => {
   const gap = .6, total = ordered.length + groups.length * gap; let pos = 0, prevGroup = null;
   return ordered.map((r, k) => { if (r.group !== prevGroup) { pos += gap; prevGroup = r.group; } const a = -Math.PI / 2 + (pos / total) * Math.PI * 2; pos += 1; const ring = k % 2 ? .7 : 1; return { r, x: 50 + Math.cos(a) * 43 * ring, y: 50 + Math.sin(a) * 44 * ring }; });
 })();
+// 役割の名前は、語の切れ目でだけ折り返す（スマホの星座の図で「ディレク／ター」のように切れないように）
+const roleWbr = t => esc(t).replace(/・/g, '・<wbr>').replace(/(ディレクター|コンサル|アナリスト|（)/g, '<wbr>$1');
 function teamNetHTML(core = '代表 中井') {
   return `<svg class="team-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${placedRoles.map(({ r, x, y }) => `<line data-role="${r.id}" x1="50" y1="50" x2="${x.toFixed(2)}" y2="${y.toFixed(2)}" vector-effect="non-scaling-stroke"/>`).join('')}</svg>` +
-    `<div class="team-core"><b>s/ash</b><span>${esc(core)}</span></div>` +
-    `<ol class="team-roles">${placedRoles.map(({ r, x, y }) => `<li class="role" data-role="${r.id}" data-group="${r.group}" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%"><button type="button" aria-pressed="false"><b>${esc(r.en)}</b><span>${esc(r.label)}</span></button></li>`).join('')}</ol>`;
+    `<i class="team-glow" aria-hidden="true"></i><div class="team-core"><b>s/ash</b><span>${esc(core)}</span></div>` +
+    `<ol class="team-roles">${placedRoles.map(({ r, x, y }) => `<li class="role" data-role="${r.id}" data-group="${r.group}" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%"><button type="button" aria-pressed="false"><b>${esc(r.en)}</b><span>${roleWbr(r.label)}</span></button></li>`).join('')}</ol>`;
 }
 // set：光らせる役割、pick：選んでいる役割（さらに強く）
 function paintTeamNet(net, set, pick) {
@@ -326,19 +355,25 @@ const teamLegend = () => `<div class="team-legend">${groups.map(g => `<span><i s
 
 /* 体制の図を、宇宙の星のようにわずかに動かす。
  * 役割の点はそれぞれ小さくゆっくり漂い、全体もごく小さく回る。線は点に付いていく。背景には瞬く星。
- * 見えている間だけ動かし、動きを止める設定・スマホの並べ表示（720px以下）では止める。ポインタが乗っている間は動きを弱め、乗っている役割は止める。 */
+ * 見えている間だけ動かし、動きを止める設定では止める（スマホでも星座の図のまま動かす）。ポインタが乗っている間は動きを弱め、乗っている役割は止める。 */
 const seeded = n => () => { n = (n * 16807) % 2147483647; return (n - 1) / 2147483646; };
 const NETS = new Set(); let driftRaf = 0;
+// 漂う動きと星は、とてもゆっくり（速くても1秒に2px弱）なので、1秒に15回描き直せば十分なめらかに見える。
+// 体制図と星は同じコマで描き直し、スクロールしている間は描き直さない（スクロールを引っかからせない）
+let slowAt = 0, slowNow = -1, scrollAt = -1e9;
+addEventListener('scroll', () => { scrollAt = performance.now(); }, { passive: true });
+function slowTick(now) { if (now === slowNow) return true; if (now - scrollAt < 140) return false; if (now - slowAt >= 66) { slowAt = slowNow = now; return true; } return false; }
 function animateNet(net) {
   if (!net || net._drift) return;
+  layoutNet(net);
   const rnd = seeded(7919);
   const items = $$('.role', net).map(li => {
     const line = net.querySelector(`line[data-role="${li.dataset.role}"]`);
     return { li, line, x: parseFloat(li.style.getPropertyValue('--x')), y: parseFloat(li.style.getPropertyValue('--y')), ax: .5 + rnd() * .55, ay: .45 + rnd() * .55, fx: 2 * Math.PI / (15 + rnd() * 13), fy: 2 * Math.PI / (17 + rnd() * 13), px: rnd() * 6.28, py: rnd() * 6.28, tw: 2 * Math.PI / (3.5 + rnd() * 5), tp: rnd() * 6.28, k: 1 };
   });
-  const st = { net, items, w: net.clientWidth, h: net.clientHeight, vis: false, over: false, hot: null, calm: 0, moved: false, t0: performance.now() - rnd() * 20000 };
+  const st = { net, items, glow: net.querySelector('.team-glow'), w: net.clientWidth, h: net.clientHeight, vis: false, over: false, hot: null, calm: 0, moved: false, t0: performance.now() - rnd() * 20000 };
   net._drift = st; NETS.add(st);
-  new ResizeObserver(() => { st.w = net.clientWidth; st.h = net.clientHeight; wakeNets(); }).observe(net);
+  new ResizeObserver(() => { const w = net.clientWidth; if (NET_MQ.matches && w && Math.abs(w - (st.lw || 0)) > 2) { st.lw = w; layoutNet(net); } st.w = w; st.h = net.clientHeight; wakeNets(); }).observe(net);
   new IntersectionObserver(es => { st.vis = es[0].isIntersecting; wakeNets(); }, { rootMargin: '80px 0px' }).observe(net);
   net.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') st.over = true; });
   net.addEventListener('pointerleave', () => { st.over = false; st.hot = null; });
@@ -347,21 +382,24 @@ function animateNet(net) {
   net.addEventListener('focusout', () => { st.hot = null; });
   wakeNets();
 }
-function resetNet(st) { st.moved = false; st.items.forEach(it => { it.li.style.translate = ''; if (it.line) { it.line.setAttribute('x2', it.x.toFixed(2)); it.line.setAttribute('y2', it.y.toFixed(2)); it.line.style.removeProperty('--tw'); } }); }
+function resetNet(st) { st.moved = false; if (st.glow) st.glow.style.opacity = ''; st.items.forEach(it => { it.li.style.translate = ''; if (it.line) { it.line.setAttribute('x2', it.x.toFixed(2)); it.line.setAttribute('y2', it.y.toFixed(2)); it.line.style.removeProperty('--tw'); } }); }
 function wakeNets() { if (!driftRaf) driftRaf = requestAnimationFrame(driftFrame); }
 function driftFrame(now) {
-  driftRaf = 0; let any = false;
+  driftRaf = 0; let any = false; const step = slowTick(now);
   NETS.forEach(st => {
     if (!st.net.isConnected) { NETS.delete(st); return; }
-    if (!(st.vis && !reduced && !document.hidden && innerWidth > 720 && st.w > 0)) { if (st.moved) resetNet(st); return; }
-    any = true; st.moved = true;
+    if (!(st.vis && !reduced && !document.hidden && st.w > 0)) { if (st.moved) resetNet(st); st.lastT = 0; return; }
+    any = true; if (!step) return;
+    st.moved = true;
+    const df = st.lastT ? Math.min(6, (now - st.lastT) / 16.67) : 1; st.lastT = now; // コマの間隔が変わっても、なめらかさの速さは同じにする
     const t = (now - st.t0) / 1000, W = st.w, H = st.h;
-    st.calm += ((st.over ? 1 : 0) - st.calm) * .05;
+    st.calm += ((st.over ? 1 : 0) - st.calm) * (1 - Math.pow(.95, df));
     const amp = 1 - st.calm * .7;
     const rot = Math.sin(t * 2 * Math.PI / 96) * 1.1 * Math.PI / 180; // 全体がごくゆっくり ±1.1° 回る
     const cs = Math.cos(rot), sn = Math.sin(rot);
+    if (st.glow) st.glow.style.opacity = (.5 + .5 * Math.sin(t * 2 * Math.PI / 12)).toFixed(3); // 中心の光がゆっくり脈打つ（12秒で1周）
     st.items.forEach(it => {
-      it.k += ((st.hot === it.li ? 0 : 1) - it.k) * .12;
+      it.k += ((st.hot === it.li ? 0 : 1) - it.k) * (1 - Math.pow(.88, df));
       const a = amp * it.k;
       const dx = (it.x - 50) * W / 100, dy = (it.y - 50) * H / 100;
       const X = 50 + (dx * cs - dy * sn) * 100 / W + Math.sin(t * it.fx + it.px) * it.ax * a;
@@ -373,7 +411,7 @@ function driftFrame(now) {
   if (any) driftRaf = requestAnimationFrame(driftFrame);
 }
 // 背景の星。大きさの違う点が、ゆっくり瞬きながら少しずつ流れる
-const SKIES = new Set(); let skyRaf = 0, skyLast = 0;
+const SKIES = new Set(); let skyRaf = 0, skyLast = 0, skyOdd = false;
 function starSky(host, density = 5200) {
   if (!host || host._sky) return;
   const c = document.createElement('canvas'); c.className = 'stars'; c.setAttribute('aria-hidden', 'true'); host.prepend(c);
@@ -381,7 +419,8 @@ function starSky(host, density = 5200) {
   host._sky = S; SKIES.add(S);
   const build = () => {
     S.w = Math.max(1, Math.round(host.clientWidth)); S.h = Math.max(1, Math.round(host.clientHeight));
-    S.dpr = Math.min(devicePixelRatio || 1, 2, Math.sqrt(4.2e6 / (S.w * S.h)));
+    // 星は小さな点なので、解像度は控えめでよい（大きなキャンバスの描き直しと転送が、スマホでいちばん重かった）
+    S.dpr = Math.min(devicePixelRatio || 1, innerWidth <= 720 ? 1.25 : 1.5, Math.sqrt(1.8e6 / (S.w * S.h)));
     c.width = Math.round(S.w * S.dpr); c.height = Math.round(S.h * S.dpr);
     const rnd = seeded(S.w * 31 + S.h * 7 + 1), n = Math.min(420, Math.round(S.w * S.h / density));
     S.list = Array.from({ length: n }, () => { const big = rnd() < .07; const r = rnd(); return { x: rnd(), y: rnd(), r: big ? 1.05 + rnd() * .85 : .4 + rnd() * .55, a: big ? .55 + rnd() * .35 : .16 + rnd() * .42, f: .35 + rnd() * 1.25, p: rnd() * 6.28, col: r < .1 ? '#69d9ee' : r < .14 ? '#ff8fab' : '#ffffff', vx: (rnd() - .5) * 1.4, vy: -(.2 + rnd() * .6) }; });
@@ -413,11 +452,61 @@ function skyFrame(now) {
     if (reduced || document.hidden) { if (!S.still) { S.still = true; drawSky(S, now); } return; }
     S.still = false; any = true;
   });
-  if (any) { if (now - skyLast > 32) { skyLast = now; SKIES.forEach(S => { if (S.vis && !S.still) drawSky(S, now); }); } skyRaf = requestAnimationFrame(skyFrame); }
+  // 星の描き直しは、体制図の2コマに1回（1秒に7〜8回）。大きなキャンバスの転送がいちばん重いため
+  if (any) { if (slowTick(now) && (skyOdd = !skyOdd)) { skyLast = now; SKIES.forEach(S => { if (S.vis && !S.still) drawSky(S, now); }); } skyRaf = requestAnimationFrame(skyFrame); }
 }
 document.addEventListener('slash:motion', () => { wakeNets(); SKIES.forEach(S => { S.still = false; drawSky(S, performance.now()); }); wakeSky(); });
 document.addEventListener('visibilitychange', () => { wakeNets(); wakeSky(); });
 addEventListener('resize', wakeNets);
+// スマホ（720px以下）でも星座の図にする：横を詰めて、縦長の楕円に置く。画面の幅が境目をまたいだら置き直す
+const NET_MQ = matchMedia('(max-width: 720px)');
+function layoutNet(net) {
+  const k = NET_MQ.matches ? .8 : 1;
+  placedRoles.forEach(({ r, x, y }) => {
+    const X = 50 + (x - 50) * k, li = net.querySelector(`.role[data-role="${r.id}"]`), ln = net.querySelector(`line[data-role="${r.id}"]`);
+    if (li) { li.style.setProperty('--x', X.toFixed(2) + '%'); li.style.setProperty('--y', y.toFixed(2) + '%'); li.style.translate = ''; }
+    if (ln) { ln.setAttribute('x2', X.toFixed(2)); ln.setAttribute('y2', y.toFixed(2)); }
+  });
+  if (NET_MQ.matches) relaxNet(net);
+  const st = net._drift; if (st) st.items.forEach(it => { it.x = parseFloat(it.li.style.getPropertyValue('--x')); it.y = parseFloat(it.li.style.getPropertyValue('--y')); });
+}
+// スマホ：役割の札どうしが重ならないよう、楕円の位置から少しずつ押し広げる（中心の円もよけ、枠の中に収める）
+function relaxNet(net) {
+  const W = net.clientWidth, H = net.clientHeight; if (!W || !H) return;
+  const core = net.querySelector('.team-core'), cr = core ? core.offsetWidth / 2 + 12 : 0, PAD = 12;
+  const items = placedRoles.map(({ r }) => {
+    const li = net.querySelector(`.role[data-role="${r.id}"]`), b = li && li.firstElementChild; if (!b) return null;
+    return { li, ln: net.querySelector(`line[data-role="${r.id}"]`), w: b.offsetWidth + PAD, h: b.offsetHeight + PAD, x: parseFloat(li.style.getPropertyValue('--x')) * W / 100, y: parseFloat(li.style.getPropertyValue('--y')) * H / 100 };
+  }).filter(Boolean);
+  for (let n = 0; n < 800; n++) {
+    let moved = false;
+    for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+      const a = items[i], b = items[j], ox = (a.w + b.w) / 2 - Math.abs(a.x - b.x), oy = (a.h + b.h) / 2 - Math.abs(a.y - b.y);
+      if (ox <= 0 || oy <= 0) continue;
+      moved = true;
+      // 縦に長い枠なので、上下にずらす方を優先する（左右は端で詰まりやすい）
+      if (ox * 2.2 < oy) { const d = ox / 2 * (Math.sign(a.x - b.x) || 1); a.x += d; b.x -= d; } else { const d = oy / 2 * (Math.sign(a.y - b.y) || 1); a.y += d; b.y -= d; }
+    }
+    items.forEach(a => {
+      const dx = a.x - W / 2, dy = a.y - H / 2, d = Math.hypot(dx, dy) || 1, need = cr + Math.min(a.w, a.h * 2) / 2;
+      if (d < need) { a.x = W / 2 + dx / d * need; a.y = H / 2 + dy / d * need; moved = true; }
+      a.x = Math.min(W - a.w / 2 + PAD / 2, Math.max(a.w / 2 - PAD / 2, a.x)); a.y = Math.min(H - a.h / 2 + PAD / 2, Math.max(a.h / 2 - PAD / 2, a.y));
+    });
+    if (!moved) break;
+  }
+  items.forEach(a => {
+    const X = a.x / W * 100, Y = a.y / H * 100;
+    a.li.style.setProperty('--x', X.toFixed(2) + '%'); a.li.style.setProperty('--y', Y.toFixed(2) + '%');
+    if (a.ln) { a.ln.setAttribute('x2', X.toFixed(2)); a.ln.setAttribute('y2', Y.toFixed(2)); }
+  });
+}
+NET_MQ.addEventListener('change', () => { NETS.forEach(st => layoutNet(st.net)); wakeNets(); });
+// 文字の形は表示を待たせずに読み込む（boot.js）ので、届いたあとに役割の札の大きさが変わる。そのたびに置き直す
+if (document.fonts) {
+  const relayNets = () => { if (NET_MQ.matches) NETS.forEach(st => layoutNet(st.net)); };
+  if (document.fonts.ready) document.fonts.ready.then(relayNets);
+  if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', relayNets);
+}
 window.SlashTeam = { netHTML: teamNetHTML, paint: paintTeamNet, role: id => roleById[id], usedBy, groups, legend: teamLegend, animate: animateNet, sky: starSky };
 
 const net = $('#team-net'), panel = $('#team-panel'), caseChips = $('#team-cases');
