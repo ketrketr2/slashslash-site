@@ -1,7 +1,7 @@
 /* s/ash WORKS — 実績の3つの表示（1件ずつ・カード・一覧）、タグの絞り込み、事例の詳細（CASE）。
  * データは works.js（window.SLASH_WORKS）。「1件ずつ」は4枚の面を透視変換で並べ、選んだ面から事例の詳細へ切り替える。
  * 動きを止める設定（OS・ヘッダーのボタン）では、浮遊・自動再生・切り替えの演出を止める。 */
-(function () {
+(window.slashInit || function (f) { f(); })(function () {
 'use strict';
 const D = window.SLASH_WORKS; if (!D) return;
 const projects = D.projects, archive = D.archive || [];
@@ -786,4 +786,4 @@ if (startHash === '#works' || startHash.startsWith('#w-')) {
   requestAnimationFrame(go);
   if (document.readyState === 'complete') setTimeout(go, 60); else addEventListener('load', go, { once: true });
 }
-})();
+});

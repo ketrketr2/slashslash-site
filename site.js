@@ -1,6 +1,6 @@
 /* s/ash — 動きの設定、導入、ヘッダー、いまの節（目次・スマホの移動バー）、カーソル、文字の動き、ヒーロー、AI、業務領域、体制、プロフィール、問い合わせ。
  * 実績（1件ずつ・カード・一覧）と事例の詳細は works-ui.js。 */
-(function () {
+(window.slashInit || function (f) { f(); })(function () {
 'use strict';
 const D = window.SLASH_WORKS || { projects: [], services: [], archive: [], roles: [], ai: [] };
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -591,4 +591,4 @@ if (form) {
 }
 
 setReduced(reduced, false);
-})();
+});

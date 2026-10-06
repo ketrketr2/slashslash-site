@@ -1,6 +1,6 @@
 /* s/ash — 開幕。闇（煙と星の空）を、ロゴの斜線に沿って一閃で切り裂き、二つに割れてサイトが現れる。
  * 空は WebGL のシェーダーで描く（使えない端末では CSS の暗いグラデーション）。動きを止める設定では出さない。 */
-(function () {
+(window.slashInit || function (f) { f(); })(function () {
 'use strict';
 const root = document.documentElement, intro = document.getElementById('intro');
 if (!intro) return;
@@ -99,4 +99,4 @@ if (!hold) {
   halfB.addEventListener('animationend', e => { if (e.animationName === 'half-b') finish(); });
   setTimeout(finish, Math.max(300, 2000 - performance.now()));
 }
-})();
+});
