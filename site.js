@@ -255,7 +255,8 @@ addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFra
 addEventListener('resize', onScroll); onScroll();
 // 画像の読み込みで節の高さが変わっても、いまの節を取り直す
 addEventListener('load', onScroll);
-new ResizeObserver(() => { if (!tick) { tick = true; requestAnimationFrame(onScroll); } }).observe(body);
+// 読み込みの間は高さが何度も変わるので、まとめて1回だけ取り直す（そのたびにページ全体の配置を計算し直さない）
+let bodyRT = 0; new ResizeObserver(() => { clearTimeout(bodyRT); bodyRT = setTimeout(() => { if (!tick) { tick = true; requestAnimationFrame(onScroll); } }, 150); }).observe(body);
 
 /* ---------- 見えている動画だけ再生 ---------- */
 const mp4 = src => src.replace(/\.webm$/, '.mp4');
@@ -503,7 +504,7 @@ function relaxNet(net) {
 NET_MQ.addEventListener('change', () => { NETS.forEach(st => layoutNet(st.net)); wakeNets(); });
 // 文字の形は表示を待たせずに読み込む（boot.js）ので、届いたあとに役割の札の大きさが変わる。そのたびに置き直す
 if (document.fonts) {
-  const relayNets = () => { if (NET_MQ.matches) NETS.forEach(st => layoutNet(st.net)); };
+  let relayT = 0; const relayNets = () => { clearTimeout(relayT); relayT = setTimeout(() => { if (NET_MQ.matches) NETS.forEach(st => layoutNet(st.net)); }, 200); }; // 和文の書体は小分けに届くので、まとめて1回
   if (document.fonts.ready) document.fonts.ready.then(relayNets);
   if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', relayNets);
 }

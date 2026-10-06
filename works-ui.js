@@ -356,7 +356,7 @@ const PICK = 2;
 function rowHTML({ p, i }) {
   const c = coverOf(p), thumb = c ? wallOf(c.poster || c.src) : '';
   const vid = c && (c.type === 'video' || c.kind === 'video') ? c.src : '';
-  return `<li><a class="sp-row" href="${pageOf(p)}" data-i="${i}" aria-haspopup="dialog" aria-label="${esc(p.label)}（${esc(p.title)}）の事例の詳細を開く">
+  return `<li><a class="sp-row" href="${pageOf(p)}" data-i="${i}" aria-haspopup="dialog">
     <span class="sp-thumb">${thumb ? `<img src="${esc(thumb)}" alt="" loading="lazy" decoding="async">` : ''}${vid ? `<video muted loop playsinline preload="none" data-src="${esc(vid)}"></video>` : ''}</span>
     <span class="sp-text"><small>${p.no}<span>${esc(p.title)}</span></small><b>${esc(p.label)}</b><em>${esc(p.industry)} / ${esc(p.year)}</em></span><i aria-hidden="true">↗</i></a></li>`;
 }
