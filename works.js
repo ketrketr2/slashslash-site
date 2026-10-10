@@ -3557,16 +3557,18 @@ window.SLASH_WORKS = {
     "f-media"
    ],
    "subtitle": "見た目を新しくするだけでなく、読者が公式サイトを「見る理由」から作り直す",
-   "summary": "出版社の雑誌の公式サイトと、新人作家を募るサイトのリニューアルを、読者の調査から企画、デザイン、CMSとサーバーの構築、公開まで進めた。調査では、公式サイトを見ない読者の多くが「特に見たいものがない」と答えていた。そこで、作り手と話しながら作品を選べる市場のようなサイトを掲げ、作品の魅力が一目で伝わる特集ページ、作家の声に触れられる導線、情報の多さに軽重をつけた画面を設計し、試し読みは自社のアプリへつないだ。公開後の更新は、社内の担当者がCMSで行う。",
+   "summary": "出版社の雑誌の公式サイトと、新人作家を募るサイトのリニューアルを、読者の調査から企画、デザイン、CMSとサーバーの構築、公開まで進めた。調査では、公式サイトを見ない読者の多くが「特に見たいものがない」と答えていた。そこで、作り手と話しながら作品を選べる市場のようなサイトを掲げ、作品の魅力が一目で伝わる特集ページ、作家の声に触れられる導線、情報の多さに軽重をつけた画面を設計し、試し読みは自社のアプリへつないだ。公開後の更新は、社内の担当者がCMSで行う。作品ごとの特設サイトも手がけた。",
    "can": [
     "読者の調査から、公式サイトを「見る理由」を見つける",
     "コンセプトと情報設計（サイトマップ・ページの一覧・ワイヤーフレーム）",
     "情報の多い画面に軽重をつけるUIとデザインのディレクション",
     "CMSの要件定義と構築、既存のコンテンツの移行",
-    "サーバーの要件定義（アクセスの予測・セキュリティ・バックアップ）と、運用の引き継ぎ"
+    "サーバーの要件定義（アクセスの予測・セキュリティ・バックアップ）と、運用の引き継ぎ",
+    "作品ごとの特設サイトの企画と制作"
    ],
    "results": [
     "利用金額・滞在時間・流入数・再訪率などの指標が増加",
+    "読みやすさとページビューが向上",
     "CMSの導入で、社内の運用の工数を削減"
    ],
    "process": [
@@ -3678,6 +3680,142 @@ window.SLASH_WORKS = {
     }
    ],
    "no": "20",
+   "links": []
+  },
+  {
+   "id": "beauty-app",
+   "label": "化粧品の公式アプリのフルリニューアル",
+   "title": "APP RENEWAL",
+   "kicker": "APP RENEWAL / UI・UX",
+   "industry": "化粧品",
+   "year": "2022–2024",
+   "status": "要件定義から公開まで（制作会社のチームとして参画）",
+   "tags": [
+    "ui",
+    "web",
+    "cx",
+    "omni",
+    "f-beauty"
+   ],
+   "subtitle": "売上の多くを占めるアプリを、使い心地を崩さずに作り直す",
+   "summary": "化粧品の会社の公式アプリのフルリニューアルを、制作会社のチームとして担当した。売上の多くをアプリが占めるため、買う・続けるための操作は変えないことを条件に、UI・UXの観点から画面と機能の構造を設計し直した。要件定義から、画面の設計とデザインなどフロントの制作全般を受け持ち、アプリの開発会社と連携して公開まで進めた。あわせて、販売の施策や店舗とつなぐ取り組みに合わせた画面の制作を、年間を通して担当した。",
+   "can": [
+    "売上を支えるアプリの、使い心地を崩さないリニューアルの設計",
+    "UI・UXの観点からの画面と機能の構造設計",
+    "要件定義と、画面の一覧・遷移図・仕様書",
+    "フロントの制作全般（画面の設計・デザイン・部品）",
+    "アプリの開発会社との仕様のすり合わせと、公開までの進行",
+    "販売の施策や、店舗と共通の会員証に合わせた画面の制作"
+   ],
+   "process": [
+    "いまの使われ方と売上につながる流れを洗い出し、変えない所と作り直す所を決める",
+    "要件定義と、画面の構造・遷移の設計。主要な画面からデザインし、ひな形と部品にする",
+    "アプリの開発会社と文書で仕様をそろえ、表示を確かめて公開。施策に合わせた画面の制作も続ける"
+   ],
+   "team": [
+    "lead",
+    "planner",
+    "prodd",
+    "designer",
+    "sysd"
+   ],
+   "note": "制作会社のチームの一員として参画し、アプリの開発は開発会社が担当しました。社名・ブランド名・アプリ名は伏せています。図は構成と考え方を示す模式図で、実際の画面ではありません。数値は架空です。",
+   "tape": [
+    "KEEP",
+    "REBUILD",
+    "APP",
+    "UX"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/beauty-app/01-keep.jpg",
+     "kind": "image",
+     "title": "変えないもの・作り直すもの",
+     "caption": "アプリの中の流れのうち、買う・続ける操作は変えず、見せ方と探し方を作り直すと決めた範囲と、売上への近さと変える量の関係（模式図・数値は架空）",
+     "alt": "6つの段階の流れの箱と、変えないもの・作り直すものの表、売上への近さと変える量の散布図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-app/02-structure.jpg",
+     "kind": "image",
+     "title": "5つのタブと、ひな形で増やす画面",
+     "caption": "下のタブの数と並びは変えずに、ひとつずつ設計する主要な画面と、ひな形から展開する画面に分けた構成と、主要な画面の模式（模式図）",
+     "alt": "左に5つのタブから枝分かれする画面の木構造、右に3台のスマートフォンの画面の模式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-app/03-build.jpg",
+     "kind": "image",
+     "title": "要件から画面へ、開発会社とつなぐ",
+     "caption": "事業の担当・制作チーム・アプリの開発会社の役割と受け渡しの文書、アプリと裏側でつながる仕組み（模式図）",
+     "alt": "3段の役割の表と受け渡しの矢印、中央のアプリと4つの仕組みをつなぐ図、5つの文書の一覧",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/beauty-app/04-operate.jpg",
+     "kind": "image",
+     "title": "日々の施策の画面と、フルリニューアル",
+     "caption": "年間を通した施策の画面づくりと機能の改修、フルリニューアルの工程を並べた約3年の流れと、店舗とつなぐ会員証の考え方（模式図・数値は架空）",
+     "alt": "3段の工程表、施策の画面を回す4つの箱、アプリと店舗を3本の矢印でつないだ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "KEEP",
+     "tag": "模式図",
+     "src": "assets/works/beauty-app/01-keep.jpg",
+     "alt": "6つの段階の流れの箱と、変えないもの・作り直すものの表、売上への近さと変える量の散布図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "変えないもの・作り直すもの",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "STRUCTURE",
+     "tag": "模式図",
+     "src": "assets/works/beauty-app/02-structure.jpg",
+     "alt": "左に5つのタブから枝分かれする画面の木構造、右に3台のスマートフォンの画面の模式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "5つのタブと、ひな形で増やす画面",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "BUILD",
+     "tag": "模式図",
+     "src": "assets/works/beauty-app/03-build.jpg",
+     "alt": "3段の役割の表と受け渡しの矢印、中央のアプリと4つの仕組みをつなぐ図、5つの文書の一覧",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "要件から画面へ、開発会社とつなぐ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "OPERATE",
+     "tag": "模式図",
+     "src": "assets/works/beauty-app/04-operate.jpg",
+     "alt": "3段の工程表、施策の画面を回す4つの箱、アプリと店舗を3本の矢印でつないだ図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "日々の施策の画面と、フルリニューアル",
+     "ratio": 0.666
+    }
+   ],
+   "no": "21",
+   "results": [],
    "links": []
   },
   {
@@ -3814,7 +3952,289 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "21",
+   "no": "22",
+   "links": []
+  },
+  {
+   "id": "music-hall",
+   "label": "音楽ホールの開館に向けた全体の企画",
+   "title": "HALL OPENING",
+   "kicker": "OPENING PLANNING / BRAND",
+   "industry": "自動車販売（地域ディーラー）",
+   "year": "2021",
+   "status": "開館前の企画（広告会社のチームとして参画）",
+   "tags": [
+    "brand",
+    "web",
+    "sns",
+    "pr",
+    "cx",
+    "biz",
+    "f-dealer"
+   ],
+   "subtitle": "名前を決めるところから、開館の日の告知まで",
+   "summary": "地域の自動車販売会社が建てる音楽ホールについて、開館に向けた企画を、広告会社のチームとして担当した。ホールの名前の検討から、ロゴの要件と制作、公式サイトの要件定義と制作、SNSの運用の方針と立ち上げ、PRツールの要件と紙の制作物、現場の運営の要件、開館のイベントと出演の検討、プレスリリースと開館の告知までを、ひとつの考え方でつないだ。",
+   "can": [
+    "ホールの名前とロゴの検討",
+    "公式サイトの要件定義と制作",
+    "SNSの運用の方針と、アカウントの立ち上げ",
+    "PRツールの要件と紙の制作物",
+    "現場の運営（受付・案内・貸し出し）の要件づくり",
+    "開館のイベントと出演の検討、プレスリリースと告知"
+   ],
+   "process": [
+    "ホールの役割と、地域の人・音楽をする人にとっての意味を言葉にし、名前とロゴの方針を決める",
+    "公式サイト・SNS・PRツール・紙の制作物を、同じ考え方で要件定義して制作する",
+    "現場の運営の要件、開館のイベント、プレスリリースと告知を、開館の日から逆算して準備する"
+   ],
+   "team": [
+    "lead",
+    "planner",
+    "prodd",
+    "designer",
+    "sns",
+    "visual"
+   ],
+   "note": "広告会社のチームの一員として参画しました。施設名・社名・地名・出演者は伏せています。SNSは方針づくりと開設までを担当し、運用は含みません。図は考え方を示す模式図で、実際のロゴやデザインではありません。",
+   "tape": [
+    "NAME",
+    "LOGO",
+    "WEB",
+    "SNS",
+    "OPENING"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/music-hall/01-naming.jpg",
+     "kind": "image",
+     "title": "名前を決め、どこで使っても崩れないロゴに",
+     "caption": "ホールの役割から名前の方向を決め、候補を広げて物差しで絞った流れと、使う場面から決めたロゴの要件（模式図・数値は架空）",
+     "alt": "役割と方向の箱、候補の数の横棒、最後の3案の比較表、ロゴを使う場面と形の展開の模式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/music-hall/02-touchpoints.jpg",
+     "kind": "image",
+     "title": "開館までの接点を、ひとつの考え方で",
+     "caption": "公式サイト・SNS・紙とPR・現地の4つの接点を、名前の発表から開館のあとまでの4つの時期に並べた地図（模式図）",
+     "alt": "4行4列の表と、名前の発表と開館の節目の線",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/music-hall/03-web-sns.jpg",
+     "kind": "image",
+     "title": "公式サイトの構成と、SNSの立ち上げ",
+     "caption": "聴きに来る人と借りたい人の2つの入口を持つ公式サイトの構成と、SNSの役割・決めたこと・開設までの手順（模式図）",
+     "alt": "左に公式サイトのページの木構造と2つの入口の矢印、右に3つのアカウントの役割と決めたことの表、開設までの4つの箱",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/music-hall/04-backward.jpg",
+     "kind": "image",
+     "title": "開館の日から逆算した準備",
+     "caption": "名前・ロゴから現場の運営の要件までを開館の日から逆算して並べた工程と、来場の流れに沿った運営の要件（模式図・数値は架空）",
+     "alt": "7段の工程表と開館の線、来場の流れの5つの箱",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "NAME",
+     "tag": "模式図",
+     "src": "assets/works/music-hall/01-naming.jpg",
+     "alt": "役割と方向の箱、候補の数の横棒、最後の3案の比較表、ロゴを使う場面と形の展開の模式",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "名前を決め、どこで使っても崩れないロゴに",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "TOUCHPOINT",
+     "tag": "模式図",
+     "src": "assets/works/music-hall/02-touchpoints.jpg",
+     "alt": "4行4列の表と、名前の発表と開館の節目の線",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "開館までの接点を、ひとつの考え方で",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "WEB / SNS",
+     "tag": "模式図",
+     "src": "assets/works/music-hall/03-web-sns.jpg",
+     "alt": "左に公式サイトのページの木構造と2つの入口の矢印、右に3つのアカウントの役割と決めたことの表、開設までの4つの箱",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "公式サイトの構成と、SNSの立ち上げ",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "COUNTDOWN",
+     "tag": "模式図",
+     "src": "assets/works/music-hall/04-backward.jpg",
+     "alt": "7段の工程表と開館の線、来場の流れの5つの箱",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "開館の日から逆算した準備",
+     "ratio": 0.666
+    }
+   ],
+   "no": "23",
+   "results": [],
+   "links": []
+  },
+  {
+   "id": "saas-site",
+   "label": "業務システムの企業サイトと製品サイトの刷新",
+   "title": "SITE RESTRUCTURE",
+   "kicker": "CORPORATE SITE / IA",
+   "industry": "SaaS",
+   "year": "2020–2021",
+   "status": "要件定義から公開まで",
+   "tags": [
+    "web",
+    "ui",
+    "kpi",
+    "brand",
+    "video",
+    "f-saas"
+   ],
+   "subtitle": "300を超えるページを、検討する人の動線から組み直す",
+   "summary": "業務システムを提供する会社の、企業サイトと製品サイトの3つのサイトをまとめてリニューアルした。企画と設計を含む要件定義から入り、300ページを超えるサイトの構造を、アクセス解析をもとに組み直して、検討する人の動線を最優先にした構造にした。検索で積み上げてきた評価を失わないように移行を設計し、サーバーの移行とCMSのカスタマイズまで担当。製品のパンフレットと紹介の映像も、同じブランドの方針でそろえて制作した。",
+   "can": [
+    "アクセス解析にもとづくサイト構造の組み直し",
+    "検討から問い合わせまでの動線の設計",
+    "検索の評価を引き継ぐ移行の設計（URLの対応・転送）",
+    "CMSのカスタマイズとサーバーの移行",
+    "3つのサイトのデザインのルールの統一",
+    "製品のパンフレットと紹介の映像の制作"
+   ],
+   "results": [
+    "主要なキーワードで検索1位",
+    "大規模なサイトを半年足らずでリニューアル"
+   ],
+   "process": [
+    "アクセス解析で、ページごとの役割と使われ方を洗い出し、残す・まとめる・なくすを決める",
+    "検討する人の動線を軸に、3つのサイトの構造とページの型を設計し、デザインのルールをそろえる",
+    "URLの対応表と転送、CMSのカスタマイズ、サーバーの移行を経て公開。パンフレットと映像も同じ方針で制作"
+   ],
+   "team": [
+    "lead",
+    "analyst",
+    "prodd",
+    "designer",
+    "sysd",
+    "eng",
+    "visual"
+   ],
+   "note": "社名・製品名は伏せています。図は構成と考え方を示す模式図で、実際の画面ではありません。数値は架空です。",
+   "tape": [
+    "300+ PAGES",
+    "FLOW",
+    "SEARCH",
+    "CMS"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/saas-site/01-inventory.jpg",
+     "kind": "image",
+     "title": "300を超えるページを、使われ方から組み直す",
+     "caption": "ページごとの訪問の数と問い合わせへのつながりから、残す・まとめる・なくすを決めた考え方と、階層を5段から3段にした構造（模式図・数値は架空）",
+     "alt": "320ページの散布図と判断の境目の点線、ページ数の帯グラフ、5段と3段の木構造",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/saas-site/02-flow.jpg",
+     "kind": "image",
+     "title": "検討する人の動線を、いちばんに",
+     "caption": "課題に気づいてから相談するまでの5つの段階に割り当てたページの役割と、3つのサイトの行き来（模式図）",
+     "alt": "5つの段階の見出しと各段階のページの箱、次の一歩の帯、3つのサイトの枠",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/saas-site/03-migration.jpg",
+     "kind": "image",
+     "title": "検索の評価を引き継ぐ移行",
+     "caption": "古いページと新しいページの4つの対応のさせ方、公開の前後の検索からの訪問の考え方、サーバーの移行とCMSのカスタマイズ（模式図・数値は架空）",
+     "alt": "古いURLと新しいURLを矢印でつないだ4つの型、公開をはさんだ折れ線グラフ、サーバーの移行の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    },
+    {
+     "src": "assets/works/saas-site/04-system.jpg",
+     "kind": "image",
+     "title": "3つのサイトと、パンフレット・映像をひとつの方針で",
+     "caption": "色・文字・部品の共通のルールと、それを当てた3つのサイト・パンフレット・映像の構成、半年足らずの工程（模式図）",
+     "alt": "色の見本と文字の大きさの段階、3つのブラウザの画面の模式、パンフレットの見開きと映像の6コマ、工程表",
+     "focus": "50% 40%",
+     "tone": "light",
+     "ratio": 0.666
+    }
+   ],
+   "layers": [
+    {
+     "type": "image",
+     "name": "INVENTORY",
+     "tag": "模式図",
+     "src": "assets/works/saas-site/01-inventory.jpg",
+     "alt": "320ページの散布図と判断の境目の点線、ページ数の帯グラフ、5段と3段の木構造",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "300を超えるページを、使われ方から組み直す",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "FLOW",
+     "tag": "模式図",
+     "src": "assets/works/saas-site/02-flow.jpg",
+     "alt": "5つの段階の見出しと各段階のページの箱、次の一歩の帯、3つのサイトの枠",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "検討する人の動線を、いちばんに",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "MIGRATION",
+     "tag": "模式図",
+     "src": "assets/works/saas-site/03-migration.jpg",
+     "alt": "古いURLと新しいURLを矢印でつないだ4つの型、公開をはさんだ折れ線グラフ、サーバーの移行の図",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "検索の評価を引き継ぐ移行",
+     "ratio": 0.666
+    },
+    {
+     "type": "image",
+     "name": "SYSTEM",
+     "tag": "模式図",
+     "src": "assets/works/saas-site/04-system.jpg",
+     "alt": "色の見本と文字の大きさの段階、3つのブラウザの画面の模式、パンフレットの見開きと映像の6コマ、工程表",
+     "focus": "50% 40%",
+     "tone": "light",
+     "title": "3つのサイトと、パンフレット・映像をひとつの方針で",
+     "ratio": 0.666
+    }
+   ],
+   "no": "24",
    "links": []
   },
   {
@@ -3965,7 +4385,7 @@ window.SLASH_WORKS = {
      "ratio": 0.693
     }
    ],
-   "no": "22",
+   "no": "25",
    "links": []
   },
   {
@@ -4108,7 +4528,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "23",
+   "no": "26",
    "links": []
   }
  ],
@@ -4261,24 +4681,6 @@ window.SLASH_WORKS = {
   },
   {
    "no": "A10",
-   "year": "2020–2021",
-   "industry": "SaaS",
-   "tags": [
-    "f-saas",
-    "web",
-    "video",
-    "kpi"
-   ],
-   "kind": "実施",
-   "title": "業務システムの企業サイトのリニューアル",
-   "detail": "検索の資産を失わずにリードを獲得できるサイトへ。サーバーの移行とCMSのカスタマイズまで。",
-   "results": [
-    "主要なキーワードで検索1位",
-    "大規模なサイトを半年足らずでリニューアル"
-   ]
-  },
-  {
-   "no": "A11",
    "year": "2020",
    "industry": "金融（カード）",
    "tags": [
@@ -4296,7 +4698,7 @@ window.SLASH_WORKS = {
    ]
   },
   {
-   "no": "A12",
+   "no": "A11",
    "year": "2018–2019",
    "industry": "商業施設",
    "tags": [
@@ -4336,6 +4738,7 @@ window.SLASH_WORKS = {
     "taste-learn",
     "owned-media",
     "fx-loyalty",
+    "music-hall",
     "dealer-community"
    ]
   },
@@ -4358,6 +4761,7 @@ window.SLASH_WORKS = {
     "isp-loyalty",
     "fx-loyalty",
     "taste-learn",
+    "beauty-app",
     "dealer-community"
    ]
   },
@@ -4475,11 +4879,14 @@ window.SLASH_WORKS = {
    ],
    "works": [
     "navi",
+    "beauty-app",
     "reader-site",
+    "saas-site",
     "condition-ui",
     "beauty-ui",
     "dealer-demo",
     "idea-studio",
+    "music-hall",
     "dealer-community"
    ]
   },
@@ -4502,7 +4909,9 @@ window.SLASH_WORKS = {
    "works": [
     "crydope",
     "ai-film",
-    "bank-brand"
+    "bank-brand",
+    "music-hall",
+    "saas-site"
    ]
   }
  ],
@@ -4827,18 +5236,18 @@ window.SLASH_WORKS = {
  ],
  "ai": [
   {
-   "id": "ai-visibility",
-   "no": "GEO",
-   "title": "AI検索での見え方を、毎日測る",
-   "body": "複数の生成AI・AI検索に毎日質問し、回答の中の言及・推奨・引用をスコアにする。",
-   "media": "assets/works/ai-visibility/08-board-tour.webm"
+   "id": "navi",
+   "no": "LIVE",
+   "title": "会話を、その場で整理する",
+   "body": "会議の文字起こしから、論点・決定・次に言うことを画面に出す。",
+   "media": "assets/works/navi/04-board-loop.webm"
   },
   {
-   "id": "data-agent",
-   "no": "AGENT",
-   "title": "頼めば、調べて根拠つきで返す",
-   "body": "案件のチャットに常駐し、資料・数値・過去のやりとりを調べて、リンクとグラフをつけて答える。",
-   "media": "assets/works/data-agent/01-thread.jpg"
+   "id": "dealer-demo",
+   "no": "DEMO",
+   "title": "提案を、動くデモで見せる",
+   "body": "販売店の成績、取りこぼし、次の打ち手を7つの画面でつなぐ。車両の画像はAIで生成した。",
+   "media": "assets/works/dealer-demo/08-intro-cockpit.webm"
   },
   {
    "id": "ai-film",
@@ -4848,11 +5257,11 @@ window.SLASH_WORKS = {
    "media": "assets/works/ai-film/01-ugc.webm"
   },
   {
-   "id": "navi",
-   "no": "LIVE",
-   "title": "会話を、その場で整理する",
-   "body": "会議の文字起こしから、論点・決定・次に言うことを画面に出す。",
-   "media": "assets/works/navi/04-board-loop.webm"
+   "id": "ai-visibility",
+   "no": "GEO",
+   "title": "AI検索での見え方を、毎日測る",
+   "body": "複数の生成AI・AI検索に毎日質問し、回答の中の言及・推奨・引用をスコアにする。",
+   "media": "assets/works/ai-visibility/08-board-tour.webm"
   },
   {
    "id": "idea-studio",
@@ -4860,6 +5269,20 @@ window.SLASH_WORKS = {
    "title": "AIの審査役と、アイデアを鍛える",
    "body": "立場の違う審査役にアイデアをぶつけるワークショップ用のツール。",
    "media": "assets/works/idea-studio/05-ai-judges.jpg"
+  },
+  {
+   "id": "data-agent",
+   "no": "AGENT",
+   "title": "頼めば、調べて根拠つきで返す",
+   "body": "案件のチャットに常駐し、資料・数値・過去のやりとりを調べて、リンクとグラフをつけて答える。",
+   "media": "assets/works/data-agent/01-thread.jpg"
+  },
+  {
+   "id": "beauty-ui",
+   "no": "DIAGNOSIS",
+   "title": "AI診断を、使う場面に合わせて見せる",
+   "body": "店頭の鏡型の診断機と、アプリのメイク・肌の診断の画面を設計した。",
+   "media": "assets/works/beauty-ui/01-mirror.jpg"
   },
   {
    "id": "ai-visibility",
