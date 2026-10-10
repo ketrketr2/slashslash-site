@@ -508,6 +508,8 @@ function mediaHTML(a, opts = {}) {
   if (a.kind === 'video' || a.type === 'video') return `<video muted loop playsinline ${opts.autoplay && !reduced ? 'autoplay' : ''} preload="${opts.eager ? 'auto' : 'none'}" poster="${esc(a.poster || '')}" aria-label="${esc(a.alt || a.title)}" style="object-position:${pos}"><source src="${esc(a.src)}" type="video/webm"><source src="${esc(mp4(a.src))}" type="video/mp4"></video>`;
   return `<img src="${esc(a.src)}" alt="${esc(a.alt || a.title)}" loading="${opts.eager ? 'eager' : 'lazy'}" decoding="async" style="object-position:${pos}">`;
 }
+// 題字のいちばん長い単語の文字数（CSS の --lw で、題字が枠からはみ出さない大きさの上限を決める）
+function longestWord(t) { return Math.max(...String(t).split(/\s+/).map(w => [...w].length), 1); }
 function splitTitle(t) { let k = 0; return t.split(' ').map(w => `<span class="w">${[...w].map(ch => `<span class="ch" style="--i:${k++}">${esc(ch)}</span>`).join('')}</span>`).join('<span class="sp"> </span>'); }
 function heroOf(p, layer) {
   const L = layer != null ? p.layers[layer] : null;
@@ -530,7 +532,7 @@ function renderCase(index, layer) {
   body.innerHTML = `
   <header class="cf-hero ${heroCls === 'fit' ? 'stack' : 'overlay'}">
     <div class="cf-hero-media ${heroCls}" ${hero && isPortrait(hero) ? `style="--bg:url('${esc(hero.poster || hero.src)}')"` : ''}>${hero ? mediaHTML(hero, { eager: true, autoplay: true }) : `<b aria-hidden="true">${esc(p.title)}</b>`}</div>
-    <div class="cf-hero-text"><p class="cf-kicker">${p.no} — ${esc(p.kicker)} / ${esc(p.industry)} / ${esc(p.year)}</p><h2 id="case-title" aria-label="${esc(p.title)}">${splitTitle(p.title)}</h2><p class="cf-sub">${esc(p.subtitle)}</p></div>
+    <div class="cf-hero-text"><p class="cf-kicker">${p.no} — ${esc(p.kicker)} / ${esc(p.industry)} / ${esc(p.year)}</p><h2 id="case-title" aria-label="${esc(p.title)}" style="--lw:${longestWord(p.title)}">${splitTitle(p.title)}</h2><p class="cf-sub">${esc(p.subtitle)}</p></div>
     ${hero ? `<p class="cf-hero-cap">01 — ${esc(hero.title)}：${esc(hero.caption)}</p>` : ''}
   </header>
   <div class="cf-tagbar"><span>タグで探す</span>${tagBtns}</div>
@@ -547,7 +549,7 @@ function renderCase(index, layer) {
     <p class="cf-note">${esc(p.note)}</p>
     ${p.own ? '' : `<p class="cf-disclaimer">画像はイメージです。実際のお客様の名前やデータなどは、すべて削除・加工を施しています。</p>`}
     <div class="cf-links">${(p.links || []).map(l => `<a href="${esc(l.href)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}<a href="#contact" data-case-contact>この領域について相談する ↗</a></div>
-    ${vis.length > 1 ? `<button type="button" class="cf-next" data-case-next data-cursor="次の事例" data-cursor-mark="→"><small>次の事例 ${next.no}</small><b>${esc(next.title)}</b><span>${esc(next.subtitle)}</span><i>→</i></button>` : ''}
+    ${vis.length > 1 ? `<button type="button" class="cf-next" data-case-next data-cursor="次の事例" data-cursor-mark="→"><small>次の事例 ${next.no}</small><b style="--lw:${longestWord(next.title)}">${esc(next.title)}</b><span>${esc(next.subtitle)}</span><i>→</i></button>` : ''}
     <button type="button" class="cf-close-end" data-case-close><span>CLOSE</span><b>事例の詳細を閉じる</b><i aria-hidden="true">×</i></button>
   </section>`;
   $('#case-label').textContent = `CASE ${p.no} — ${p.label}`;

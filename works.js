@@ -621,6 +621,180 @@ window.SLASH_WORKS = {
    "links": []
   },
   {
+   "id": "ai-observatory",
+   "label": "AI検索での推され方の深掘り",
+   "title": "AI OBSERVATORY",
+   "kicker": "GEO / DEEP DIVE",
+   "industry": "自動車",
+   "year": "2026",
+   "status": "分析の設計とダッシュボードの構築（協力会社として参画）",
+   "tags": [
+    "geo",
+    "ai",
+    "bi",
+    "stats",
+    "kpi",
+    "research",
+    "f-auto"
+   ],
+   "subtitle": "1つの車種が、AIの回答の中でどの問いで推され、どこで外れるのかを読み解く",
+   "summary": "コンパクトカー1車種について、生活者がしそうな問いを4つのAI検索（Google AI Overviews・AI Mode・ChatGPT・Gemini）に投げ、実際の回答の中で言及・推奨・引用されたかを測った。競合との序列や評価軸ごとの勝ち負けに加え、AIが回答の裏で調べている検索語、回答の根拠になった引用元、聞き方による答えの揺らぎまで掘り下げ、公式サイトの行動データや口コミ、検索の関心と突き合わせた。打ち手を動かしたときの推奨率の見込みを、区間つきで試算できる画面も作った。",
+   "can": [
+    "生活者の問いの設計と、言及・推奨・引用・誤情報の指標の設計",
+    "4つのAI検索の回答の判定と集計（すべての率に区間をつける）",
+    "競合との序列、評価軸の勝ち負け、引用元の縄張りの可視化",
+    "AIが裏で調べる検索語や、回答の組み立ての読み解き",
+    "公式サイトの行動データ・口コミ・検索の関心との突き合わせ",
+    "打ち手の効果を試す施策シミュレーター"
+   ],
+   "process": [
+    "車種や場面ごとに生活者の問いを設計し、指標の定義と分母を決める",
+    "4つのAI検索の回答から、車名・別名と引用元を判定して集計する",
+    "競合比較・AIの読み解き・サイトや口コミとの突き合わせ・施策の試算を、行き来できる画面にまとめる"
+   ],
+   "team": [
+    "lead",
+    "analyst",
+    "stat",
+    "eng",
+    "designer"
+   ],
+   "note": "協力会社として参画しているプロジェクトです。AIの回答の取得は、別の協力会社が担当しました。ダッシュボードの実画面（公開用の写し）を使い、社名・車名・サイト名は置き換え、数値はすべて置き換えています。車両の画像は、画像生成AIで作った実在しない車に差し替えています。",
+   "tape": [
+    "4 AI ENGINES",
+    "ORBIT",
+    "AI BRAIN",
+    "UNIVERSE",
+    "WHY"
+   ],
+   "gallery": [
+    {
+     "src": "assets/works/ai-observatory/00-stage.webm",
+     "kind": "video",
+     "title": "4つのAI検索の軌道",
+     "caption": "車の周りを回る点のひとつひとつが、4つのAI検索の1回答。金の点が5位以内の推奨、水色の輪は、この車を想定した問いなのに挙がらなかった回答。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。車両の画像は、画像生成AIで作った実在しない車です。",
+     "alt": "黒い背景の中央に白いコンパクトカー。その周りを、金と水色の点が並ぶ4本の軌道がゆっくり回る動画",
+     "focus": "82% 50%",
+     "tone": "dark",
+     "ratio": 0.417,
+     "poster": "assets/works/ai-observatory/00-stage.jpg"
+    },
+    {
+     "src": "assets/works/ai-observatory/01-orbit.webm",
+     "kind": "video",
+     "title": "コマンドセンター：4つのAI検索の軌道",
+     "caption": "4つのAI検索の回答を、車の周りを回る点で見せる最初の画面。点のひとつひとつが1回答で、金の点が5位以内の推奨。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。車両の画像は、画像生成AIで作った実在しない車です。",
+     "alt": "黒い画面の中央に白いコンパクトカー。その周りを4本の軌道の点が回り、左に大きな見出しと推奨の率が並ぶ動画",
+     "focus": "50% 50%",
+     "tone": "dark",
+     "ratio": 0.562,
+     "poster": "assets/works/ai-observatory/01-orbit.jpg"
+    },
+    {
+     "src": "assets/works/ai-observatory/02-brain.jpg",
+     "kind": "image",
+     "title": "AIの脳",
+     "caption": "回答で使われた評価軸と質問の条件（左）を、根拠に引かれたサイト（右）とつなぎ、回答を1件ずつ発火させる画面。金色のノードほど、使われたときに推奨されやすい。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。",
+     "alt": "左右2つの半円に分かれた脳の形の図。左に評価軸と質問の条件のノード、右に引用元サイトのノード、その間を水色の点線が走る",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "ratio": 0.704
+    },
+    {
+     "src": "assets/works/ai-observatory/03-universe.webm",
+     "kind": "video",
+     "title": "回答宇宙",
+     "caption": "すべての回答を、本文の言葉の近さで立体に並べた画面。首位に挙がった車ごとのまとまりと、推奨された回答が集まる場所を、回しながら見る。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。",
+     "alt": "黒地に無数の点が星雲のように広がってゆっくり回り、首位の車の名前のラベルと光る金の点が動く動画",
+     "focus": "50% 50%",
+     "tone": "dark",
+     "ratio": 0.562,
+     "poster": "assets/works/ai-observatory/03-universe.jpg"
+    },
+    {
+     "src": "assets/works/ai-observatory/04-graph.jpg",
+     "kind": "image",
+     "title": "共起概念マップ",
+     "caption": "回答の中で一緒に語られる言葉を網の目でつなぎ、推奨につながる言葉と、競合に結びつく言葉を見分ける画面。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。",
+     "alt": "黒地に大小の円と線が網の目のように広がり、車種と文脈の言葉のラベルが並ぶ。金の線が自社の車とつながる言葉を示す",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "ratio": 0.716
+    },
+    {
+     "src": "assets/works/ai-observatory/05-vector.jpg",
+     "kind": "image",
+     "title": "意味空間の自社圏マップ",
+     "caption": "問いを意味の近さで地図に置き、推奨される範囲の境界を描いた画面。境界の外側にある問いが、取りこぼしの候補になる。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。",
+     "alt": "黒地に星のような点が散らばり、金色の実線と点線の輪郭が、推奨されやすい範囲を囲む",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "ratio": 0.71
+    },
+    {
+     "src": "assets/works/ai-observatory/06-reasoning.jpg",
+     "kind": "image",
+     "title": "推論ステップの構造化マップ",
+     "caption": "質問が置いた条件から、回答が重視した評価軸、そして結論までの流れを帯でつないだ画面。金色が濃い帯ほど、その流れで推奨されやすい。ダッシュボードの実画面（公開用の写し）で、社名・車名・サイト名は置き換え、数値はすべて置き換えています。",
+     "alt": "左に質問の条件、中央に回答の評価軸、右に結論の箱が並び、その間を金と灰色の帯が太さを変えながら流れる図",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "ratio": 0.601
+    }
+   ],
+   "layers": [
+    {
+     "type": "video",
+     "name": "ORBIT",
+     "tag": "実画面",
+     "src": "assets/works/ai-observatory/00-stage.webm",
+     "alt": "黒い背景の中央に白いコンパクトカー。その周りを、金と水色の点が並ぶ4本の軌道がゆっくり回る動画",
+     "focus": "82% 50%",
+     "tone": "dark",
+     "title": "4つのAI検索の軌道",
+     "ratio": 0.417,
+     "poster": "assets/works/ai-observatory/00-stage.jpg"
+    },
+    {
+     "type": "image",
+     "name": "BRAIN",
+     "tag": "実画面",
+     "src": "assets/works/ai-observatory/02-brain.jpg",
+     "alt": "左右2つの半円に分かれた脳の形の図。左に評価軸と質問の条件のノード、右に引用元サイトのノード、その間を水色の点線が走る",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "title": "AIの脳",
+     "ratio": 0.704
+    },
+    {
+     "type": "video",
+     "name": "UNIVERSE",
+     "tag": "実画面",
+     "src": "assets/works/ai-observatory/03-universe.webm",
+     "alt": "黒地に無数の点が星雲のように広がってゆっくり回り、首位の車の名前のラベルと光る金の点が動く動画",
+     "focus": "50% 50%",
+     "tone": "dark",
+     "title": "回答宇宙",
+     "ratio": 0.562,
+     "poster": "assets/works/ai-observatory/03-universe.jpg"
+    },
+    {
+     "type": "image",
+     "name": "GRAPH",
+     "tag": "実画面",
+     "src": "assets/works/ai-observatory/04-graph.jpg",
+     "alt": "黒地に大小の円と線が網の目のように広がり、車種と文脈の言葉のラベルが並ぶ。金の線が自社の車とつながる言葉を示す",
+     "focus": "50% 45%",
+     "tone": "dark",
+     "title": "共起概念マップ",
+     "ratio": 0.716
+    }
+   ],
+   "no": "03",
+   "results": [],
+   "links": []
+  },
+  {
    "id": "ai-journey",
    "label": "AI時代の購買ファネルと価値換算",
    "title": "AI ERA JOURNEY",
@@ -754,7 +928,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "03",
+   "no": "04",
    "results": [],
    "links": []
   },
@@ -903,7 +1077,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "04",
+   "no": "05",
    "results": [],
    "links": []
   },
@@ -1044,7 +1218,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "05",
+   "no": "06",
    "results": []
   },
   {
@@ -1186,7 +1360,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "06",
+   "no": "07",
    "results": [],
    "links": []
   },
@@ -1324,7 +1498,7 @@ window.SLASH_WORKS = {
      ]
     }
    ],
-   "no": "07",
+   "no": "08",
    "results": [],
    "links": []
   },
@@ -1460,7 +1634,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "08",
+   "no": "09",
    "results": [],
    "links": []
   },
@@ -1715,7 +1889,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "09",
+   "no": "10",
    "results": [],
    "links": []
   },
@@ -1853,7 +2027,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "10",
+   "no": "11",
    "results": [],
    "links": []
   },
@@ -2006,7 +2180,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "11",
+   "no": "12",
    "links": []
   },
   {
@@ -2144,7 +2318,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "12",
+   "no": "13",
    "results": [],
    "links": []
   },
@@ -2422,7 +2596,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "13",
+   "no": "14",
    "results": [],
    "links": []
   },
@@ -2659,7 +2833,7 @@ window.SLASH_WORKS = {
      "ratio": 0.562
     }
    ],
-   "no": "14",
+   "no": "15",
    "results": [],
    "links": []
   },
@@ -2906,7 +3080,7 @@ window.SLASH_WORKS = {
      "ratio": 0.563
     }
    ],
-   "no": "15",
+   "no": "16",
    "results": [],
    "links": []
   },
@@ -3072,7 +3246,7 @@ window.SLASH_WORKS = {
      "ratio": 0.625
     }
    ],
-   "no": "16",
+   "no": "17",
    "results": [],
    "links": []
   },
@@ -3259,7 +3433,7 @@ window.SLASH_WORKS = {
      "ratio": 0.625
     }
    ],
-   "no": "17",
+   "no": "18",
    "results": [],
    "links": []
   },
@@ -3401,7 +3575,7 @@ window.SLASH_WORKS = {
      "ratio": 0.569
     }
    ],
-   "no": "18",
+   "no": "19",
    "results": [],
    "links": []
   },
@@ -3536,7 +3710,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "19",
+   "no": "20",
    "results": [],
    "links": []
   },
@@ -3679,7 +3853,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "20",
+   "no": "21",
    "links": []
   },
   {
@@ -3814,7 +3988,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "21",
+   "no": "22",
    "results": [],
    "links": []
   },
@@ -3952,7 +4126,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "22",
+   "no": "23",
    "links": []
   },
   {
@@ -4091,7 +4265,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "23",
+   "no": "24",
    "results": [],
    "links": []
   },
@@ -4234,7 +4408,7 @@ window.SLASH_WORKS = {
      "ratio": 0.666
     }
    ],
-   "no": "24",
+   "no": "25",
    "links": []
   },
   {
@@ -4385,7 +4559,7 @@ window.SLASH_WORKS = {
      "ratio": 0.693
     }
    ],
-   "no": "25",
+   "no": "26",
    "links": []
   },
   {
@@ -4528,7 +4702,7 @@ window.SLASH_WORKS = {
      "tone": "accent"
     }
    ],
-   "no": "26",
+   "no": "27",
    "links": []
   }
  ],
@@ -4812,7 +4986,8 @@ window.SLASH_WORKS = {
     "bank-brand",
     "clean-room",
     "urban-inbound",
-    "omni-cx"
+    "omni-cx",
+    "ai-observatory"
    ]
   },
   {
@@ -4834,6 +5009,7 @@ window.SLASH_WORKS = {
     "clean-room",
     "urban-inbound",
     "ai-visibility",
+    "ai-observatory",
     "owned-media",
     "dealer-demo"
    ]
@@ -4854,6 +5030,7 @@ window.SLASH_WORKS = {
    ],
    "works": [
     "ai-visibility",
+    "ai-observatory",
     "ai-journey",
     "data-agent",
     "ai-film",
@@ -5236,6 +5413,14 @@ window.SLASH_WORKS = {
  ],
  "ai": [
   {
+   "id": "ai-observatory",
+   "no": "ORBIT",
+   "title": "AIの推し方を、回答ごとに読み解く",
+   "body": "4つのAI検索の実際の回答で、1つの車種がどの問いで推され、どこで外れるかを見る。回答のひとつひとつが、車の周りを回る点になる。",
+   "media": "assets/works/ai-observatory/tile-orbit.webm",
+   "focus": "50% 40%"
+  },
+  {
    "id": "navi",
    "no": "LIVE",
    "title": "会話を、その場で整理する",
@@ -5276,13 +5461,6 @@ window.SLASH_WORKS = {
    "title": "頼めば、調べて根拠つきで返す",
    "body": "案件のチャットに常駐し、資料・数値・過去のやりとりを調べて、リンクとグラフをつけて答える。",
    "media": "assets/works/data-agent/01-thread.jpg"
-  },
-  {
-   "id": "beauty-ui",
-   "no": "DIAGNOSIS",
-   "title": "AI診断を、使う場面に合わせて見せる",
-   "body": "店頭の鏡型の診断機と、アプリのメイク・肌の診断の画面を設計した。",
-   "media": "assets/works/beauty-ui/01-mirror.jpg"
   },
   {
    "id": "ai-visibility",

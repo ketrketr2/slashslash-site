@@ -274,7 +274,8 @@ if (aiGrid) {
     const p = byId[it.id]; if (!p) return '';
     const isVid = /\.webm$/.test(it.media), poster = isVid ? it.media.replace(/\.webm$/, '.jpg') : it.media;
     const portrait = (p.gallery || []).some(a => a.src === it.media && a.ratio > 1.15);
-    return `<li class="ai-item"><div class="ai-media ${portrait ? 'portrait' : ''}"><img src="${esc(poster)}" alt="" loading="lazy" decoding="async">${isVid ? `<video muted loop playsinline preload="none" data-auto data-src="${esc(it.media)}" poster="${esc(poster)}"></video>` : ''}<span class="ai-no">${pad(k + 1)} / ${esc(it.no)}</span></div>
+    const pos = it.focus ? ` style="object-position:${esc(it.focus)}"` : ''; // 横長の素材で、見せたい位置を指定したもの（例：車が右寄りの動画）
+    return `<li class="ai-item"><div class="ai-media ${portrait ? 'portrait' : ''}"><img src="${esc(poster)}" alt="" loading="lazy" decoding="async"${pos}>${isVid ? `<video muted loop playsinline preload="none" data-auto data-src="${esc(it.media)}" poster="${esc(poster)}"${pos}></video>` : ''}<span class="ai-no">${pad(k + 1)} / ${esc(it.no)}</span></div>
       <div class="ai-body"><h3>${esc(it.title)}</h3><p>${esc(it.body)}</p><span class="ai-link"><small>${esc(p.title)}</small>事例を詳しく見る ↗</span></div>
       <a class="ai-hit" href="/works/${encodeURIComponent(it.id)}/" data-open="${esc(it.id)}" aria-haspopup="dialog" aria-label="${esc(it.title)}：${esc(p.label)}の事例の詳細を開く" data-cursor="詳しく見る"></a></li>`;
   }).join('');

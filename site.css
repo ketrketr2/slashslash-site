@@ -1530,3 +1530,15 @@ section[tabindex="-1"]:focus{outline:none}
   .cp-foot nav{gap:8px 18px}
 }
 @media(max-width:360px){.cp-nav .cp-works{display:none}}
+
+/* 題字（英字）：いちばん長い単語でも枠に収まるよう、単語の文字数（--lw）から大きさの上限を決める（容器の幅 cqw を使う。未対応の環境では従来の大きさ） */
+.cf-hero-text,.cf-next{container-type:inline-size}
+.cf-hero-text h2{font-size:min(clamp(48px,10vw,184px),calc(100cqw / (var(--lw,6) * .87)))}
+.cp-en{font-size:min(clamp(44px,8.4vw,156px),calc(100cqw / (var(--lw,6) * .85)))}
+.cf-next b{font-size:min(clamp(34px,6vw,100px),calc((100cqw - clamp(40px,6vw,90px) - 28px) / (var(--lw,6) * .85)))}
+@media(max-width:720px){
+  .cf-hero-text h2{font-size:min(clamp(40px,13vw,80px),calc(100cqw / (var(--lw,6) * .87)))}
+  .cp-en{font-size:min(clamp(36px,12vw,72px),calc(100cqw / (var(--lw,6) * .85)))}
+}
+/* 写真や動画の上に重ねる題字・見出しの読みやすさ（明るい被写体の上でも沈まないように、ごく薄い影） */
+.cf-hero.overlay .cf-hero-text{text-shadow:0 2px 18px #0000008c}
