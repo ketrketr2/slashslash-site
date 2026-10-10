@@ -5247,7 +5247,7 @@ window.SLASH_WORKS = {
    "no": "DEMO",
    "title": "提案を、動くデモで見せる",
    "body": "販売店の成績、取りこぼし、次の打ち手を7つの画面でつなぐ。車両の画像はAIで生成した。",
-   "media": "assets/works/dealer-demo/08-intro-cockpit.webm"
+   "media": "assets/works/dealer-demo/08-intro-cockpit.jpg"
   },
   {
    "id": "ai-film",
