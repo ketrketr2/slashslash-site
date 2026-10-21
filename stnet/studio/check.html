@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>接続の確認 · STNet IDEA STUDIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
+<style>
+:root{--ink:#19392f;--sub:#4c5f4a;--line:#d9e0cf;--paper:#fffef9;--bg:#f3f4ee;--ok:#1f6b3a;--okbg:#e5f2dc;--ng:#8a2a12;--ngbg:#fbe7e1;--mark:#eef7a8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"BIZ UDGothic","BIZ UDPGothic","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;line-height:1.8}
+main{max-width:760px;margin:0 auto;padding:40px 16px 64px}
+.kicker{font-size:13px;letter-spacing:.08em;color:var(--sub)}
+h1{font-size:26px;margin:4px 0 8px}
+p{margin:0 0 14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin:18px 0}
+button{font:inherit;font-weight:700;font-size:17px;border:0;border-radius:10px;background:var(--ink);color:#f1f6e3;padding:14px 22px;cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+ol{margin:0;padding-left:1.4em}
+li{margin:0 0 10px}
+.row{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding:12px 0}
+.row:first-child{border-top:0}
+.badge{flex:none;min-width:84px;text-align:center;font-weight:700;border-radius:8px;padding:2px 8px;background:#eceee6;color:var(--sub)}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.ng{background:var(--ngbg);color:var(--ng)}
+.row small{display:block;color:var(--sub);font-size:13px}
+code{font-family:inherit;background:#eef0e8;border-radius:5px;padding:1px 6px}
+mark{background:linear-gradient(transparent 0,var(--mark) 0);background-size:100% 1.2em;background-repeat:no-repeat;padding:0 2px;color:inherit}
+.result{font-weight:700;font-size:18px;margin:6px 0 0}
+</style>
+</head>
+<body>
+<main>
+<div class="kicker">STNet 新規事業ワークショップ · IDEA STUDIO</div>
+<h1>このPCから、会場のサーバーにつながるかを確かめる</h1>
+<p>ワークショップの画面は、Google の Apps Script（会場のサーバー）と通信して、チームの入力をそろえます。下のボタンを押すと、<mark>いま使っているPCとネットワークから届くか</mark>を数秒で確かめます。入力や個人の情報は送りません。</p>
+<div class="card">
+<button id="go">接続を確かめる</button>
+<p class="result" id="summary" aria-live="polite"></p>
+<div id="rows"></div>
+</div>
+<div class="card">
+<h2 style="font-size:18px;margin:0 0 10px">つながらないとき（情報システムご担当の方へ）</h2>
+<p>次の宛先への HTTPS 通信を許可してください。ワークショップの画面と会場のサーバーは、この3つだけを使います（文字の表示に Google Fonts も使いますが、止められていても画面は動きます）。</p>
+<ol>
+<li><code>www.slashslash.jp</code>：画面そのもの（このページと同じ場所）</li>
+<li><code>script.google.com</code>：会場のサーバーの受付（Google Apps Script）</li>
+<li><code>script.googleusercontent.com</code>：会場のサーバーの応答（Apps Script の応答はこの宛先から返ります）</li>
+</ol>
+<p style="margin-top:12px;font-size:14px;color:var(--sub)">確かめている宛先：<code id="url"></code></p>
+</div>
+</main>
+<script>
+const GAS = 'https://script.google.com/macros/s/AKfycbxYkfJZigTzpqKP-kD_xSr4VYIH7kJIaB1muqD0kx_INukY0LozKv3fJhJT5wrf1P-4/exec';
+document.getElementById('url').textContent = GAS;
+const rows = document.getElementById('rows'), summary = document.getElementById('summary'), go = document.getElementById('go');
+function row(label, state, note) {
+  const d = document.createElement('div'); d.className = 'row';
+  d.innerHTML = '<span class="badge ' + (state === 'ok' ? 'ok' : state === 'ng' ? 'ng' : '') + '">' + (state === 'ok' ? 'つながる' : state === 'ng' ? 'つながらない' : '確認中') + '</span><div><b></b><small></small></div>';
+  d.querySelector('b').textContent = label; d.querySelector('small').textContent = note || '';
+  rows.appendChild(d); return d;
+}
+async function timed(fn) { const t = performance.now(); try { const v = await fn(); return { ok: true, v, ms: Math.round(performance.now() - t) }; } catch (e) { return { ok: false, e, ms: Math.round(performance.now() - t) }; } }
+go.onclick = async () => {
+  go.disabled = true; rows.innerHTML = ''; summary.textContent = '確かめています…';
+  // 混雑時に POST が GET に変わって届くことがある（lost）。そのときは送り直す
+  const a = await timed(async () => { for (let i = 0; i < 3; i++) { const r = await fetch(GAS + '?b=1', { method: 'POST', body: JSON.stringify({ v: 1, reqs: [{ r: 'status', m: 'GET' }] }), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow', credentials: 'omit', cache: 'no-store' }); const t = await r.text(); let v = null; try { v = JSON.parse(t); } catch (e) { v = null; } if (v && v.ok && v.res && v.res[0].s === 200) return v; if (!(v && v.lost) && !t.startsWith('STNet IDEA STUDIO 会場サーバー')) throw new Error('応答の形が違います'); } throw new Error('混み合っています'); });
+  row('会場のサーバー（Apps Script）との通信', a.ok ? 'ok' : 'ng', a.ok ? '応答まで ' + (a.ms / 1000).toFixed(1) + ' 秒' : '届きませんでした（' + String(a.e && a.e.message || a.e) + '）');
+  const b = await timed(async () => { const r = await fetch(GAS + '?ping=' + Date.now(), { redirect: 'follow', credentials: 'omit', cache: 'no-store' }); const t = await r.text(); if (!/接続できています/.test(t)) throw new Error('応答の形が違います'); return t; });
+  row('会場のサーバーの確認ページ', b.ok ? 'ok' : 'ng', b.ok ? '応答まで ' + (b.ms / 1000).toFixed(1) + ' 秒' : '届きませんでした');
+  summary.textContent = a.ok ? 'このPCから、ワークショップの画面を使えます。' : 'このPCからは、会場のサーバーに届いていません。下の宛先の許可をご確認ください。';
+  summary.style.color = a.ok ? 'var(--ok)' : 'var(--ng)';
+  go.disabled = false; go.textContent = 'もう一度確かめる';
+};
+</script>
+</body>
+</html>
