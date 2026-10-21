@@ -19,6 +19,18 @@ let reduced = document.body.classList.contains('reduced');
 const announce = t => { const a = $('#announcement'); if (a) a.textContent = t; };
 // 計測（analytics.js。本番だけで動く）
 const track = (name, params) => { try { if (window.slashTrack) window.slashTrack(name, params); } catch (e) { } };
+// 「どこを見ていたか」の計測の呼び出し（analytics.js の slashPage・slashPlace・slashDwell。読み込まれていなければ何もしない）
+const ga = (fn, ...a) => { try { return window[fn] ? window[fn](...a) : null; } catch (e) { return null; } };
+const seenCards = new Set(); // 実績のカード・一覧で、すでに「見られた」と送った事例（表示の種類ごと）
+function watchCards(els, ui) {
+  return ga('slashDwell', els, el => {
+    if (caseOpen || document.documentElement.classList.contains('case-open')) return false; // 事例の詳細の後ろに隠れている間は数えない
+    const p = projects[+el.dataset.i]; if (!p || seenCards.has(ui + p.id)) return; seenCards.add(ui + p.id);
+    track('view_card', { case_id: p.id, case_name: p.label, case_industry: p.industry, ui_from: ui });
+  }, 1500);
+}
+let cardDwell = null, listDwell = null, matDwell = null;
+const topTitle = document.title;
 
 /* ================= 状態 ================= */
 // 初めての人には、いちばん迷わない「カード」を見せる（表示の選択は端末に保存。2026-10-05 に鍵を改め、全員カードから）
@@ -370,11 +382,13 @@ function renderGrid() {
   const vis = visibleProjects(), sp = narrow.matches;
   grid.classList.toggle('sp', sp);
   if (cardObserver) cardObserver.disconnect();
-  if (sp) { renderSpGrid(vis); watchCovers(); applyMore(); return; }
+  if (cardDwell) cardDwell.stop();
+  if (sp) { renderSpGrid(vis); watchCovers(); applyMore(); cardDwell = watchCards($$('.card[data-i], .sp-row[data-i]', grid), 'card'); return; }
   grid.innerHTML = vis.map(cardHTML).join('');
   cardObserver = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.style.transitionDelay = `${(+x.target.dataset.k % 3) * 70}ms`; x.target.classList.add('in'); cardObserver.unobserve(x.target); } }), { rootMargin: '0px 0px -8% 0px' });
   $$('.card', grid).forEach((c, k) => { c.dataset.k = k; if (reduced) c.classList.add('in'); else cardObserver.observe(c); });
   watchCovers(); applyMore();
+  cardDwell = watchCards($$('.card[data-i]', grid), 'card');
 }
 /* 動画の事例は、カードのサムネも動かす（見えている間だけ。動きを止める設定・事例の詳細を開いている間・タブが裏にある間は止める） */
 let coverIO = null;
@@ -425,6 +439,8 @@ function renderList() {
       <div class="lv-detail" id="${id}"><div><div class="lv-detail-in"><p>${esc(a.detail)}</p>${a.results && a.results.length ? `<ul class="lv-results"><li class="lr-label">RESULT</li>${a.results.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}</div></div></div></li>`;
   }).join('');
   applyMore();
+  if (listDwell) listDwell.stop();
+  listDwell = watchCards($$('.lv-hit[data-i]', lv), 'list');
 }
 lv.addEventListener('click', e => {
   const b = e.target.closest('.lv-hit'); if (!b) return;
@@ -519,19 +535,23 @@ function heroOf(p, layer) {
 let caseFrom = 'other';
 function renderCase(index, layer) {
   const p = projects[index], g = p.gallery || [], hero = heroOf(p, layer);
+  const caseTitle = `${p.label}（${p.industry}）｜実績｜株式会社スラッシュ`;
+  ga('slashPlace', 'case_time', { case_id: p.id, case_name: p.label, case_industry: p.industry }); // 前の場所（節・前の事例）の秒数を送ってから切り替える
+  ga('slashPage', pageOf(p), caseTitle);
+  document.title = caseTitle;
   track('view_case', { case_id: p.id, case_name: p.label, case_industry: p.industry, ui_from: caseFrom });
   const rest = g.filter(a => !hero || a.src !== hero.src);
   const portraitCount = rest.filter(isPortrait).length, manyPortrait = portraitCount >= 3;
   const figures = rest.map((a, k) => {
     const portrait = isPortrait(a), wide = manyPortrait ? !portrait && a.ratio < .9 : (!portrait && k % 5 === 0);
-    return `<figure class="cf-fig ${a.kind === 'video' ? 'is-video' : ''} ${wide ? 'wide' : ''} ${portrait ? 'portrait' : ''} tone-${esc(a.tone)}"><button type="button" class="cf-frame" data-k="${k}" aria-label="${esc(a.title)}を大きく見る" data-cursor="${a.kind === 'video' ? '再生' : '拡大'}" data-cursor-mark="${a.kind === 'video' ? '▶' : '＋'}">${mediaHTML(a)}</button><figcaption><b>${pad(k + 2)} — ${esc(a.title)}</b><span>${esc(a.caption)}</span></figcaption></figure>`;
+    return `<figure class="cf-fig ${a.kind === 'video' ? 'is-video' : ''} ${wide ? 'wide' : ''} ${portrait ? 'portrait' : ''} tone-${esc(a.tone)}" data-mno="${pad(k + 2)}" data-mtitle="${esc(a.title)}" data-mkind="${a.kind === 'video' ? 'video' : 'image'}"><button type="button" class="cf-frame" data-k="${k}" aria-label="${esc(a.title)}を大きく見る" data-cursor="${a.kind === 'video' ? '再生' : '拡大'}" data-cursor-mark="${a.kind === 'video' ? '▶' : '＋'}">${mediaHTML(a)}</button><figcaption><b>${pad(k + 2)} — ${esc(a.title)}</b><span>${esc(a.caption)}</span></figcaption></figure>`;
   }).join('');
   const vis = caseList, at = vis.indexOf(index), next = projects[vis[(at + 1) % vis.length]];
   const heroCls = hero ? (isPortrait(hero) ? 'portrait' : (hero.tone === 'light' ? 'fit' : '')) : 'cf-hero-type';
   const tagBtns = p.tags.map(t => `<button type="button" class="tag-btn" data-tag="${t}">${esc(TAG[t].label)}</button>`).join('');
   body.innerHTML = `
   <header class="cf-hero ${heroCls === 'fit' ? 'stack' : 'overlay'}">
-    <div class="cf-hero-media ${heroCls}" ${hero && isPortrait(hero) ? `style="--bg:url('${esc(hero.poster || hero.src)}')"` : ''}>${hero ? mediaHTML(hero, { eager: true, autoplay: true }) : `<b aria-hidden="true">${esc(p.title)}</b>`}</div>
+    <div class="cf-hero-media ${heroCls}" ${hero ? `data-mno="01" data-mtitle="${esc(hero.title)}" data-mkind="${hero.kind === 'video' || hero.type === 'video' ? 'video' : 'image'}"` : ''} ${hero && isPortrait(hero) ? `style="--bg:url('${esc(hero.poster || hero.src)}')"` : ''}>${hero ? mediaHTML(hero, { eager: true, autoplay: true }) : `<b aria-hidden="true">${esc(p.title)}</b>`}</div>
     <div class="cf-hero-text"><p class="cf-kicker">${p.no} — ${esc(p.kicker)} / ${esc(p.industry)} / ${esc(p.year)}</p><h2 id="case-title" aria-label="${esc(p.title)}" style="--lw:${longestWord(p.title)}">${splitTitle(p.title)}</h2><p class="cf-sub">${esc(p.subtitle)}</p></div>
     ${hero ? `<p class="cf-hero-cap">01 — ${esc(hero.title)}：${esc(hero.caption)}</p>` : ''}
   </header>
@@ -559,6 +579,8 @@ function renderCase(index, layer) {
   caseObserver = new IntersectionObserver(es => es.forEach(x => { const v = x.target; if (x.isIntersecting && !reduced) { v.preload = 'auto'; const pr = v.play(); if (pr) pr.catch(() => { }); } else v.pause(); }), { root: scroller, threshold: .2 });
   $$('video', body).forEach(v => caseObserver.observe(v));
   body._rest = rest; body._p = p;
+  if (matDwell) matDwell.stop();
+  matDwell = ga('slashDwell', $$('[data-mno]', body), el => track('view_material', { case_id: p.id, case_name: p.label, material_no: el.dataset.mno, material_title: el.dataset.mtitle, material_kind: el.dataset.mkind, ui_from: 'case_file' }), 1000, scroller);
   if (location.hash !== `#case-${p.id}` || !(history.state && history.state.slashCase)) history.replaceState(casePushed ? { slashCase: p.id } : null, '', `#case-${p.id}`);
   casePick = null; const net = $('.cf-net', body); if (net && window.SlashTeam) { window.SlashTeam.paint(net, new Set(p.team), null); if (window.SlashTeam.animate) window.SlashTeam.animate(net); if (window.SlashTeam.sky) window.SlashTeam.sky($('.cf-teambox', body), 4200); }
   announce(`${p.title}の事例の詳細を開きました。`);
@@ -663,7 +685,8 @@ function closeCase(then) {
 }
 function closeNow(then, keep = !then) {
   casePushed = false;
-  if (!dlg.open) { caseOpen = false; document.body.classList.remove('reading'); cut.classList.remove('on'); fly.classList.remove('on'); syncPlayback(); if (then) then(); return; }
+  // ブラウザが先に閉じていた場合（Esc を続けて押したときなど）も、片付け（中身・case-open・計測）を済ませる
+  if (!dlg.open) { if (caseOpen && body.childElementCount) afterClosed(keep); caseOpen = false; document.body.classList.remove('reading'); cut.classList.remove('on'); fly.classList.remove('on'); syncPlayback(); if (then) then(); return; }
   const done = () => { dlg.classList.remove('leave'); dlg.close(); afterClosed(keep); if (then) then(); };
   if (reduced) { done(); return; }
   dlg.classList.remove('enter'); dlg.classList.add('leave');
@@ -692,6 +715,8 @@ dlg.addEventListener('cancel', e => { e.preventDefault(); if (!zoom.hidden) { cl
 // 閉じたあとの片付け。close イベントは少し遅れて届くので、自分で閉じたときはその場で済ませる
 function afterClosed(keepScroll = true) {
   if (!caseOpen) return;
+  if (matDwell) { matDwell.stop(); matDwell = null; }
+  ga('slashPlace', null); ga('slashPage'); document.title = topTitle; // この直後に site.js が、いまの節を「見ている場所」に戻す
   if (caseObserver) caseObserver.disconnect(); $$('video', body).forEach(v => { v.pause(); v.removeAttribute('src'); v.load && v.load(); });
   body.innerHTML = ''; document.documentElement.classList.remove('case-open'); caseOpen = false; closeZoomNow(); zoomPushed = false; syncFab();
   document.body.classList.remove('reading'); syncPlayback();
@@ -722,7 +747,7 @@ body.addEventListener('click', e => {
   if (e.target.closest('[data-case-next]')) { stepCase(1); return; }
   if (e.target.closest('[data-case-close]')) { closeCase(); return; }
   if (e.target.closest('[data-case-contact]')) { e.preventDefault(); track('nav_click', { section: 'contact', ui_from: 'case' }); closeCase(() => { const c = $('#contact'); if (c) c.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth' }); }); return; }
-  const f = e.target.closest('.cf-frame'); if (f) { openZoom(body._rest[+f.dataset.k]); track('zoom_media', { case_id: projects[caseIndex].id, case_name: projects[caseIndex].label }); }
+  const f = e.target.closest('.cf-frame'); if (f) { const a = body._rest[+f.dataset.k], fig = f.closest('[data-mno]'); openZoom(a); track('zoom_media', { case_id: projects[caseIndex].id, case_name: projects[caseIndex].label, material_no: fig ? fig.dataset.mno : '', material_title: a ? a.title : '', material_kind: a ? (a.kind === 'video' ? 'video' : 'image') : '' }); }
 });
 // 下へ読み進めたら、右下に「閉じる」を出し続ける（末尾の「閉じる」が見えている間と、拡大表示の間は隠す）
 const fab = $('#cf-fab'); let fabRaf = 0;

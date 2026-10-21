@@ -194,10 +194,17 @@ function noteSection(i) {
   if (!id || seenSecs.has(id)) return;
   seenTimer = setTimeout(() => { if (secIdx === i && !seenSecs.has(id)) { seenSecs.add(id); track('view_section', { section: id }); } }, 800);
 }
+// 「どこを見ていたか」：いま見ている節（いちばん上は top）を analytics.js に伝える。事例の詳細を開いている間は、事例の方を数える
+function placeSection() {
+  if (root.classList.contains('case-open')) return;
+  try { if (window.slashPlace) window.slashPlace('section_time', { section: SECS[secIdx] ? SECS[secIdx].id : 'top' }); } catch (e) { }
+}
+let wasCaseOpen = false;
+new MutationObserver(() => { const open = root.classList.contains('case-open'); if (open !== wasCaseOpen) { wasCaseOpen = open; if (!open) placeSection(); } }).observe(root, { attributes: true, attributeFilter: ['class'] });
 function paintSection(i, p) {
   if (i !== secIdx) {
     secIdx = i; const id = SECS[i] ? SECS[i].id : '';
-    noteSection(i);
+    noteSection(i); placeSection();
     [gnavLinks, menuLinks].forEach(list => list.forEach(a => { const on = a.dataset.sec === id; a.classList.toggle('current', on); if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }));
     if (SECS[i] && dock) {
       dockNo.textContent = SECS[i].no; dockName.textContent = SECS[i].ja;
@@ -280,6 +287,8 @@ if (aiGrid) {
       <a class="ai-hit" href="/works/${encodeURIComponent(it.id)}/" data-open="${esc(it.id)}" aria-haspopup="dialog" aria-label="${esc(it.title)}：${esc(p.label)}の事例の詳細を開く" data-cursor="詳しく見る"></a></li>`;
   }).join('');
   $$('video[data-auto]', aiGrid).forEach(v => playIO.observe(v));
+  // 見られたカード（開かなかったものも含めて、どこまで目に入ったか）
+  if (window.slashDwell) window.slashDwell($$('.ai-item', aiGrid), el => { if (root.classList.contains('case-open')) return false; const it = (D.ai || [])[$$('.ai-item', aiGrid).indexOf(el)], p = it && byId[it.id]; if (p) track('view_card', { case_id: p.id, case_name: p.label, case_industry: p.industry, ui_from: 'ai' }); }, 1500);
   aiGrid.addEventListener('click', e => {
     const b = e.target.closest('[data-open]'); if (!b || !window.SlashWorks) return;
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || (e.button && e.button !== 0)) return; // 押しながら：事例のページを新しいタブで開く
