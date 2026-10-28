@@ -1583,5 +1583,23 @@ html.intro-on .reel-howto{animation:intro-in .9s ease 1.25s both}
 @media(max-width:360px){
   .reel-howto{font-size:10.5px;gap:7px;letter-spacing:.01em}
   .reel-howto b{font-size:9.5px;padding:4px 6px 3px}
+  .reel-tip{max-width:74vw}
+  .reel-tip span{display:none}
 }
 .reduced .reel-tip{transition:none}
+/* 見た目（トンマナ）の札：いまのチャンネル。押すと次の見た目へ */
+.reel-ch{position:absolute;z-index:3;right:var(--gutter);top:calc(var(--head) + 11px);display:inline-flex;align-items:center;gap:9px;margin:0;padding:7px 11px 6px 10px;background:#111110e0;color:#fff;border:1px solid #ffffff42;border-radius:0;font:800 11px/1 var(--display);font-stretch:112%;letter-spacing:.11em;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:4px 4px 0 #00000070;transition:border-color .15s,background .15s}
+.reel-ch i{font-style:normal;color:var(--accent)}
+.reel-ch span{min-width:5.6em;text-align:left}
+.reel-ch em{font-style:normal;opacity:.75;font-size:12px}
+.reel-ch:hover,.reel-ch:focus-visible{border-color:var(--accent);background:#111110f5;outline:none}
+.reel-ch:active{transform:translate(1px,1px)}
+.reel-ch.zap span{animation:reel-zap .34s steps(5) 1}
+@keyframes reel-zap{0%{opacity:.15;transform:translateX(-4px);filter:blur(1px)}30%{opacity:1;transform:translateX(3px)}55%{opacity:.35;transform:none}100%{opacity:1;transform:none;filter:none}}
+.hero:not(.reel-on) .reel-ch{display:none}
+html.intro-on .reel-ch{animation:intro-in .9s ease 1.35s both}
+@media(max-width:720px){
+  .reel-ch{right:auto;left:var(--gutter);top:calc(var(--head) + 30px);gap:7px;padding:6px 9px 5px 8px;font-size:10px}
+  .reel-ch span{min-width:5em}
+}
+.reduced .reel-ch.zap span{animation:none}
