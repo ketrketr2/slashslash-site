@@ -670,6 +670,8 @@ function openCase(index, opts = {}) {
   // ページを切り替えず、いまのページの上に事例の詳細を重ねる（PCは右から、スマホは下からのシート。後ろのページは暗く透けて見え、押すと閉じる）
   show(); if (!reduced) { dlg.classList.remove('enter'); void dlg.offsetWidth; dlg.classList.add('enter'); }
 }
+// ヒーローの「実績の壁」（wall.js）から事例を開く
+window.slashOpenCase = (id, o = {}) => { const i = projects.findIndex(p => p.id === id); if (i >= 0) openCase(i, { from: o.from, src: o.src || 'other' }); };
 function swapCase(index, layer, src) {
   caseIndex = index; if (src) caseFrom = src;
   body.classList.remove('case-body-swap'); void body.offsetWidth; renderCase(index, layer); if (!reduced) body.classList.add('case-body-swap');

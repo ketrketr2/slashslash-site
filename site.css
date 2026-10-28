@@ -1542,3 +1542,46 @@ section[tabindex="-1"]:focus{outline:none}
 }
 /* 写真や動画の上に重ねる題字・見出しの読みやすさ（明るい被写体の上でも沈まないように、ごく薄い影） */
 .cf-hero.overlay .cf-hero-text{text-shadow:0 2px 18px #0000008c}
+/* ===== ヒーロー：実績の壁（wall.js。WebGL で映像と画面を敷き詰める。使えない端末は従来の画像の壁） ===== */
+.hero-reel{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;background:#0b0b0a;touch-action:pan-y;cursor:grab;-webkit-tap-highlight-color:transparent}
+.hero.reel-drag .hero-reel{cursor:grabbing}
+.has-cursor .hero-reel,.has-cursor .hero.reel-drag .hero-reel{cursor:none}
+.hero:not(.reel-on) .hero-reel,.hero:not(.reel-on) .reel-tip,.hero:not(.reel-on) .reel-howto{display:none}
+.hero.reel-on .hero-wall,.hero.reel-on .hero-type,.hero.reel-on .hero-slash{display:none}
+.hero.reel-on:after{background:linear-gradient(180deg,#111110d0 0%,#11111055 8%,#11111000 17%),linear-gradient(0deg,#111110c8 0%,#11111060 13%,#11111000 30%),radial-gradient(58% 66% at 12% 98%,#111110c0 0%,#11111066 45%,#11111000 72%)}
+.reel-hover .cursor-ring{opacity:0}
+.reel-hover .cursor-dot{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--accent)}
+.reel-from{position:fixed;pointer-events:none;visibility:hidden}
+.reel-src{position:absolute;left:0;top:0;width:8px;height:8px;object-fit:cover;pointer-events:none;border:0}
+.hero:not(.reel-on) .reel-src{display:none}
+/* 事例名の札：レンズの右下に添える */
+.reel-tip{position:absolute;left:0;top:0;z-index:3;pointer-events:none;width:max-content;min-width:210px;max-width:min(330px,72vw);padding:11px 15px 12px 14px;background:#111110f0;color:#fff;border:1px solid #ffffff2b;border-left:4px solid var(--accent);box-shadow:7px 7px 0 #00000080;opacity:0;transition:opacity .18s;will-change:transform,opacity}
+.reel-tip.on{opacity:1}
+.reel-tip small{display:flex;align-items:center;gap:8px;margin-bottom:6px;font:700 11px/1 var(--jp);letter-spacing:.06em;color:#ffffffb8}
+.reel-tip small b{background:var(--accent);color:var(--ink);padding:3px 6px 2px;font:900 11px/1 var(--display);letter-spacing:.02em}
+.reel-tip strong{display:block;font:700 15.5px/1.45 var(--jp);letter-spacing:.02em}
+.reel-tip span{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-top:4px;font:800 10.5px/1.3 var(--display);font-stretch:112%;letter-spacing:.07em;color:#ffffffa6}
+.reel-tip span i{font:700 11px/1.3 var(--jp);font-style:normal;letter-spacing:.04em;color:#ffffffd0}
+.reel-tip em{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:9px;padding-top:8px;border-top:1px solid #ffffff26;font:700 11.5px/1 var(--jp);font-style:normal;letter-spacing:.04em;color:var(--accent)}
+.reel-tip em b{font:900 13px/1 var(--display)}
+/* 使い方：ヘッダーの下に小さく */
+.reel-howto{position:absolute;z-index:3;left:var(--gutter);top:calc(var(--head) + 14px);margin:0;display:flex;align-items:center;gap:10px;max-width:calc(100% - 2 * var(--gutter));font:700 12.5px/1.5 var(--jp);letter-spacing:.03em;color:#fff;pointer-events:none;text-shadow:0 1px 3px #000,0 0 14px #000c}
+.reel-howto b{flex:none;font:900 11px/1 var(--display);font-stretch:118%;letter-spacing:.12em;background:#fff;color:var(--ink);padding:4px 8px 3px;text-shadow:none}
+.reel-howto span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reel-howto .rh-sp{display:none}
+html.intro-on .reel-howto{animation:intro-in .9s ease 1.25s both}
+@media (hover:none),(pointer:coarse),(max-width:720px){
+  .reel-howto .rh-pc{display:none}.reel-howto .rh-sp{display:inline}
+}
+@media(max-width:720px){
+  .reel-howto{top:calc(var(--head) + 6px);font-size:11.5px;gap:8px}
+  .reel-howto b{font-size:10px}
+  .reel-tip{min-width:0;max-width:min(260px,64vw);padding:9px 12px 10px 11px}
+  .reel-tip strong{font-size:14px}
+  .reel-tip em{margin-top:7px;padding-top:6px;font-size:11px}
+}
+@media(max-width:360px){
+  .reel-howto{font-size:10.5px;gap:7px;letter-spacing:.01em}
+  .reel-howto b{font-size:9.5px;padding:4px 6px 3px}
+}
+.reduced .reel-tip{transition:none}

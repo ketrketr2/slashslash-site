@@ -156,8 +156,12 @@ function buildType() {
   const kinds = ['narrow', 'wide', 'narrow', 'wide', 'narrow'];
   box.innerHTML = rows.map((words, r) => { const seq = words.map(w => `<span class="ht-w">${w}</span><span class="ht-s">/</span>`).join(''); const strip = seq + seq + seq; return `<div class="ht-row ${kinds[r]} ${r % 2 ? 'rev' : ''}" style="--dur:${26 + r * 7}s">${strip}${strip}</div>`; }).join('');
 }
-buildWall(); buildType();
-let lastMobile = innerWidth <= 720; addEventListener('resize', () => { const m = innerWidth <= 720; if (m !== lastMobile) { lastMobile = m; buildWall(); } });
+// 実績の壁（wall.js・WebGL）が動く端末では、従来の画像の壁と大きな文字は作らない。動かなかったとき（slash:reel-fail）だけ作る
+let legacyOn = false;
+const legacyWall = () => { if (legacyOn) return; legacyOn = true; buildWall(); buildType(); };
+if (!document.getElementById('hero-reel')) legacyWall();
+document.addEventListener('slash:reel-fail', legacyWall);
+let lastMobile = innerWidth <= 720; addEventListener('resize', () => { const m = innerWidth <= 720; if (m !== lastMobile) { lastMobile = m; if (legacyOn) buildWall(); } });
 const hero = $('.hero'), wallPlane = $('#wall-plane'), heroType = $('#hero-type');
 if (hero && wallPlane) {
   hero.addEventListener('pointermove', e => { if (reduced || e.pointerType !== 'mouse') return; const r = hero.getBoundingClientRect(); const nx = (e.clientX - r.left) / r.width * 2 - 1, ny = (e.clientY - r.top) / r.height * 2 - 1; wallPlane.style.setProperty('--mx', nx.toFixed(3)); wallPlane.style.setProperty('--my', ny.toFixed(3)); $$('.ht-row', heroType).forEach((row, i) => { row.style.setProperty('--fs', `${Math.round((i % 2 ? 125 : 68) + nx * (i % 2 ? -30 : 30))}%`); }); });
