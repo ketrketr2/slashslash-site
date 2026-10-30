@@ -1626,33 +1626,45 @@ html.intro-on .reel-ch{animation:intro-in .9s ease 1.35s both}
 }
 
 /* ---------- 2026-10-30b：下へ読み進めるだけで迷わないように（目次・次へ・移動バー） ---------- */
-/* ヒーローの目次（PC）：この先の7つの節を最初に見せ、押すとその節へ */
-.hero{--hi-gap:clamp(14px,2.2vh,24px);--hi-h:66px}
-.hero-index{position:absolute;z-index:4;left:var(--gutter);right:var(--gutter);bottom:var(--hi-gap);display:flex;align-items:stretch;color:#fff;background:#0e0e0d8c;border:1px solid #ffffff33;-webkit-backdrop-filter:blur(2px) brightness(.6) saturate(1.15);backdrop-filter:blur(2px) brightness(.6) saturate(1.15);animation:hi-in .9s var(--ease) .5s both}
+/* ヒーローの目次（PC）：この先の7つの節を最初に見せ、押すとその節へ。
+   2026-10-30c：押せることが一目で分かるように、1つずつボタンの形に（枠・矢印の丸・「押すと移動」）。最初に一度だけ、矢印の丸が左から順に沈む */
+.hero{--hi-gap:clamp(14px,2.2vh,24px);--hi-h:64px;--hi-pad:6px}
+.hero-index{position:absolute;z-index:4;left:var(--gutter);right:var(--gutter);bottom:var(--hi-gap);display:flex;align-items:stretch;gap:var(--hi-pad);padding:var(--hi-pad);color:#fff;background:#0e0e0d99;border:1px solid #ffffff2b;-webkit-backdrop-filter:blur(2px) brightness(.6) saturate(1.15);backdrop-filter:blur(2px) brightness(.6) saturate(1.15);animation:hi-in .9s var(--ease) .5s both}
 html.intro-on .hero-index{animation-delay:1.15s}
 @keyframes hi-in{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
-.hi-k{flex:none;display:grid;align-content:center;gap:4px;margin:0;padding:0 clamp(14px,1.4vw,22px);border-right:1px solid #ffffff2e}
+.hi-k{flex:none;display:grid;align-content:center;gap:5px;margin:0;padding:0 clamp(8px,.9vw,14px) 0 clamp(8px,.8vw,12px)}
 .hi-k span{font:600 10px/1 var(--mono);letter-spacing:.16em;color:var(--accent)}
 .hi-k b{font:700 15px/1.2 var(--jp);letter-spacing:.1em}
-.hero-index ol{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));list-style:none;margin:0;padding:0}
+.hi-k em{font:400 10.5px/1.2 var(--jp);font-style:normal;letter-spacing:.02em;color:#ffffffb0;white-space:nowrap}
+.hero-index ol{flex:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--hi-pad);list-style:none;margin:0;padding:0}
 .hero-index li{min-width:0}
-.hero-index li+li a{border-left:1px solid #ffffff21}
-.hero-index a{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:'no name' 'desc desc';align-items:baseline;align-content:center;gap:5px 8px;height:100%;min-height:var(--hi-h);padding:11px clamp(12px,1.1vw,16px) 12px;color:#fff;text-decoration:none;transition:background .25s,color .25s}
+.hero-index li:nth-child(2){--i:1}.hero-index li:nth-child(3){--i:2}.hero-index li:nth-child(4){--i:3}.hero-index li:nth-child(5){--i:4}.hero-index li:nth-child(6){--i:5}.hero-index li:nth-child(7){--i:6}
+.hero-index a{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:'no name ar' 'desc desc desc';align-items:center;align-content:center;gap:5px 7px;height:100%;min-height:var(--hi-h);padding:9px 8px 10px clamp(10px,.9vw,13px);color:#fff;text-decoration:none;background:#ffffff12;border:1px solid #ffffff4d;transition:color .25s,border-color .25s,transform .35s var(--ease),box-shadow .35s var(--ease)}
+.hero-index a:before{content:'';position:absolute;inset:0;z-index:-1;background:var(--accent);transform:scaleY(0);transform-origin:50% 100%;transition:transform .45s var(--ease)}
 .hero-index a small{grid-area:no;font:600 11px/1 var(--mono);color:var(--accent);letter-spacing:.04em;transition:color .25s}
-.hero-index a b{grid-area:name;font:700 15px/1.25 var(--jp);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hero-index a span{grid-area:desc;font:400 11.5px/1.45 var(--jp);color:#ffffffb8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .25s}
-.hero-index a:after{content:'↓';position:absolute;right:11px;top:10px;font:400 13px/1 var(--jp);opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .35s var(--ease)}
-.hero-index a:hover,.hero-index a:focus-visible{background:var(--accent);color:var(--ink);outline:none}
+.hero-index a b{grid-area:name;min-width:0;font:700 15px/1.2 var(--jp);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-index a span{grid-area:desc;min-width:0;font:400 11.5px/1.4 var(--jp);color:#ffffffbd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .25s}
+.hero-index .hi-ar{grid-area:ar;display:grid;place-items:center;width:22px;height:22px;border:1px solid #ffffffb8;border-radius:50%;font:400 12px/1 var(--jp);font-style:normal;transition:transform .45s var(--ease),background .25s,color .25s,border-color .25s}
+.hero-index a:hover,.hero-index a:focus-visible{color:var(--ink);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 10px 22px #0000005c;outline:none}
+.hero-index a:hover:before,.hero-index a:focus-visible:before{transform:scaleY(1)}
 .hero-index a:hover small,.hero-index a:focus-visible small{color:var(--ink)}
-.hero-index a:hover span,.hero-index a:focus-visible span{color:#111110c2}
-.hero-index a:hover:after,.hero-index a:focus-visible:after{opacity:1;transform:none}
-.hero-index li:last-child a{background:#69d9ee24}
-.hero-index li:last-child a:hover,.hero-index li:last-child a:focus-visible{background:var(--accent)}
-@media(min-width:961px){.hero-copy{bottom:calc(var(--hi-gap) + var(--hi-h) + clamp(12px,1.6vh,18px))}}
-@media(max-width:1180px){.hero{--hi-h:50px}.hero-index a span{display:none}.hero-index a{padding:0 12px;align-content:center}}
+.hero-index a:hover span,.hero-index a:focus-visible span{color:#111110c7}
+.hero-index a:hover .hi-ar,.hero-index a:focus-visible .hi-ar{transform:translateY(3px);background:var(--ink);border-color:var(--ink);color:var(--accent)}
+.hero-index a:active{transform:none;box-shadow:none}
+.hero-index li:last-child a{border-color:#69d9eeb3;background:#69d9ee29}
+/* 最初に一度だけ：枠が光り、矢印の丸が左から順に沈む（押せることの合図） */
+.hero-index a{animation:hi-edge .9s ease calc(1.65s + var(--i,0) * .09s) 1}
+.hero-index .hi-ar{animation:hi-ping .9s var(--ease) calc(1.65s + var(--i,0) * .09s) 1}
+html.intro-on .hero-index a,html.intro-on .hero-index .hi-ar{animation-delay:calc(2.3s + var(--i,0) * .09s)}
+@keyframes hi-edge{35%{border-color:var(--accent)}}
+@keyframes hi-ping{35%{transform:translateY(4px);background:var(--accent);border-color:var(--accent);color:var(--ink)}70%{transform:translateY(-1px)}}
+@media(min-width:961px){.hero-copy{bottom:calc(var(--hi-gap) + var(--hi-h) + var(--hi-pad) * 2 + 2px + clamp(12px,1.6vh,18px))}}
+@media(max-width:1220px){.hero{--hi-h:44px}.hi-k span{display:none}.hero-index a span{display:none}.hero-index a{grid-template-areas:'no name ar';padding:0 7px 0 10px}}
+@media(max-width:1150px){.hero-index a small{display:none}.hero-index a{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'name ar'}}
 @media(max-width:960px){.hero-index{display:none}}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.hero-index{background:#0e0e0dc4}}
 .reduced .hero-index,.pre-reduced .hero-index{animation:none!important;opacity:1;transform:none}
+.reduced .hero-index a,.reduced .hero-index .hi-ar,.pre-reduced .hero-index a,.pre-reduced .hero-index .hi-ar{animation:none!important;transition:none}
 
 /* 節の終わりの「次へ」：次の節の名前と中身を見せ、押すとその節の頭へ */
 .next-ch{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:0 clamp(14px,2.2vw,32px);margin:clamp(56px,7vw,104px) var(--gutter) 0;padding:clamp(18px,2.2vw,28px) clamp(6px,1.2vw,16px);border-top:2px solid currentColor;border-bottom:1px solid currentColor;color:inherit;text-decoration:none}

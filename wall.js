@@ -1,7 +1,7 @@
 /* s/ash — ヒーローの「実績の壁」。手がけた映像と画面を、ブラウン管のテレビを積み上げた壁として流す（WebGL）。
  * ・静止画は2枚のアトラス（assets/hero/wall-a/b.webp、1枚に 256x144 のタイルが112）、映像は 4x3 にまとめた1本（wall-v.mp4、12秒で継ぎ目なく回る）
  * ・テレビ1台ずつ：ベゼル・丸い角・ふくらんだ画面・走査線・画面の光の照り返し。チャンネルが変わるときは砂嵐・カラーバー・CH 表示・縦の流れ・電源の入り切り
- * ・見た目（トンマナ）は7通りを巡回：COLOR TV／VHS／B/W／THERMAL／LED／PRINT／VECTOR。切り替えは波のように1台ずつ。右上の札で次へ送れる
+ * ・見た目（トンマナ）は7通りを巡回：VECTOR／LED／COLOR TV／VHS／B/W／THERMAL／PRINT の順（スマホは VECTOR なし）。4.5秒ごとに、波のように1台ずつ切り替える。右上の札で次へ送れる
  * ・マウス：レンズ（中は本来の色で拡大）、乗っているタイルの事例名の札と CH 表示、ドラッグで壁が動き（速いと砂嵐＝チューニング）、放すと波紋、
  *   速くなでるとなぞった所がめくれる、押すとそのタイルへ一気に寄って事例の詳細が開く。触らないとレンズが自動で巡回する
  * ・スクロールで下へ進むと、ブラウン管の電源を切るように横一線に縮んで消える
@@ -314,8 +314,9 @@ function channel(k, t) {
 
 /* ---------- 見た目（トンマナ）の巡回 ---------- */
 const LOOK_NAMES = ['COLOR TV', 'VHS', 'B/W', 'THERMAL', 'LED', 'PRINT', 'VECTOR'];
-const LOOKS = lite ? [0, 1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6];
-const LOOK_HOLD = 7;
+// 巡回の順：VECTOR と LED を先に（2026-10-30 本人の指示）。札の CH 番号はこの順で 1 から
+const LOOKS = lite ? [4, 0, 1, 2, 3, 5] : [6, 4, 0, 1, 2, 3, 5];
+const LOOK_HOLD = 4.5, LOOK_FIRST = 5.5, LOOK_WAVE = 2200; // 1つの見た目を映す秒数／最初の見た目（電源が入る分を足す）／切り替えの波の速さ（px/秒）
 let lookI = 0, look = LOOKS[0], lookNext = 1e9;
 function showLook() {
   if (!chip) return;
@@ -330,7 +331,7 @@ function setLook(i, t, ox, oy) {
   visibleCells((cx, cy, k) => {
     if (reduced) { S.mode[k] = look; S.modeAt[k] = -1; return; }
     const [sx, sy] = toScreen((cx + .5) * pitch[0], (cy + .5) * pitch[1]);
-    S.modeNext[k] = look; S.modeAt[k] = t + Math.hypot(sx - ox, sy - oy) / 1500 + rnd() * .12;
+    S.modeNext[k] = look; S.modeAt[k] = t + Math.hypot(sx - ox, sy - oy) / LOOK_WAVE + rnd() * .1;
   });
   if (reduced) kick();
 }
@@ -662,7 +663,7 @@ document.addEventListener('slash:motion', e => {
   reduced = !!(e.detail && e.detail.reduced);
   cancelAnimationFrame(raf); raf = 0;
   if (reduced) { if (video) video.pause(); lens.R = 0; lens.ring = 0; S.flip.fill(-1); S.born.fill(-1); S.bars.fill(-9); S.pend2.fill(-1); tune = tuneT = 0; }
-  else { S.born.fill(-1); born = now(); lookNext = born + 8; startVideo(); }
+  else { S.born.fill(-1); born = now(); lookNext = born + LOOK_FIRST; startVideo(); }
   kick();
 });
 
@@ -671,7 +672,7 @@ size(); showLook();
 loadAtlas('assets/hero/wall-a.webp', 0).then(ok => {
   if (!ok) { fail('atlas'); return; }
   stillCount = Math.min(STILLS, PER_ATLAS);
-  const begin = () => { if (born >= 0) return; born = now(); lookNext = born + 8; S.born.fill(-1); kick(); setTimeout(startVideo, 600); };
+  const begin = () => { if (born >= 0) return; born = now(); lookNext = born + LOOK_FIRST; S.born.fill(-1); kick(); setTimeout(startVideo, 600); };
   // 開幕の演出があるときは、闇が割れるのに合わせて点ける
   if (root.classList.contains('intro-on') && !root.classList.contains('intro-done')) document.addEventListener('slash:intro-done', begin, { once: true });
   else begin();
