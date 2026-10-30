@@ -337,7 +337,7 @@ function setLook(i, t, ox, oy) {
 
 /* ---------- 大きさと、画面⇔壁の座標 ---------- */
 let W = 1, H = 1, dpr = 1, gut = 3, bez = 8, ledP = 5.6, pitch = [128, 75], tileMin = 1, zoom = 1, scrollP = 0, power = 0, powerY = 0;
-const copyEl = hero.querySelector('.hero-copy'), factsEl = hero.querySelector('.hero-facts'), howEl = hero.querySelector('.reel-howto');
+const copyEl = hero.querySelector('.hero-copy'), factsEl = hero.querySelector('.hero-index, .hero-facts'), howEl = hero.querySelector('.reel-howto');
 const NONE = { x0: 0, y0: 1e4, x1: 0, y1: 1e4 };
 let avoid = NONE, factsBox = NONE, howBox = NONE, chipBox = NONE, factsTop = 1e4; // レンズの自動巡回と事例名の札が避ける、文字の箱・数字・使い方・見た目の札
 function size() {

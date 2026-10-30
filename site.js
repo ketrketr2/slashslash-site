@@ -14,7 +14,7 @@ const wallOf = src => src.replace('assets/works/', 'assets/wall/').replace('asse
 const go = el => { if (el) el.scrollIntoView({ behavior: reduced ? 'instant' : 'smooth', block: 'start' }); };
 // 計測（analytics.js。本番だけで動く。ほかの環境では何もしない）
 const track = (name, params) => { try { if (window.slashTrack) window.slashTrack(name, params); } catch (e) { } };
-const fromOf = a => a.closest('.gnav') ? 'header' : a.closest('.menu') ? 'menu' : a.closest('.site-footer') ? 'footer' : a.closest('.hero') ? 'hero' : a.closest('.sv-ask') ? 'services' : a.closest('.ai-foot') ? 'ai' : a.closest('.contact') ? 'contact' : 'link';
+const fromOf = a => a.closest('.gnav') ? 'header' : a.closest('.menu') ? 'menu' : a.closest('.site-footer') ? 'footer' : a.closest('.hero-index') ? 'hero_index' : a.closest('.next-ch') ? 'next_bar' : a.closest('.hero') ? 'hero' : a.closest('.sv-ask') ? 'services' : a.closest('.ai-foot') ? 'ai' : a.closest('.contact') ? 'contact' : 'link';
 /* 節へ移る。途中の見出しが後から開いて（文字幅が変わって）着地点がずれないよう、目的の節より上の見出しを先に開いておく。
  * スクロールが止まったら、節の頭がヘッダーのすぐ下にあるかを確かめて合わせ直す */
 function jump(el) {
@@ -62,6 +62,7 @@ osReduce.addEventListener('change', e => { if (!stored) setReduced(e.matches, fa
 
 /* ---------- 目次（メニュー）。右上の「メニュー」と、スマホの移動バーの真ん中から開く ---------- */
 const menu = $('#menu'), menuBtn = $('#menu-btn'), dock = $('#dock'), dockHere = $('#dock-here');
+const dockSmall = matchMedia('(max-width:960px)'); // スマホ・タブレットは、ヒーローの間も移動バーを出す
 let menuOpener = null;
 function setMenu(openIt, opener) {
   menu.hidden = !openIt; root.classList.toggle('menu-open', openIt);
@@ -210,7 +211,13 @@ function paintSection(i, p) {
     secIdx = i; const id = SECS[i] ? SECS[i].id : '';
     noteSection(i); placeSection();
     [gnavLinks, menuLinks].forEach(list => list.forEach(a => { const on = a.dataset.sec === id; a.classList.toggle('current', on); if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); }));
+    if (dock && i < 0) {
+      dock.classList.add('at-top'); dockNo.textContent = ''; dockName.textContent = 'このサイトの7つの節';
+      dockHere.setAttribute('aria-label', '目次を開く（このサイトの7つの節）');
+      dockPrev.disabled = true; dockNext.disabled = false; dockNext.setAttribute('aria-label', `次の節へ（${SECS[0] ? SECS[0].ja : ''}）`);
+    }
     if (SECS[i] && dock) {
+      dock.classList.remove('at-top'); dockPrev.disabled = false;
       dockNo.textContent = SECS[i].no; dockName.textContent = SECS[i].ja;
       dockHere.setAttribute('aria-label', `目次を開く（いまは ${SECS[i].no} ${SECS[i].ja}）`);
       dockNext.disabled = i >= SECS.length - 1;
@@ -223,9 +230,13 @@ function paintSection(i, p) {
   const cur = gnavLinks.find(a => a.classList.contains('current')); if (cur) cur.style.setProperty('--p', p.toFixed(3));
   if (dockBar) dockBar.style.transform = `scaleX(${p.toFixed(3)})`;
 }
+// ヒーローの間は、文字の箱（ボタン）の下に移動バーが入る余地があるときだけ出す（背の低いスマホでボタンを隠さない）
+const heroCopy = $('.hero-copy');
+function heroDockFits() { if (!heroCopy) return true; const r = heroCopy.getBoundingClientRect(); return r.bottom <= innerHeight - 74; }
 function syncDock() {
   if (!dock) return;
-  const show = solidNow && secIdx >= 0 && menu.hidden && !typing && !root.classList.contains('case-open');
+  const intro = root.classList.contains('intro-on') && !root.classList.contains('intro-done');
+  const show = (solidNow || (secIdx < 0 && dockSmall.matches && heroDockFits())) && menu.hidden && !typing && !intro && !root.classList.contains('case-open');
   dock.classList.toggle('on', show); dock.toggleAttribute('inert', !show);
 }
 if (dock) {
@@ -235,6 +246,19 @@ if (dock) {
     if (SECS[i]) { track('nav_click', { section: SECS[i].id, ui_from: ui }); jump(SECS[i].el); }
   }));
   dockHere.addEventListener('click', () => { setMenu(true, dockHere); track('open_menu', { ui_from: 'dock' }); });
+  document.addEventListener('slash:intro-done', syncDock);
+  addEventListener('resize', syncDock, { passive: true });
+  if (dockSmall.addEventListener) dockSmall.addEventListener('change', syncDock);
+  // キーボードの ← → でも前後の節へ（入力中・事例の詳細・目次の画面・横に動かす部品の上では使わない）
+  document.addEventListener('keydown', e => {
+    if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+    if (!menu.hidden || root.classList.contains('case-open')) return;
+    const t = e.target; if (t && t.closest && t.closest('input,textarea,select,[contenteditable],[role=tab],[role=tablist],[role=dialog],#f-area,.ws-views,.tc-chips,.stage,.plist')) return;
+    const d = e.key === 'ArrowRight' ? 1 : -1, i = secIdx + d;
+    e.preventDefault();
+    if (i < 0) { window.scrollTo({ top: 0, behavior: reduced ? 'instant' : 'smooth' }); return; }
+    if (SECS[i]) { track('nav_click', { section: SECS[i].id, ui_from: d > 0 ? 'key_next' : 'key_prev' }); jump(SECS[i].el); }
+  });
   // 入力中は、キーボードの上にかぶらないよう隠す
   document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('input,textarea,select')) { typing = true; syncDock(); } });
   document.addEventListener('focusout', e => { if (e.target.matches && e.target.matches('input,textarea,select')) { typing = false; setTimeout(syncDock, 60); } });
