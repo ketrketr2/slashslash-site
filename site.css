@@ -1603,3 +1603,24 @@ html.intro-on .reel-ch{animation:intro-in .9s ease 1.35s both}
   .reel-ch span{min-width:5em}
 }
 .reduced .reel-ch.zap span{animation:none}
+/* ヒーローの文字の箱（2026-10-30）：一回り小さく、半透明のスモークガラスにして、下のテレビの壁が透けて見えるように */
+.hero-copy{width:min(540px,calc(100% - 2 * var(--gutter)));padding:clamp(16px,1.6vw,24px) clamp(18px,1.8vw,26px) clamp(18px,1.7vw,24px);background:#0e0e0d6b;color:#fff;border:1px solid #ffffff38;border-left:4px solid var(--accent);box-shadow:none;-webkit-backdrop-filter:blur(1.5px) brightness(.62) saturate(1.2);backdrop-filter:blur(1.5px) brightness(.62) saturate(1.2)}
+.hero-copy h1{font-size:clamp(19px,1.85vw,27px);line-height:1.45;margin:0 0 10px;text-shadow:0 1px 3px #0009}
+.hero-lead{font-size:clamp(12.5px,.92vw,14px);line-height:1.85;margin:0 0 16px;max-width:36em;color:#ffffffe6;text-shadow:0 1px 2px #0008}
+.hero-kicker{margin:0 0 10px}
+.hero-kicker span{background:#fff;color:var(--ink)}
+.hero-kicker em{color:#ffffffd9}
+.hero-copy .btn-primary,.hero-copy .btn-ghost{padding:10px 16px;font-size:13px;gap:12px}
+.hero-copy .btn-primary{background:#fff;color:var(--ink);box-shadow:5px 5px 0 var(--pink)}
+.hero-copy .btn-primary:hover{box-shadow:8px 8px 0 var(--pink)}
+.hero-copy .btn-ghost{border-color:#ffffffb8;color:#fff;background:#0e0e0d40}
+.hero-copy .btn-ghost:hover{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+/* 文字の箱の下は暗くしすぎない（テレビが透けて見えるように） */
+.hero.reel-on:after{background:linear-gradient(180deg,#111110d0 0%,#11111055 8%,#11111000 17%),linear-gradient(0deg,#11111099 0%,#11111040 10%,#11111000 22%)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.hero-copy{background:#0e0e0dc4}}
+@media(max-width:720px){
+  .hero-copy{left:16px;right:16px;width:auto;bottom:16px;padding:14px 15px 16px;box-shadow:none}
+  .hero-copy h1{font-size:17.5px;margin-bottom:8px}
+  .hero-lead{font-size:12.5px;line-height:1.8;margin-bottom:13px}
+  .hero-copy .btn-primary,.hero-copy .btn-ghost{padding:10px 14px;font-size:12.5px}
+}
